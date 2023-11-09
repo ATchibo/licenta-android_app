@@ -11,6 +11,8 @@
 
 <!--    Main screen-->
     <string name="main_screen_title">%s\'s irrigation system</string>
+    <string name="main_screen_subtitle">Devices:</string>
+
     <string name="raspberry_status">Status: %s</string>
 
 </resources>
