@@ -1,3 +1,12 @@
 <resources>
+<!--    General-->
     <string name="app_name">PlantBuddy</string>
+    <string name="ok">OK</string>
+
+<!--    Login screen-->
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="error_title">Error</string>
+    <string name="error_message">Invalid credentials. Please try again.</string>
+
 </resources>
