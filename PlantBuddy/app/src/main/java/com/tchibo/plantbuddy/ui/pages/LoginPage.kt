@@ -41,12 +41,7 @@ import com.tchibo.plantbuddy.utils.ScreenInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(setCurrentScreenInfo: (ScreenInfo) -> Unit) {
-    setCurrentScreenInfo(
-        ScreenInfo(
-            title = stringResource(id = R.string.app_name)
-        )
-    )
+fun LoginPage() {
 
     val navigator = LocalNavController.current
 

@@ -9,4 +9,8 @@
     <string name="error_title">Error</string>
     <string name="error_message">Invalid credentials. Please try again.</string>
 
+<!--    Main screen-->
+    <string name="main_screen_title">%s\'s irrigation system</string>
+    <string name="raspberry_status">Status: %s</string>
+
 </resources>

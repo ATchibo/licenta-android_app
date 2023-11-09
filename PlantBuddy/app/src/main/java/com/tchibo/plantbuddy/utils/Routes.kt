@@ -8,7 +8,7 @@ class Routes {
         private const val LOGIN = "/login"
         private const val REGISTER = "/register"
         private const val HOME = "/"
-        private const val DETAILS = "/details/{taskId}"
+        private const val DETAILS = "/details/{id}"
         private const val ADD = "/add"
         private const val EDIT = "$DETAILS/edit"
 
@@ -23,8 +23,8 @@ class Routes {
             return DETAILS
         }
 
-        fun getNavigateDetails(taskId: Int) : String {
-            return DETAILS.replace("{taskId}", Json.encodeToString(taskId))
+        fun getNavigateDetails(id: String) : String {
+            return DETAILS.replace("{idd}", Json.encodeToString(id))
         }
 
         fun getNavigateEditRaw() : String {

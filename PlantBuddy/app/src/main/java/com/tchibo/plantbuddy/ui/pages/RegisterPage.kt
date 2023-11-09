@@ -24,12 +24,7 @@ import com.tchibo.plantbuddy.utils.ScreenInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterPage(setCurrentScreenInfo: (ScreenInfo) -> Unit) {
-
-    setCurrentScreenInfo(
-        ScreenInfo(
-        title = "TaskScheduler"
-    ))
+fun RegisterPage() {
 
     val navigator = LocalNavController.current
     val context = LocalContext.current

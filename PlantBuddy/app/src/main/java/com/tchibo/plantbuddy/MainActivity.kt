@@ -44,9 +44,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    Scaffold (
-                        topBar = { Appbar(currentScreenInfo) }
-                    ) { paddingValues ->
+                    Scaffold () { paddingValues ->
                         CompositionLocalProvider (LocalNavController provides navController) {
                             ComposeNavigation(paddingValues, setCurrentScreenInfo)
                         }
@@ -66,17 +64,17 @@ fun ComposeNavigation(paddingValues: PaddingValues, setCurrentScreenInfo: (Scree
 
     NavHost(
         navController = navController,
-        startDestination = Routes.getNavigateLogin(),
+        startDestination = Routes.getNavigateHome(),
         modifier = Modifier.padding(paddingValues)
     ){
         composable(Routes.getNavigateLogin()){
-            LoginPage(setCurrentScreenInfo)
+            LoginPage()
         }
         composable(Routes.getNavigateRegister()){
-            RegisterPage(setCurrentScreenInfo)
+            RegisterPage()
         }
         composable(Routes.getNavigateHome()){
-            HomePage(setCurrentScreenInfo)
+            HomePage()
         }
 //        composable(Routes.getNavigateDetailsRaw()){ backStackEntry ->
 //            val taskJson = backStackEntry.arguments?.getString("taskId")
