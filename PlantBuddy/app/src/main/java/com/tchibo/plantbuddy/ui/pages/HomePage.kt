@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -27,8 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.temp.TempDb
+import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage() {
 
@@ -36,59 +40,67 @@ fun HomePage() {
         mutableStateOf(TempDb.getMyRaspberryDtoItems())
     }
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
-        .background(MaterialTheme.colorScheme.background),
-    ) {
-        Image(
-            painterResource(R.drawable.home_bg),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize(),
-            contentScale = ContentScale.FillHeight,
-        )
+    fun onAddClick() {
+        println("pressed add")
+    }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0x99000000))
-                .padding(5.dp)
+    Scaffold(
+        floatingActionButton = { HomePageActionButton { onAddClick() } },
+    ) { it ->
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(MaterialTheme.colorScheme.background),
         ) {
-            Spacer(modifier = Modifier.height(100.dp))
-
-            Text(
-                text = stringResource(
-                    id = R.string.main_screen_title,
-                    "Tchibo" // temp
-                ),
+            Image(
+                painterResource(R.drawable.home_bg),
+                contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Medium,
-//                color = MaterialTheme.colorScheme.onSurface,
-                color = Color.White,
+                    .fillMaxSize(),
+                contentScale = ContentScale.FillHeight,
             )
-            Spacer(modifier = Modifier.height(10.dp))
 
-            Text(
-                text = stringResource(id = R.string.main_screen_subtitle),
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp, 0.dp),
-                fontSize = 20.sp,
+                    .fillMaxSize()
+                    .background(color = Color(0x99000000))
+                    .padding(it)
+            ) {
+                Spacer(modifier = Modifier.height(100.dp))
+
+                Text(
+                    text = stringResource(
+                        id = R.string.main_screen_title,
+                        "Tchibo" // temp
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Medium,
 //                color = MaterialTheme.colorScheme.onSurface,
-                color = Color.White,
-            )
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                content = {
-                    items(raspberryDtoList.value.size) { index ->
-                        RaspberryShortcutCard(raspberryDtoList.value[index])
+                    color = Color.White,
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = stringResource(id = R.string.main_screen_subtitle),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp, 0.dp),
+                    fontSize = 20.sp,
+//                color = MaterialTheme.colorScheme.onSurface,
+                    color = Color.White,
+                )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    content = {
+                        items(raspberryDtoList.value.size) { index ->
+                            RaspberryShortcutCard(raspberryDtoList.value[index])
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
