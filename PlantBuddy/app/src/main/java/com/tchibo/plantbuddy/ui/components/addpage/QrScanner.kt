@@ -9,6 +9,9 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,8 +45,8 @@ fun QrScanner() {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, BarcodeAnalyser{
-                        Toast.makeText(context, "Barcode found", Toast.LENGTH_SHORT).show()
+                    it.setAnalyzer(cameraExecutor, BarcodeAnalyser{ barcodeList ->
+                        Toast.makeText(context, barcodeList.get(0).displayValue, Toast.LENGTH_SHORT).show()
                     })
                 }
 
@@ -63,7 +66,8 @@ fun QrScanner() {
         }, ContextCompat.getMainExecutor(context))
         previewView
     },
-    modifier = Modifier
-        .size(width = 250.dp, height = 250.dp)
+    modifier = Modifier.fillMaxWidth()
+        .height(150.dp)
+        .padding(10.dp)
     )
 }
