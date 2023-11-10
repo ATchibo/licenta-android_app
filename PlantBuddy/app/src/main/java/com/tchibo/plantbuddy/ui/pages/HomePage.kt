@@ -27,22 +27,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.temp.TempDb
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
+import com.tchibo.plantbuddy.utils.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage() {
+
+    val navigator = LocalNavController.current
 
     var raspberryDtoList = remember {
         mutableStateOf(TempDb.getMyRaspberryDtoItems())
     }
 
     fun onAddClick() {
-        println("pressed add")
+        navigator.navigate(Routes.getNavigateAdd())
     }
 
     Scaffold(

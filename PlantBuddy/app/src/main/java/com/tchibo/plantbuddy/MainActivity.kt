@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.PlantBuddyTheme
 import com.tchibo.plantbuddy.ui.components.Appbar
+import com.tchibo.plantbuddy.ui.pages.AddRpiPage
 import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
@@ -82,9 +83,9 @@ fun ComposeNavigation(paddingValues: PaddingValues, setCurrentScreenInfo: (Scree
             val rpiId = backStackEntry.arguments?.getString("id")
             DetailsPage(rpiId.orEmpty())
         }
-//        composable(Routes.getNavigateAdd()) {
-//            AddTaskPage(setCurrentScreenInfo = setCurrentScreenInfo)
-//        }
+        composable(Routes.getNavigateAdd()) {
+            AddRpiPage()
+        }
 //        composable(Routes.getNavigateEditRaw()) {backStackEntry ->
 //            val taskJson = backStackEntry.arguments?.getString("taskId")
 //            EditTaskPage(taskJson.orEmpty().toInt(), setCurrentScreenInfo)

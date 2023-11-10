@@ -15,4 +15,10 @@
 
     <string name="raspberry_status">Status: %s</string>
 
+<!-- Add device dialog -->
+    <string name="add_device_title">Link Raspberry Pi to your account</string>
+    <string name="add_device_instructions_0">Instructions:</string>
+    <string name="add_device_instructions_1">Connect your Raspberry Pi to a network</string>
+    <string name="add_device_instructions_2">Display the QR Code</string>
+    <string name="add_device_instructions_3">Scan the code to link the device</string>
 </resources>
