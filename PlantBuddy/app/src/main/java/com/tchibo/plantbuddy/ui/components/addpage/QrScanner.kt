@@ -33,57 +33,48 @@ import java.util.concurrent.Executors
 @Composable
 fun QrScanner() {
 
-    val width = LocalConfiguration.current.screenWidthDp.dp
-    val height = width
+    AndroidView({ context ->
+        val cameraExecutor = Executors.newSingleThreadExecutor()
+        val previewView = PreviewView(context).also {
+            it.scaleType = PreviewView.ScaleType.FILL_END
+        }
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        cameraProviderFuture.addListener({
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-    Column(
-        modifier = Modifier
-            .size(width, height),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        AndroidView({ context ->
-            val cameraExecutor = Executors.newSingleThreadExecutor()
-            val previewView = PreviewView(context).also {
-                it.scaleType = PreviewView.ScaleType.FILL_CENTER
-            }
-            val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-            cameraProviderFuture.addListener({
-                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-                val preview = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(previewView.surfaceProvider)
-                    }
-
-                val imageCapture = ImageCapture.Builder().build()
-
-                val imageAnalyzer = ImageAnalysis.Builder()
-                    .build()
-                    .also {
-                        it.setAnalyzer(cameraExecutor, BarcodeAnalyser{ barcodeList ->
-                            Toast.makeText(context, barcodeList.get(0).displayValue, Toast.LENGTH_SHORT).show()
-                        })
-                    }
-
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                try {
-                    // Unbind use cases before rebinding
-                    cameraProvider.unbindAll()
-
-                    // Bind use cases to camera
-                    cameraProvider.bindToLifecycle(
-                        context as ComponentActivity, cameraSelector, preview, imageCapture, imageAnalyzer)
-
-                } catch(exc: Exception) {
-                    Log.e("DEBUG", "Use case binding failed", exc)
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(previewView.surfaceProvider)
                 }
-            }, ContextCompat.getMainExecutor(context))
-            previewView
-        },
-            modifier = Modifier.size(width - 100.dp, height - 100.dp)
-        )
-    }
+
+            val imageCapture = ImageCapture.Builder().build()
+
+            val imageAnalyzer = ImageAnalysis.Builder()
+                .build()
+                .also {
+                    it.setAnalyzer(cameraExecutor, BarcodeAnalyser{ barcodeList ->
+                        Toast.makeText(context, barcodeList.get(0).displayValue, Toast.LENGTH_SHORT).show()
+                    })
+                }
+
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            try {
+                // Unbind use cases before rebinding
+                cameraProvider.unbindAll()
+
+                // Bind use cases to camera
+                cameraProvider.bindToLifecycle(
+                    context as ComponentActivity, cameraSelector, preview, imageCapture, imageAnalyzer)
+
+            } catch(exc: Exception) {
+                Log.e("DEBUG", "Use case binding failed", exc)
+            }
+        }, ContextCompat.getMainExecutor(context))
+        previewView
+    },
+        modifier = Modifier.fillMaxWidth()
+            .aspectRatio(1f)
+    )
 }
