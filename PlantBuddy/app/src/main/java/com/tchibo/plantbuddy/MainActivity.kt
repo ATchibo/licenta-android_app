@@ -22,11 +22,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.PlantBuddyTheme
 import com.tchibo.plantbuddy.ui.components.Appbar
+import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
 import com.tchibo.plantbuddy.ui.pages.RegisterPage
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.ScreenInfo
+import kotlinx.serialization.json.Json
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -76,10 +78,10 @@ fun ComposeNavigation(paddingValues: PaddingValues, setCurrentScreenInfo: (Scree
         composable(Routes.getNavigateHome()){
             HomePage()
         }
-//        composable(Routes.getNavigateDetailsRaw()){ backStackEntry ->
-//            val taskJson = backStackEntry.arguments?.getString("taskId")
-//            DetailsPage(Json.decodeFromString(taskJson.orEmpty()), setCurrentScreenInfo)
-//        }
+        composable(Routes.getNavigateDetailsRaw()){ backStackEntry ->
+            val rpiId = backStackEntry.arguments?.getString("id")
+            DetailsPage(rpiId.orEmpty())
+        }
 //        composable(Routes.getNavigateAdd()) {
 //            AddTaskPage(setCurrentScreenInfo = setCurrentScreenInfo)
 //        }

@@ -1,4 +1,4 @@
-package com.example.compose
+package com.tchibo.plantbuddy.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFF006D3C)
@@ -65,3 +65,5 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 
 val seed = Color(0xFF358856)
+
+val translucent_bg_tint = Color(0x99000000)

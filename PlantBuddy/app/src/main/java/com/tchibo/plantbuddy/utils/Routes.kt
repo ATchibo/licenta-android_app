@@ -24,15 +24,15 @@ class Routes {
         }
 
         fun getNavigateDetails(id: String) : String {
-            return DETAILS.replace("{idd}", Json.encodeToString(id))
+            return DETAILS.replace("{id}", id)
         }
 
         fun getNavigateEditRaw() : String {
             return EDIT
         }
 
-        fun getNavigateEdit(taskId: Int) : String {
-            return EDIT.replace("{taskId}", Json.encodeToString(taskId))
+        fun getNavigateEdit(rpiId: String) : String {
+            return EDIT.replace("{id}", rpiId)
         }
 
         fun getNavigateAdd() : String {

@@ -31,6 +31,7 @@ import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.temp.TempDb
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
+import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +64,7 @@ fun HomePage() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = Color(0x99000000))
+                    .background(color = translucent_bg_tint)
                     .padding(it)
             ) {
                 Spacer(modifier = Modifier.height(100.dp))
@@ -78,7 +79,6 @@ fun HomePage() {
                         .padding(20.dp),
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Medium,
-//                color = MaterialTheme.colorScheme.onSurface,
                     color = Color.White,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -89,7 +89,6 @@ fun HomePage() {
                         .fillMaxWidth()
                         .padding(20.dp, 0.dp),
                     fontSize = 20.sp,
-//                color = MaterialTheme.colorScheme.onSurface,
                     color = Color.White,
                 )
                 LazyVerticalGrid(
