@@ -26,14 +26,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.temp.TempDb
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
+import com.tchibo.plantbuddy.utils.NORMAL_TEXT_SIZE
 import com.tchibo.plantbuddy.utils.Routes
+import com.tchibo.plantbuddy.utils.BIG_TEXT_SIZE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +82,7 @@ fun HomePage() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp),
-                    fontSize = 26.sp,
+                    fontSize = BIG_TEXT_SIZE,
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
                 )
@@ -92,7 +93,7 @@ fun HomePage() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp, 0.dp),
-                    fontSize = 20.sp,
+                    fontSize = NORMAL_TEXT_SIZE,
                     color = Color.White,
                 )
                 LazyVerticalGrid(

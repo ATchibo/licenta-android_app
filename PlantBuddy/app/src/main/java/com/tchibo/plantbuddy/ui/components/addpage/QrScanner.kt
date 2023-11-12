@@ -23,58 +23,84 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.tchibo.plantbuddy.utils.BarcodeAnalyser
 import java.util.concurrent.Executors
+import java.lang.Runnable
 
 @Composable
 fun QrScanner() {
 
-    AndroidView({ context ->
-        val cameraExecutor = Executors.newSingleThreadExecutor()
-        val previewView = PreviewView(context).also {
-            it.scaleType = PreviewView.ScaleType.FILL_END
-        }
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(previewView.surfaceProvider)
-                }
-
-            val imageCapture = ImageCapture.Builder().build()
-
-            val imageAnalyzer = ImageAnalysis.Builder()
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, BarcodeAnalyser{ barcodeList ->
-                        Toast.makeText(context, barcodeList.get(0).displayValue, Toast.LENGTH_SHORT).show()
-                    })
-                }
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
-
-                // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
-                    context as ComponentActivity, cameraSelector, preview, imageCapture, imageAnalyzer)
-
-            } catch(exc: Exception) {
-                Log.e("DEBUG", "Use case binding failed", exc)
-            }
-        }, ContextCompat.getMainExecutor(context))
-        previewView
-    },
+    Box(
         modifier = Modifier.fillMaxWidth()
             .aspectRatio(1f)
-    )
+            .clipToBounds()
+    ) {
+        AndroidView(
+            modifier = Modifier.fillMaxWidth(),
+            factory = { context ->
+                val cameraExecutor = Executors.newSingleThreadExecutor()
+
+                val previewView = PreviewView(context).also {
+                    it.scaleType = PreviewView.ScaleType.FILL_CENTER
+                }
+
+                val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+
+                val cameraRunnable: Runnable = Runnable {
+                    val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+                    val preview = Preview.Builder()
+                        .build()
+                        .also {
+                            it.setSurfaceProvider(previewView.surfaceProvider)
+                        }
+
+                    val imageCapture = ImageCapture.Builder().build()
+
+                    val imageAnalyzer = ImageAnalysis.Builder()
+                        .build()
+                        .also {
+                            it.setAnalyzer(cameraExecutor, BarcodeAnalyser { barcodeList ->
+                                Toast.makeText(
+                                    context,
+                                    barcodeList[0].displayValue,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            })
+                        }
+
+                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                    try {
+                        // Unbind use cases before rebinding
+                        cameraProvider.unbindAll()
+
+                        // Bind use cases to camera
+                        cameraProvider.bindToLifecycle(
+                            context as ComponentActivity,
+                            cameraSelector,
+                            preview,
+                            imageCapture,
+                            imageAnalyzer
+                        )
+
+                    } catch (exc: Exception) {
+                        Log.e("DEBUG", "Use case binding failed", exc)
+                    }
+                }
+
+                cameraProviderFuture.addListener(
+                    cameraRunnable,
+                    ContextCompat.getMainExecutor(context)
+                )
+
+                previewView // return
+            }
+        )
+    }
 }
