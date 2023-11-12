@@ -32,9 +32,9 @@ import com.tchibo.plantbuddy.temp.TempDb
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
-import com.tchibo.plantbuddy.utils.NORMAL_TEXT_SIZE
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.Routes
-import com.tchibo.plantbuddy.utils.BIG_TEXT_SIZE
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,7 +82,7 @@ fun HomePage() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp),
-                    fontSize = BIG_TEXT_SIZE,
+                    fontSize = TEXT_SIZE_BIG,
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
                 )
@@ -93,7 +93,7 @@ fun HomePage() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp, 0.dp),
-                    fontSize = NORMAL_TEXT_SIZE,
+                    fontSize = TEXT_SIZE_NORMAL,
                     color = Color.White,
                 )
                 LazyVerticalGrid(

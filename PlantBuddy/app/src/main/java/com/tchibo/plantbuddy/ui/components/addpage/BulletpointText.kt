@@ -2,7 +2,7 @@ package com.tchibo.plantbuddy.ui.components.addpage
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.tchibo.plantbuddy.utils.NORMAL_TEXT_SIZE
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 
 @Composable
 fun BulletpointText(text: String) {
@@ -10,6 +10,6 @@ fun BulletpointText(text: String) {
 
     Text(
         text = "$bulletPoint $text",
-        fontSize = NORMAL_TEXT_SIZE
+        fontSize = TEXT_SIZE_NORMAL
     )
 }

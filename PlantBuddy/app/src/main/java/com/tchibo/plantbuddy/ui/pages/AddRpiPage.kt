@@ -21,8 +21,8 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.ui.components.addpage.BulletpointText
 import com.tchibo.plantbuddy.ui.components.addpage.QrScanner
-import com.tchibo.plantbuddy.utils.BIG_TEXT_SIZE
-import com.tchibo.plantbuddy.utils.NORMAL_TEXT_SIZE
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -40,7 +40,7 @@ fun AddRpiPage() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 50.dp, bottom = 50.dp),
-            fontSize = BIG_TEXT_SIZE
+            fontSize = TEXT_SIZE_BIG
         )
 
         QrScanner()
@@ -54,7 +54,7 @@ fun AddRpiPage() {
                 Text(
                     text = stringResource(id = R.string.add_device_instructions_0),
                     modifier = Modifier.padding(bottom = 10.dp),
-                    fontSize = NORMAL_TEXT_SIZE
+                    fontSize = TEXT_SIZE_NORMAL
                 )
             }
             items(3) { index ->
