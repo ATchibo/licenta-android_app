@@ -2,6 +2,9 @@
 <!--    General-->
     <string name="app_name">PlantBuddy</string>
     <string name="ok">OK</string>
+    <string name="no">NO</string>
+    <string name="cancel">Cancel</string>
+    <string name="back_button_text">Back</string>
 
 <!--    Login screen-->
     <string name="login">Login</string>
@@ -15,10 +18,12 @@
 
     <string name="raspberry_status">Status: %s</string>
 
-<!-- Add device dialog -->
+<!-- Add device page -->
     <string name="add_device_title">Link Raspberry Pi to your account</string>
     <string name="add_device_instructions_0">Instructions:</string>
     <string name="add_device_instructions_1">Connect your Raspberry Pi to a network</string>
     <string name="add_device_instructions_2">Display the QR Code</string>
     <string name="add_device_instructions_3">Scan the code to link the device</string>
+    <string name="camera_alert_title">Camera required</string>
+    <string name="camera_alert_body">Please grant the app permission to use the camera</string>
 </resources>

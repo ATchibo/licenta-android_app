@@ -3,13 +3,17 @@ package com.tchibo.plantbuddy.ui.pages
 import android.Manifest
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -18,6 +22,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.ui.components.addpage.BulletpointText
 import com.tchibo.plantbuddy.ui.components.addpage.QrScanner
@@ -28,7 +33,12 @@ import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 @Composable
 fun AddRpiPage() {
 
+    val navigator = LocalNavController.current
+
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+    val showCameraAlert = remember {
+        mutableStateOf(!cameraPermissionState.status.isGranted)
+    }
 
     Column(
         modifier = Modifier
@@ -39,7 +49,7 @@ fun AddRpiPage() {
             text = stringResource(id = R.string.add_device_title),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 50.dp, bottom = 50.dp),
+                .padding(vertical = 40.dp),
             fontSize = TEXT_SIZE_BIG
         )
 
@@ -70,20 +80,50 @@ fun AddRpiPage() {
                 BulletpointText(instruction)
             }
         }
-
-        if (!cameraPermissionState.status.isGranted) {
-            Column {
-                val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
-                    "The camera is important for this app. Please grant the permission."
-                } else {
-                    "Camera permission required for this feature to be available. " +
-                            "Please grant the permission"
-                }
-                Toast.makeText(LocalContext.current, textToShow, Toast.LENGTH_SHORT).show()
-                Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
-                    Text("Request permission")
-                }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                navigator.popBackStack()
             }
+        ) {
+            Text(text = stringResource(id = R.string.back_button_text))
+        }
+
+        if (showCameraAlert.value) {
+            AlertDialog(
+                onDismissRequest = {
+                    showCameraAlert.value = false
+                },
+                title = {
+                    Text(text = stringResource(id = R.string.camera_alert_title))
+                },
+                text = {
+                    Text(text = stringResource(id = R.string.camera_alert_body))
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            showCameraAlert.value = false
+                            navigator.popBackStack()
+                        }
+                    ) {
+                        Text(text = stringResource(id = R.string.no))
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showCameraAlert.value = false
+                            cameraPermissionState.launchPermissionRequest()
+                        }
+                    ) {
+                        Text(text = stringResource(id = R.string.ok))
+                    }
+                }
+            )
         }
     }
 }
