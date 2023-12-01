@@ -24,16 +24,23 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
+import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.ui.components.addpage.BulletpointText
 import com.tchibo.plantbuddy.ui.components.addpage.QrScanner
+import com.tchibo.plantbuddy.utils.FirebaseController
+import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
+import com.tchibo.plantbuddy.utils.sign_in.UserData
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun AddRpiPage() {
+fun AddRpiPage(
+    userData: UserData
+) {
 
     val navigator = LocalNavController.current
+    val context = LocalContext.current
 
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val showCameraAlert = remember {
@@ -53,7 +60,18 @@ fun AddRpiPage() {
             fontSize = TEXT_SIZE_BIG
         )
 
-        QrScanner()
+        QrScanner(
+            onQrCodeFound = {qrCode ->
+                if (qrCode.isEmpty())
+                    return@QrScanner
+
+                val firebaseDeviceLinking = FirebaseDeviceLinking(qrCode, userData.email)
+                FirebaseController.INSTANCE.addDeviceAccountLink(firebaseDeviceLinking, context) {
+                    // TODO: Add error handling and change route
+                    navigator.navigate(Routes.getNavigateHome())
+                }
+            }
+        )
 
         LazyColumn(
             modifier = Modifier
