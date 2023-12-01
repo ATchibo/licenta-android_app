@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,11 +36,13 @@ import androidx.compose.ui.unit.dp
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.temp.TempDb
+import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.Routes
+import com.tchibo.plantbuddy.utils.ScreenInfo
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.sign_in.UserData
 
@@ -59,19 +62,16 @@ fun HomePage(
         navigator.navigate(Routes.getNavigateAdd())
     }
 
-    Scaffold(
-        topBar = {
-             TopAppBar(
-                 title = { Text(text = "Your App Title") },
-                 navigationIcon = {
-                     IconButton(onClick = {
-                         navigator.navigate(Routes.getNavigateSettings())
-                     }) {
-                         Icon(imageVector = Icons.Default.Settings, contentDescription = null)
-                     }
-                 }
-             )
+    val screenInfo = ScreenInfo(
+        title = "Home",
+        navigationIcon = Icons.Filled.Settings,
+        onNavigationIconClick = {
+            navigator.navigate(Routes.getNavigateSettings())
         },
+    )
+
+    Scaffold(
+        topBar = { Appbar(screenInfo = screenInfo) },
         floatingActionButton = { HomePageActionButton { onAddClick() } },
     ) { it ->
         Box(modifier = Modifier
