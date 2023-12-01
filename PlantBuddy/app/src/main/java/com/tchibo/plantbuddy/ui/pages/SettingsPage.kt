@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.tchibo.plantbuddy.LocalNavController
+import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.utils.ScreenInfo
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
@@ -43,10 +44,9 @@ fun SettingsPage(
     val navController = LocalNavController.current
 
     val screenInfo = ScreenInfo(
-        Icons.Filled.ArrowBack,
-        "Back",
-        { navController.navigateUp() },
-        "Settings"
+        title = stringResource(id = R.string.settings_title),
+        navigationIcon = Icons.Filled.ArrowBack,
+        onNavigationIconClick = { navController.navigateUp() },
     )
 
     Scaffold (

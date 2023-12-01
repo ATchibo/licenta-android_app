@@ -63,7 +63,6 @@ fun HomePage(
     }
 
     val screenInfo = ScreenInfo(
-        title = "Home",
         navigationIcon = Icons.Filled.Settings,
         onNavigationIconClick = {
             navigator.navigate(Routes.getNavigateSettings())

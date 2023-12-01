@@ -46,7 +46,7 @@ fun Appbar(screenInfo: ScreenInfo) {
                     screenInfo.navigationIcon?.let {
                         Icon(
                             imageVector = it,
-                            contentDescription = screenInfo.navigationIconContentDescription,
+                            contentDescription = screenInfo.navigationIconContentDescription.orEmpty(),
                             tint = onBgColor
                         )
                     }

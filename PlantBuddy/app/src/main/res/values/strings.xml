@@ -8,10 +8,14 @@
     <string name="default_web_client_id">753395543788-to1sjo1otqb13v8uju38kkpjih4nvsdm.apps.googleusercontent.com</string>
 
 <!--    Login screen-->
-    <string name="login">Login</string>
+    <string name="login_title">Welcome to PlantBuddy</string>
+    <string name="login">Login with Gmail</string>
     <string name="password">Password</string>
     <string name="error_title">Error</string>
     <string name="error_message">Invalid credentials. Please try again.</string>
+
+<!--    Settings screen-->
+    <string name="settings_title">Settings</string>
 
 <!--    Main screen-->
     <string name="main_screen_title">%s\'s irrigation system</string>

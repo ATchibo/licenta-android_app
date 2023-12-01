@@ -47,7 +47,6 @@ fun LoginPage(
     state: SignInState,
     logInFunction: () -> Unit,
 ) {
-    val navigator = LocalNavController.current
     val context = LocalContext.current
 
     LaunchedEffect(key1 = state.errorMessage) {
@@ -67,7 +66,7 @@ fun LoginPage(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(id = R.string.login),
+                text = stringResource(id = R.string.login_title),
                 fontSize = 30.sp,
                 modifier = Modifier.padding(10.dp)
             )
