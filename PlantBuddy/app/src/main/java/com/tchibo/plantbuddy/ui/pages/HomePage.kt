@@ -35,10 +35,13 @@ import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
+import com.tchibo.plantbuddy.utils.sign_in.UserData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage() {
+fun HomePage(
+    userData: UserData
+) {
 
     val navigator = LocalNavController.current
 

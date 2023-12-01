@@ -5,6 +5,7 @@
     <string name="no">NO</string>
     <string name="cancel">Cancel</string>
     <string name="back_button_text">Back</string>
+    <string name="default_web_client_id">753395543788-to1sjo1otqb13v8uju38kkpjih4nvsdm.apps.googleusercontent.com</string>
 
 <!--    Login screen-->
     <string name="login">Login</string>

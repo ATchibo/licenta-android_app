@@ -6,7 +6,6 @@ import kotlinx.serialization.json.Json
 class Routes {
     companion object {
         private const val LOGIN = "/login"
-        private const val REGISTER = "/register"
         private const val HOME = "/"
         private const val DETAILS = "/details/{id}"
         private const val ADD = "/add"
@@ -37,10 +36,6 @@ class Routes {
 
         fun getNavigateAdd() : String {
             return ADD
-        }
-
-        fun getNavigateRegister(): String {
-            return REGISTER
         }
     }
 }
