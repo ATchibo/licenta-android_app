@@ -35,6 +35,7 @@ import com.tchibo.plantbuddy.ui.pages.AddRpiPage
 import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
+import com.tchibo.plantbuddy.ui.pages.SettingsPage
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.ScreenInfo
 import com.tchibo.plantbuddy.utils.sign_in.GoogleAuthClient
@@ -139,6 +140,19 @@ class MainActivity : ComponentActivity() {
             }
             composable(Routes.getNavigateAdd()) {
                 AddRpiPage()
+            }
+            composable(Routes.getNavigateSettings()) {
+                googleAuthClient.getSignedInUser()?.let { it1 ->
+                    SettingsPage(
+                        userData = it1,
+                        logout = {
+                            lifecycleScope.launch {
+                                googleAuthClient.signOut()
+                                navController.navigate(Routes.getNavigateLogin())
+                            }
+                        }
+                    )
+                }
             }
         }
 

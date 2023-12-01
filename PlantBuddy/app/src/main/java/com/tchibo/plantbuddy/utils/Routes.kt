@@ -10,6 +10,7 @@ class Routes {
         private const val DETAILS = "/details/{id}"
         private const val ADD = "/add"
         private const val EDIT = "$DETAILS/edit"
+        private const val SETTINGS = "/settings"
 
         fun getNavigateLogin(): String {
             return LOGIN
@@ -36,6 +37,10 @@ class Routes {
 
         fun getNavigateAdd() : String {
             return ADD
+        }
+
+        fun getNavigateSettings() : String {
+            return SETTINGS
         }
     }
 }
