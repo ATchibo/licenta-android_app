@@ -20,10 +20,9 @@ class FirebaseController private constructor(
         firebaseDeviceLinking: FirebaseDeviceLinking,
         context: Context,
         onSuccess: () -> Unit = {},
+        onFailure: () -> Unit = {}
     ) {
         val dbLinks: CollectionReference = db.collection(deviceLinksCollectionName)
-
-        println("Adauagm link: $firebaseDeviceLinking")
 
         dbLinks.whereEqualTo("raspberryId", firebaseDeviceLinking.raspberryId)
             .get()
@@ -40,6 +39,8 @@ class FirebaseController private constructor(
                     }.addOnFailureListener { e ->
                         Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
                             .show()
+
+                        onFailure()
                     }
                 } else {
                     Toast.makeText(
@@ -47,6 +48,8 @@ class FirebaseController private constructor(
                         "Device already linked to another account",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    onFailure()
                 }
             }
     }
