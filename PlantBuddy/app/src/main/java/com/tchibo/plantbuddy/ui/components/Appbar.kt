@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import com.tchibo.plantbuddy.ui.theme.ubuntuFontFamily
-import com.tchibo.plantbuddy.utils.ScreenInfo
+import com.tchibo.plantbuddy.domain.ScreenInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

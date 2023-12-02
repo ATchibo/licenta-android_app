@@ -1,7 +1,6 @@
 package com.tchibo.plantbuddy.ui.pages
 
 import android.Manifest
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -22,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,13 +28,12 @@ import androidx.compose.ui.window.DialogProperties
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.ui.components.addpage.BulletpointText
 import com.tchibo.plantbuddy.ui.components.addpage.QrScanner
-import com.tchibo.plantbuddy.utils.FirebaseController
+import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL

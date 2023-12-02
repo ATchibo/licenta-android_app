@@ -22,18 +22,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
-import com.tchibo.plantbuddy.domain.RaspberryDataDto
+import com.tchibo.plantbuddy.domain.RaspberryInfoDto
 import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.utils.Routes
 
 @Composable
-fun RaspberryShortcutCard(raspberryDataDto: RaspberryDataDto) {
+fun RaspberryShortcutCard(raspberryInfoDto: RaspberryInfoDto) {
 
     val navController = LocalNavController.current
 
     fun goToTaskDetails() {
         navController.navigate(
-            Routes.getNavigateDetails(raspberryDataDto.id),
+            Routes.getNavigateDetails(raspberryInfoDto.id),
         )
     }
 
@@ -49,7 +49,7 @@ fun RaspberryShortcutCard(raspberryDataDto: RaspberryDataDto) {
     ) {
         Column {
             Text(
-                text = raspberryDataDto.nickname,
+                text = raspberryInfoDto.nickname,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp),
@@ -59,7 +59,7 @@ fun RaspberryShortcutCard(raspberryDataDto: RaspberryDataDto) {
             Text(
                 text = stringResource(
                     id = R.string.raspberry_status,
-                    raspberryDataDto.status.toString()
+                    raspberryInfoDto.status.toString()
                 ),
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -81,7 +81,7 @@ fun ComposeLocalWrapper(content: @Composable () -> Unit) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun RaspberryShortcutCardPreview() {
-    val raspberryDataDto = RaspberryDataDto(
+    val raspberryInfoDto = RaspberryInfoDto(
         id = "1",
         nickname = "Raspberry 1",
         status = RaspberryStatus.ONLINE,
@@ -93,7 +93,7 @@ fun RaspberryShortcutCardPreview() {
             .fillMaxHeight()
             .background(MaterialTheme.colorScheme.background)
         ) {
-            RaspberryShortcutCard(raspberryDataDto)
+            RaspberryShortcutCard(raspberryInfoDto)
         }
     }
 }

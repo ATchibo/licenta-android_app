@@ -1,4 +1,4 @@
-package com.tchibo.plantbuddy.utils
+package com.tchibo.plantbuddy.domain
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

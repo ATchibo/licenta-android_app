@@ -1,6 +1,5 @@
 package com.tchibo.plantbuddy
 
-import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import com.google.android.gms.auth.api.identity.Identity
 import androidx.activity.ComponentActivity
@@ -8,12 +7,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -21,9 +16,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -31,17 +25,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.PlantBuddyTheme
+import com.tchibo.plantbuddy.controller.FirebaseController
+import com.tchibo.plantbuddy.controller.db.LocalDbController
 import com.tchibo.plantbuddy.ui.pages.AddRpiPage
 import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
 import com.tchibo.plantbuddy.ui.pages.SettingsPage
 import com.tchibo.plantbuddy.utils.Routes
-import com.tchibo.plantbuddy.utils.ScreenInfo
 import com.tchibo.plantbuddy.utils.sign_in.GoogleAuthClient
 import com.tchibo.plantbuddy.utils.sign_in.SignInViewModel
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 
 class MainActivity : ComponentActivity() {
 
@@ -58,6 +52,9 @@ class MainActivity : ComponentActivity() {
             PlantBuddyTheme {
                 val navController = rememberNavController()
 
+                val context = LocalContext.current
+                LocalDbController.initialize(context)
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
@@ -70,6 +67,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun initDatabases() {
+        FirebaseController.initialize(googleAuthClient.getSignedInUser() ?: return)
+        LocalDbController.INSTANCE.loadInitialData()
+    }
+
     @Composable
     fun ComposeNavigation() {
 
@@ -78,6 +80,7 @@ class MainActivity : ComponentActivity() {
         // auto login when starting the app
         LaunchedEffect(key1 = Unit) {
             if (googleAuthClient.getSignedInUser() != null) {
+                initDatabases()
                 navController.navigate(Routes.getNavigateHome())
             }
         }
@@ -107,25 +110,27 @@ class MainActivity : ComponentActivity() {
                 // go to homepage if login is successful
                 LaunchedEffect(key1 = state.isSignInSuccessful) {
                     if (state.isSignInSuccessful) {
+                        initDatabases()
                         navController.navigate(Routes.getNavigateHome())
                         viewModel.resetState()
                     }
                 }
 
-                if (googleAuthClient.getSignedInUser() == null)
-                LoginPage(
-                    state = state,
-                    logInFunction = {
-                        lifecycleScope.launch {
-                            val signInIntentSender = googleAuthClient.signIn()
-                            launcher.launch(
-                                IntentSenderRequest.Builder(
-                                    signInIntentSender ?: return@launch
-                                ).build()
-                            )
+                if (googleAuthClient.getSignedInUser() == null) {
+                    LoginPage(
+                        state = state,
+                        logInFunction = {
+                            lifecycleScope.launch {
+                                val signInIntentSender = googleAuthClient.signIn()
+                                launcher.launch(
+                                    IntentSenderRequest.Builder(
+                                        signInIntentSender ?: return@launch
+                                    ).build()
+                                )
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
             composable(Routes.getNavigateHome()){
                 googleAuthClient.getSignedInUser()?.let { it1 ->
