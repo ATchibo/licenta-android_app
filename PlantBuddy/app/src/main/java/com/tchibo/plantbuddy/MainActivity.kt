@@ -37,6 +37,7 @@ import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.sign_in.GoogleAuthClient
 import com.tchibo.plantbuddy.utils.sign_in.SignInViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -69,16 +70,20 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private suspend fun initialiseDbs() {
+        FirebaseController.initialize(googleAuthClient.getSignedInUser()!!)
+        LocalDbController.INSTANCE.loadInitialData()
+    }
+
     @Composable
     fun ComposeNavigation() {
 
         val navController = LocalNavController.current
 
-        val coroutineScope = rememberCoroutineScope()
-
         // auto login when starting the app
         LaunchedEffect(key1 = Unit) {
             if (googleAuthClient.getSignedInUser() != null) {
+                initialiseDbs()
                 navController.navigate(Routes.getNavigateHome())
             }
         }
@@ -108,6 +113,7 @@ class MainActivity : ComponentActivity() {
                 // go to homepage if login is successful
                 LaunchedEffect(key1 = state.isSignInSuccessful) {
                     if (state.isSignInSuccessful) {
+                        initialiseDbs()
                         navController.navigate(Routes.getNavigateHome())
                         viewModel.resetState()
                     }

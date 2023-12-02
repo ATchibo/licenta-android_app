@@ -74,11 +74,6 @@ fun HomePage(
     )
 
     LaunchedEffect(key1 = Unit) {
-        FirebaseController.initialize(userData)
-        async {
-            LocalDbController.INSTANCE.loadInitialData()
-        }.await()
-
         val raspberryInfoDtoList = async {
             LocalDbController.INSTANCE.getRaspberryInfoDtoList()
         }.await()
