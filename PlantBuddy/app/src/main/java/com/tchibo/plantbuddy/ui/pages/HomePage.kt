@@ -74,11 +74,8 @@ fun HomePage(
     )
 
     LaunchedEffect(key1 = Unit) {
-        val raspberryInfoDtoList = async {
+        raspberryDtoList.value =
             LocalDbController.INSTANCE.getRaspberryInfoDtoList()
-        }.await()
-
-        raspberryDtoList.value = raspberryInfoDtoList
     }
 
     Scaffold(
