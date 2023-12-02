@@ -9,29 +9,29 @@ class TempDb {
 
         private var raspberryDtoItems: List<RaspberryInfoDto> = listOf(
             RaspberryInfoDto(
-                id = "1",
-                nickname = "Raspberry 1",
-                status = RaspberryStatus.ONLINE,
+                raspberryId = "1",
+                raspberryName = "Raspberry 1",
+                raspberryStatus = RaspberryStatus.ONLINE,
             ),
             RaspberryInfoDto(
-                id = "2",
-                nickname = "Raspberry 2",
-                status = RaspberryStatus.OFFLINE,
+                raspberryId = "2",
+                raspberryName = "Raspberry 2",
+                raspberryStatus = RaspberryStatus.OFFLINE,
             ),
             RaspberryInfoDto(
-                id = "3",
-                nickname = "Raspberry 3",
-                status = RaspberryStatus.ONLINE,
+                raspberryId = "3",
+                raspberryName = "Raspberry 3",
+                raspberryStatus = RaspberryStatus.ONLINE,
             ),
             RaspberryInfoDto(
-                id = "4",
-                nickname = "Raspberry 4",
-                status = RaspberryStatus.ONLINE,
+                raspberryId = "4",
+                raspberryName = "Raspberry 4",
+                raspberryStatus = RaspberryStatus.ONLINE,
             ),
             RaspberryInfoDto(
-                id = "5",
-                nickname = "Raspberry 5",
-                status = RaspberryStatus.UNKNOWN,
+                raspberryId = "5",
+                raspberryName = "Raspberry 5",
+                raspberryStatus = RaspberryStatus.UNKNOWN,
             ),
         )
 

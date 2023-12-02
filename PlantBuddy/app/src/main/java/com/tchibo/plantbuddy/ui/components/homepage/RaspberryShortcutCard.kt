@@ -33,7 +33,7 @@ fun RaspberryShortcutCard(raspberryInfoDto: RaspberryInfoDto) {
 
     fun goToTaskDetails() {
         navController.navigate(
-            Routes.getNavigateDetails(raspberryInfoDto.id),
+            Routes.getNavigateDetails(raspberryInfoDto.raspberryId),
         )
     }
 
@@ -49,7 +49,7 @@ fun RaspberryShortcutCard(raspberryInfoDto: RaspberryInfoDto) {
     ) {
         Column {
             Text(
-                text = raspberryInfoDto.nickname,
+                text = raspberryInfoDto.raspberryName,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp),
@@ -59,7 +59,7 @@ fun RaspberryShortcutCard(raspberryInfoDto: RaspberryInfoDto) {
             Text(
                 text = stringResource(
                     id = R.string.raspberry_status,
-                    raspberryInfoDto.status.toString()
+                    raspberryInfoDto.raspberryStatus.toString()
                 ),
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -82,9 +82,9 @@ fun ComposeLocalWrapper(content: @Composable () -> Unit) {
 @Composable
 fun RaspberryShortcutCardPreview() {
     val raspberryInfoDto = RaspberryInfoDto(
-        id = "1",
-        nickname = "Raspberry 1",
-        status = RaspberryStatus.ONLINE,
+        raspberryId = "1",
+        raspberryName = "Raspberry 1",
+        raspberryStatus = RaspberryStatus.ONLINE,
     )
 
     ComposeLocalWrapper {

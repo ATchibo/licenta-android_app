@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,6 +36,7 @@ import com.tchibo.plantbuddy.ui.pages.SettingsPage
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.sign_in.GoogleAuthClient
 import com.tchibo.plantbuddy.utils.sign_in.SignInViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -67,20 +69,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun initDatabases() {
-        FirebaseController.initialize(googleAuthClient.getSignedInUser() ?: return)
-        LocalDbController.INSTANCE.loadInitialData()
-    }
-
     @Composable
     fun ComposeNavigation() {
 
         val navController = LocalNavController.current
 
+        val coroutineScope = rememberCoroutineScope()
+
         // auto login when starting the app
         LaunchedEffect(key1 = Unit) {
             if (googleAuthClient.getSignedInUser() != null) {
-                initDatabases()
                 navController.navigate(Routes.getNavigateHome())
             }
         }
@@ -110,7 +108,6 @@ class MainActivity : ComponentActivity() {
                 // go to homepage if login is successful
                 LaunchedEffect(key1 = state.isSignInSuccessful) {
                     if (state.isSignInSuccessful) {
-                        initDatabases()
                         navController.navigate(Routes.getNavigateHome())
                         viewModel.resetState()
                     }

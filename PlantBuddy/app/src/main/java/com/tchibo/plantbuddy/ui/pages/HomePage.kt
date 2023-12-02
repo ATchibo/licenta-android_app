@@ -20,17 +20,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
+import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.controller.db.LocalDbController
+import com.tchibo.plantbuddy.domain.RaspberryInfoDto
 import com.tchibo.plantbuddy.temp.TempDb
 import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
@@ -41,6 +46,9 @@ import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.sign_in.UserData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,8 +58,8 @@ fun HomePage(
 
     val navigator = LocalNavController.current
 
-    var raspberryDtoList = remember {
-        mutableStateOf(LocalDbController.INSTANCE.getRaspberryInfoDtoList())
+    val raspberryDtoList = remember {
+        mutableStateOf(listOf<RaspberryInfoDto>())
     }
 
     fun onAddClick() {
@@ -64,6 +72,19 @@ fun HomePage(
             navigator.navigate(Routes.getNavigateSettings())
         },
     )
+
+    LaunchedEffect(key1 = Unit) {
+        FirebaseController.initialize(userData)
+        async {
+            LocalDbController.INSTANCE.loadInitialData()
+        }.await()
+
+        val raspberryInfoDtoList = async {
+            LocalDbController.INSTANCE.getRaspberryInfoDtoList()
+        }.await()
+
+        raspberryDtoList.value = raspberryInfoDtoList
+    }
 
     Scaffold(
         topBar = { Appbar(screenInfo = screenInfo) },

@@ -4,10 +4,10 @@ import android.content.Context
 import android.widget.Toast
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.tchibo.plantbuddy.controller.db.LocalDbController
 import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.utils.sign_in.UserData
+import kotlinx.coroutines.tasks.await
 
 class FirebaseController private constructor(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -69,10 +69,17 @@ class FirebaseController private constructor(
             }
     }
 
-    fun getRaspberryInfoList(): List<RaspberryInfo> {
-        return db.collection(raspberryInfoCollectionName)
-            .whereEqualTo("ownerId", userData.email)
+    suspend fun getRaspberryInfoList(): List<RaspberryInfo> {
+        val raspberryIds = db.collection(deviceLinksCollectionName)
+            .whereEqualTo("ownerEmail", userData.email)
             .get()
-            .result?.toObjects(RaspberryInfo::class.java) ?: listOf()
+            .await()
+            .map { it -> it.get("raspberryId") }
+
+        return db.collection(raspberryInfoCollectionName)
+            .whereArrayContains("raspberryId", raspberryIds)
+            .get()
+            .await()
+            .toObjects(RaspberryInfo::class.java)
     }
 }
