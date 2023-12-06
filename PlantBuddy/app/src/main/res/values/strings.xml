@@ -32,4 +32,5 @@
     <string name="camera_alert_title">Camera required</string>
     <string name="camera_alert_body">Please grant the app permission to use the camera</string>
     <string name="add_device_loading">Linking device</string>
+    <string name="initial_loading">Loading</string>
 </resources>

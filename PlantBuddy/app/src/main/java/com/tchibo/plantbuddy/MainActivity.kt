@@ -7,18 +7,30 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -34,6 +46,7 @@ import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
 import com.tchibo.plantbuddy.ui.pages.SettingsPage
 import com.tchibo.plantbuddy.utils.Routes
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.sign_in.GoogleAuthClient
 import com.tchibo.plantbuddy.utils.sign_in.SignInViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -80,10 +93,16 @@ class MainActivity : ComponentActivity() {
 
         val navController = LocalNavController.current
 
+        val showLoading = remember {
+            mutableStateOf(false)
+        }
+
         // auto login when starting the app
         LaunchedEffect(key1 = Unit) {
             if (googleAuthClient.getSignedInUser() != null) {
+                showLoading.value = true
                 initialiseDbs()
+                showLoading.value = false
                 navController.navigate(Routes.getNavigateHome())
             }
         }
@@ -113,7 +132,9 @@ class MainActivity : ComponentActivity() {
                 // go to homepage if login is successful
                 LaunchedEffect(key1 = state.isSignInSuccessful) {
                     if (state.isSignInSuccessful) {
+                        showLoading.value = true
                         initialiseDbs()
+                        showLoading.value = false
                         navController.navigate(Routes.getNavigateHome())
                         viewModel.resetState()
                     }
@@ -133,6 +154,21 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     )
+                } else {
+                    if (showLoading.value) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            CircularProgressIndicator()
+
+                            Text(
+                                text = stringResource(id = R.string.initial_loading),
+                                modifier = Modifier.padding(start = 10.dp),
+                                fontSize = TEXT_SIZE_NORMAL
+                            )
+                        }
+                    }
                 }
             }
             composable(Routes.getNavigateHome()){
