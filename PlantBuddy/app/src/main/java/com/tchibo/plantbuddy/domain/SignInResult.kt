@@ -1,4 +1,4 @@
-package com.tchibo.plantbuddy.utils.sign_in
+package com.tchibo.plantbuddy.domain
 
 data class SignInResult (
     val data: UserData?,

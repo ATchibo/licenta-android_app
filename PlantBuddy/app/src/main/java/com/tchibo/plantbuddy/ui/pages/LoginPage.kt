@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tchibo.plantbuddy.R
-import com.tchibo.plantbuddy.utils.sign_in.SignInState
+import com.tchibo.plantbuddy.ui.viewmodels.SignInState
 
 @Composable
 fun LoginPage(

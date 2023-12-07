@@ -7,12 +7,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,7 +23,6 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -47,10 +44,8 @@ import com.tchibo.plantbuddy.ui.pages.LoginPage
 import com.tchibo.plantbuddy.ui.pages.SettingsPage
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
-import com.tchibo.plantbuddy.utils.sign_in.GoogleAuthClient
-import com.tchibo.plantbuddy.utils.sign_in.SignInViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
+import com.tchibo.plantbuddy.utils.GoogleAuthClient
+import com.tchibo.plantbuddy.ui.viewmodels.SignInViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {

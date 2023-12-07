@@ -6,7 +6,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.domain.RaspberryInfo
-import com.tchibo.plantbuddy.utils.sign_in.UserData
+import com.tchibo.plantbuddy.domain.UserData
 import kotlinx.coroutines.tasks.await
 
 class FirebaseController private constructor(
