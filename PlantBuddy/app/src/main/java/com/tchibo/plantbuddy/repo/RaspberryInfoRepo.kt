@@ -12,7 +12,7 @@ interface RaspberryInfoRepo {
     /**
      * Retrieve an item from the given data source that matches with the [id].
      */
-    fun getItemStream(id: Int): Flow<RaspberryInfo?>
+    fun getItemStream(id: String): Flow<RaspberryInfo?>
 
     /**
      * Insert item in the data source

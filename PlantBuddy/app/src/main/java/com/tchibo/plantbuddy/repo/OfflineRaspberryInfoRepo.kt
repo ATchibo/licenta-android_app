@@ -10,7 +10,7 @@ class OfflineRaspberryInfoRepo(
     override fun getAllItemsStream(): Flow<List<RaspberryInfo>> =
         raspberryInfoDao.getAll()
 
-    override fun getItemStream(id: Int): Flow<RaspberryInfo?> =
+    override fun getItemStream(id: String): Flow<RaspberryInfo?> =
         raspberryInfoDao.getById(id)
 
     override suspend fun insertItem(item: RaspberryInfo) =

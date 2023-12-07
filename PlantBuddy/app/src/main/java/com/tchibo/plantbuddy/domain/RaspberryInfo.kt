@@ -11,5 +11,5 @@ data class RaspberryInfo (
     @ColumnInfo val raspberryName: String = "",
     @ColumnInfo val raspberryLocation: String? = null,
     @ColumnInfo val raspberryDescription: String? = null,
-    @ColumnInfo val raspberryStatus: RaspberryStatus = RaspberryStatus.OFFLINE,
+    @ColumnInfo val raspberryStatus: RaspberryStatus? = RaspberryStatus.OFFLINE,
 )

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface RaspberryInfoDao {
 
     @Query("SELECT * FROM raspberryinfo WHERE raspberryId = :id")
-    fun getById(id: Int): Flow<RaspberryInfo?>
+    fun getById(id: String): Flow<RaspberryInfo?>
 
     @Query("SELECT * FROM raspberryinfo")
     fun getAll(): Flow<List<RaspberryInfo>>

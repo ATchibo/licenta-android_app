@@ -11,8 +11,8 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import com.tchibo.plantbuddy.ui.theme.ubuntuFontFamily
 import com.tchibo.plantbuddy.domain.ScreenInfo
+import com.tchibo.plantbuddy.ui.theme.ubuntuFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +28,7 @@ fun Appbar(screenInfo: ScreenInfo) {
     else MaterialTheme.colorScheme.primary
 
     CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = bgColor,
             titleContentColor = onBgColor
         ),

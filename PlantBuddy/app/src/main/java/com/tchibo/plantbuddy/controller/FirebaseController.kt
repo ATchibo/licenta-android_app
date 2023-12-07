@@ -77,7 +77,7 @@ class FirebaseController private constructor(
             .map { it -> it.get("raspberryId") }
 
         return db.collection(raspberryInfoCollectionName)
-            .whereArrayContains("raspberryId", raspberryIds)
+            .whereIn("raspberryId", raspberryIds)
             .get()
             .await()
             .toObjects(RaspberryInfo::class.java)
