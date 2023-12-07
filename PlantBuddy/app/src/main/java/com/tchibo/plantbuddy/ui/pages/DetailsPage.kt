@@ -14,6 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
+import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.ui.components.Appbar
@@ -64,7 +68,16 @@ fun DetailsPage(rpiId: String) {
                 },
             )
 
-
+            Chart(
+                chart = lineChart(),
+                chartModelProducer = state.chartModelProducer,
+                startAxis = rememberStartAxis(
+                    title = "Moisture percentage",
+                ),
+                bottomAxis = rememberBottomAxis(
+                    title = "Time",
+                ),
+            )
         }
     }
 }

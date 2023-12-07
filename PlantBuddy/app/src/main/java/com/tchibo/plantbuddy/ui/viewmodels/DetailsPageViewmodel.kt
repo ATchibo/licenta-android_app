@@ -7,15 +7,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.entryOf
 import com.tchibo.plantbuddy.controller.db.LocalDbController
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 data class DetailsPageState(
     val screenInfo: ScreenInfo = ScreenInfo(),
     val raspberryInfo: RaspberryInfo = RaspberryInfo(),
     val isRefreshing: Boolean = false,
+
+    val chartModelProducer: ChartEntryModelProducer =
+        ChartEntryModelProducer(List(4) { entryOf(it, Random.nextFloat() * 16f) })
 )
 
 class DetailsPageViewmodel(
