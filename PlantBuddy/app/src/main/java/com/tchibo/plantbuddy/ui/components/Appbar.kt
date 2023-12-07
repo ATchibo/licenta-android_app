@@ -9,19 +9,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.ui.theme.ubuntuFontFamily
-import com.tchibo.plantbuddy.utils.ScreenInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Appbar(screenInfo: ScreenInfo) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
+    val bgColor = if (screenInfo.showBackground)
+        MaterialTheme.colorScheme.primary
+    else Color.Transparent
+
+    val onBgColor = if (screenInfo.showBackground)
+        MaterialTheme.colorScheme.onPrimary
+    else MaterialTheme.colorScheme.primary
+
     CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = bgColor,
+            titleContentColor = onBgColor
         ),
         title = {
             Text(
@@ -37,8 +46,8 @@ fun Appbar(screenInfo: ScreenInfo) {
                     screenInfo.navigationIcon?.let {
                         Icon(
                             imageVector = it,
-                            contentDescription = screenInfo.navigationIconContentDescription,
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            contentDescription = screenInfo.navigationIconContentDescription.orEmpty(),
+                            tint = onBgColor
                         )
                     }
                 }

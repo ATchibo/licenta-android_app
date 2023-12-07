@@ -1,6 +1,5 @@
 package com.tchibo.plantbuddy.ui.pages
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,50 +12,66 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
-import com.tchibo.plantbuddy.temp.TempDb
+import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
-import com.tchibo.plantbuddy.utils.Routes
+import com.tchibo.plantbuddy.ui.viewmodels.HomePageViewModel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
+import com.tchibo.plantbuddy.utils.sign_in.UserData
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomePage() {
+fun HomePage(
+    userData: UserData
+) {
 
     val navigator = LocalNavController.current
 
-    var raspberryDtoList = remember {
-        mutableStateOf(TempDb.getMyRaspberryDtoItems())
-    }
-
-    fun onAddClick() {
-        navigator.navigate(Routes.getNavigateAdd())
-    }
+    val viewModel = viewModel<HomePageViewModel>(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return HomePageViewModel(navigator) as T
+            }
+        }
+    )
+    val state = viewModel.state.value
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isRefreshing,
+        onRefresh = viewModel::reloadRaspberryDtoList
+    )
 
     Scaffold(
-        floatingActionButton = { HomePageActionButton { onAddClick() } },
+        topBar = { Appbar(screenInfo = state.screenInfo) },
+        floatingActionButton = { HomePageActionButton { viewModel.onAddClick() } },
     ) { it ->
         Box(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .pullRefresh(pullRefreshState),
         ) {
             Image(
                 painterResource(R.drawable.home_bg),
@@ -77,7 +92,7 @@ fun HomePage() {
                 Text(
                     text = stringResource(
                         id = R.string.main_screen_title,
-                        "Tchibo" // temp
+                        userData.username // temp
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -99,12 +114,20 @@ fun HomePage() {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     content = {
-                        items(raspberryDtoList.value.size) { index ->
-                            RaspberryShortcutCard(raspberryDtoList.value[index])
+                        items(state.raspberryDtoList.size) { index ->
+                            RaspberryShortcutCard(state.raspberryDtoList[index])
                         }
                     }
                 )
             }
+
+            PullRefreshIndicator(
+                refreshing = state.isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            )
         }
     }
 }

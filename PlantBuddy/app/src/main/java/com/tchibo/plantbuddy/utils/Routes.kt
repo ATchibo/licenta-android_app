@@ -6,11 +6,11 @@ import kotlinx.serialization.json.Json
 class Routes {
     companion object {
         private const val LOGIN = "/login"
-        private const val REGISTER = "/register"
         private const val HOME = "/"
         private const val DETAILS = "/details/{id}"
         private const val ADD = "/add"
         private const val EDIT = "$DETAILS/edit"
+        private const val SETTINGS = "/settings"
 
         fun getNavigateLogin(): String {
             return LOGIN
@@ -39,8 +39,8 @@ class Routes {
             return ADD
         }
 
-        fun getNavigateRegister(): String {
-            return REGISTER
+        fun getNavigateSettings() : String {
+            return SETTINGS
         }
     }
 }

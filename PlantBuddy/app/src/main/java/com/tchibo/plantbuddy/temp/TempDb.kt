@@ -1,41 +1,41 @@
 package com.tchibo.plantbuddy.temp
 
-import com.tchibo.plantbuddy.domain.RaspberryDataDto
+import com.tchibo.plantbuddy.domain.RaspberryInfoDto
 import com.tchibo.plantbuddy.domain.RaspberryStatus
 
 class TempDb {
 
     companion object {
 
-        private var raspberryDtoItems: List<RaspberryDataDto> = listOf(
-            RaspberryDataDto(
-                id = "1",
-                nickname = "Raspberry 1",
-                status = RaspberryStatus.ONLINE,
+        private var raspberryDtoItems: List<RaspberryInfoDto> = listOf(
+            RaspberryInfoDto(
+                raspberryId = "1",
+                raspberryName = "Raspberry 1",
+                raspberryStatus = RaspberryStatus.ONLINE,
             ),
-            RaspberryDataDto(
-                id = "2",
-                nickname = "Raspberry 2",
-                status = RaspberryStatus.OFFLINE,
+            RaspberryInfoDto(
+                raspberryId = "2",
+                raspberryName = "Raspberry 2",
+                raspberryStatus = RaspberryStatus.OFFLINE,
             ),
-            RaspberryDataDto(
-                id = "3",
-                nickname = "Raspberry 3",
-                status = RaspberryStatus.ONLINE,
+            RaspberryInfoDto(
+                raspberryId = "3",
+                raspberryName = "Raspberry 3",
+                raspberryStatus = RaspberryStatus.ONLINE,
             ),
-            RaspberryDataDto(
-                id = "4",
-                nickname = "Raspberry 4",
-                status = RaspberryStatus.ONLINE,
+            RaspberryInfoDto(
+                raspberryId = "4",
+                raspberryName = "Raspberry 4",
+                raspberryStatus = RaspberryStatus.ONLINE,
             ),
-            RaspberryDataDto(
-                id = "5",
-                nickname = "Raspberry 5",
-                status = RaspberryStatus.UNKNOWN,
+            RaspberryInfoDto(
+                raspberryId = "5",
+                raspberryName = "Raspberry 5",
+                raspberryStatus = RaspberryStatus.UNKNOWN,
             ),
         )
 
-        fun getMyRaspberryDtoItems(): List<RaspberryDataDto> {
+        fun getMyRaspberryDtoItems(): List<RaspberryInfoDto> {
             return raspberryDtoItems
         }
     }

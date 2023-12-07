@@ -33,7 +33,9 @@ import java.util.concurrent.Executors
 import java.lang.Runnable
 
 @Composable
-fun QrScanner() {
+fun QrScanner(
+    onQrCodeFound: (String) -> Unit = {}
+) {
 
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -66,11 +68,7 @@ fun QrScanner() {
                         .build()
                         .also {
                             it.setAnalyzer(cameraExecutor, BarcodeAnalyser { barcodeList ->
-                                Toast.makeText(
-                                    context,
-                                    barcodeList[0].displayValue,
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                onQrCodeFound(barcodeList[0].displayValue.orEmpty())
                             })
                         }
 
