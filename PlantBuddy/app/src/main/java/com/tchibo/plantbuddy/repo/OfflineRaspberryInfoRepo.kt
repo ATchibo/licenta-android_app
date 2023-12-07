@@ -21,4 +21,7 @@ class OfflineRaspberryInfoRepo(
 
     override suspend fun updateItem(item: RaspberryInfo) =
         raspberryInfoDao.update(item)
+
+    override suspend fun clear() =
+        raspberryInfoDao.clear()
 }

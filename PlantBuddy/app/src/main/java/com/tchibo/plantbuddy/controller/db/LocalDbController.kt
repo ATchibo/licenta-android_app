@@ -40,6 +40,8 @@ class LocalDbController private constructor(
     }
 
     private suspend fun setRaspberryInfoList(raspberryInfoList: List<RaspberryInfo>) {
+        raspberryInfoRepo.clear()
+
         for (raspberryInfo in raspberryInfoList) {
             raspberryInfoRepo.insertItem(raspberryInfo)
         }

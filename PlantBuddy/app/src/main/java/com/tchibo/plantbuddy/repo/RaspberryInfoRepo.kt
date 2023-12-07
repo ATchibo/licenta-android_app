@@ -29,4 +29,8 @@ interface RaspberryInfoRepo {
      */
     suspend fun updateItem(item: RaspberryInfo)
 
+    /**
+     * Clear all the items from the data source
+     */
+    suspend fun clear()
 }

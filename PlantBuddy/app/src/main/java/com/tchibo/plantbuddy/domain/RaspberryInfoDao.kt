@@ -28,4 +28,7 @@ interface RaspberryInfoDao {
 
     @Delete
     suspend fun delete(raspberryInfo: RaspberryInfo)
+
+    @Query("DELETE FROM raspberryinfo")
+    suspend fun clear()
 }

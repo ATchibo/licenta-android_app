@@ -46,7 +46,6 @@ class HomePageViewModel(
                 },
             )
 
-
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
                 raspberryDtoList = raspberryDtoList,
@@ -62,8 +61,9 @@ class HomePageViewModel(
             _state.value = _state.value.copy(
                 isRefreshing = true,
             )
+            LocalDbController.INSTANCE.loadInitialData()
 
-            val raspberryDtoList = LocalDbController.INSTANCE.refreshRaspberryInfoDtoList()
+            val raspberryDtoList = LocalDbController.INSTANCE.getRaspberryInfoDtoList()
             println("Raspberry dto list: $raspberryDtoList")
 
             _state.value = _state.value.copy(
