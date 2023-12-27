@@ -8,7 +8,6 @@ import com.tchibo.plantbuddy.domain.RaspberryInfoDto
 import com.tchibo.plantbuddy.repo.MoistureInfoRepo
 import com.tchibo.plantbuddy.repo.OfflineRaspberryRepo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
@@ -88,9 +87,28 @@ class LocalDbController private constructor(
         return raspberryInfoRepo.getItemStream(rpiId).first()
     }
 
-    fun getMoistureInfoForRaspId(rpiId: String): Flow<MoistureInfo?> {
-        return moistureInfoRepo.getItemsWithRaspIdStream(rpiId)
+    suspend fun getMoistureInfoForRaspId(rpiId: String): List<MoistureInfo?> {
+        try {
+            val moistureInfoFlow = moistureInfoRepo.getItemsWithRaspIdStream(rpiId)
+            println("Loaded moisture info flow.")
+
+            // Collect the Flow using collect
+            val moistureInfoList = mutableListOf<MoistureInfo?>()
+            println("Asteptam sa se termine de colectat datele...")
+            moistureInfoFlow.collect { moistureInfo ->
+                println("Am primit un moisture info.")
+                moistureInfoList.add(moistureInfo)
+            }
+
+            println("Loaded moisture info list.")
+            return moistureInfoList
+        } catch (e: Exception) {
+            // Handle exceptions appropriately
+            e.printStackTrace()
+            return emptyList()
+        }
     }
+
 
     private suspend fun loadRaspberryInfoList() {
         // load all raspberry info from firebase

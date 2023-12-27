@@ -11,10 +11,9 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import com.tchibo.plantbuddy.controller.db.LocalDbController
 import com.tchibo.plantbuddy.domain.DeviceDetails
-import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.MoistureInfoDto
 import com.tchibo.plantbuddy.domain.ScreenInfo
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.stream.Collectors.toList
 import kotlin.random.Random
@@ -53,26 +52,41 @@ class DetailsPageViewmodel(
                 },
             )
 
-            val raspberryInfo = LocalDbController.INSTANCE.getRaspberryInfo(raspberryId)
-            println("Raspberry info: $raspberryInfo")
+            val raspberryInfo = async {
+                LocalDbController.INSTANCE.getRaspberryInfo(raspberryId)
+            }
+            println("Loaded raspberry info.")
 
-            val moistureInfoList: List<MoistureInfo?> =
-                LocalDbController.INSTANCE.getMoistureInfoForRaspId(raspberryId).toList()
+            val moistureInfoList = async {
+                LocalDbController.INSTANCE.getMoistureInfoForRaspId(raspberryId)
+//                listOf(
+//                    MoistureInfo("0000000000000000", 1.0f, LocalDateTime.of(2021, 1, 1, 1, 1)),
+//                    MoistureInfo("0000000000000000", 3.2f, LocalDateTime.of(2022, 1, 1, 1, 2)),
+//                    MoistureInfo("0000000000000000", 2.1f, LocalDateTime.of(2023, 1, 1, 1, 3)),
+//                )
+            }
+            println("Loaded moisture info.")
 
-            val moistureInfoDtoList = moistureInfoList.stream()
+            val moistureInfoDtoList = moistureInfoList.await().stream()
                 .filter { it != null }
                 .map { MoistureInfoDto(it!!.measurementValuePercent, it.measurementTime) }
                 .collect(toList())
+            println("Converted moisture info.")
 
             val chartModelProducer = ChartEntryModelProducer(
-                moistureInfoDtoList.map { entryOf(it.measurementTime.nanos, it.measurementValuePercent.toFloat()) }
+                moistureInfoDtoList.map { entryOf(it.measurementTime.seconds / 1000000, it.measurementValuePercent) }
             )
+
+            val deviceDetails = DeviceDetails(
+                raspberryInfo = raspberryInfo.await()!!,
+                moistureReadings = moistureInfoDtoList,
+            )
+
+            println("Loaded initial data.")
 
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
-                deviceDetails = if (raspberryInfo != null)
-                    DeviceDetails(raspberryInfo, moistureInfoDtoList)
-                            else DeviceDetails(),
+                deviceDetails = deviceDetails,
                 isRefreshing = false,
                 chartModelProducer = chartModelProducer,
             )

@@ -1,8 +1,8 @@
 package com.tchibo.plantbuddy.domain
 
-import com.google.type.DateTime
+import com.google.firebase.Timestamp
 
 data class MoistureInfoDto (
-    val measurementValuePercent: Int,
-    val measurementTime: DateTime,
+    val measurementValuePercent: Float,
+    val measurementTime: Timestamp,
 )
