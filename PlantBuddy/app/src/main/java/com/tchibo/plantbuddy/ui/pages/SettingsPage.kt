@@ -25,7 +25,7 @@ import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
-import com.tchibo.plantbuddy.utils.sign_in.UserData
+import com.tchibo.plantbuddy.domain.UserData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

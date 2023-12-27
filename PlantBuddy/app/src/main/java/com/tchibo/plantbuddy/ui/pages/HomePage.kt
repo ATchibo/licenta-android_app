@@ -33,6 +33,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
+import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
@@ -40,7 +41,6 @@ import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
 import com.tchibo.plantbuddy.ui.viewmodels.HomePageViewModel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
-import com.tchibo.plantbuddy.utils.sign_in.UserData
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

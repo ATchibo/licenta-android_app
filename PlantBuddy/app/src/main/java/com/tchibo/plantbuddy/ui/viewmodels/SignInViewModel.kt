@@ -1,9 +1,16 @@
-package com.tchibo.plantbuddy.utils.sign_in
+package com.tchibo.plantbuddy.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
+import com.tchibo.plantbuddy.domain.SignInResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+
+
+data class SignInState (
+    val isSignInSuccessful: Boolean = false,
+    val errorMessage: String? = null,
+)
 
 class SignInViewModel: ViewModel() {
 

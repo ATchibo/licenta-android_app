@@ -37,7 +37,7 @@ import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
-import com.tchibo.plantbuddy.utils.sign_in.UserData
+import com.tchibo.plantbuddy.domain.UserData
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

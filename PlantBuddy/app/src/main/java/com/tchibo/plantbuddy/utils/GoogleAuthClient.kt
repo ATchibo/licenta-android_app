@@ -1,4 +1,4 @@
-package com.tchibo.plantbuddy.utils.sign_in
+package com.tchibo.plantbuddy.utils
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.tchibo.plantbuddy.R
+import com.tchibo.plantbuddy.domain.SignInResult
+import com.tchibo.plantbuddy.domain.UserData
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CancellationException
 
