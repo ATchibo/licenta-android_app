@@ -32,7 +32,8 @@ fun HumidityGraph(
         bottomAxis = rememberBottomAxis(
             title = "Time",
             valueFormatter = { value, _ ->
-                val formatter = DateTimeFormatter.ofPattern("MMM dd HH:mm")
+//                val formatter = DateTimeFormatter.ofPattern("MMM dd HH:mm")
+                val formatter = DateTimeFormatter.ofPattern("HH:mm")
                 val timestamp = LocalDateTime.ofInstant(
                     Instant.ofEpochSecond(state.moistureMaps[value]?.first?.seconds ?: 0),
                     ZoneId.systemDefault()
