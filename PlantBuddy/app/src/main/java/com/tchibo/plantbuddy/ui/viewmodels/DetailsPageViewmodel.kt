@@ -9,7 +9,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
-import com.tchibo.plantbuddy.controller.db.LocalDbController
+import com.tchibo.plantbuddy.controller.MoistureInfoController
+import com.tchibo.plantbuddy.controller.RaspberryInfoController
 import com.tchibo.plantbuddy.domain.DeviceDetails
 import com.tchibo.plantbuddy.domain.MoistureInfoDto
 import com.tchibo.plantbuddy.domain.ScreenInfo
@@ -53,17 +54,12 @@ class DetailsPageViewmodel(
             )
 
             val raspberryInfo = async {
-                LocalDbController.INSTANCE.getRaspberryInfo(raspberryId)
+                RaspberryInfoController.INSTANCE.getRaspberryInfo(raspberryId)
             }
             println("Loaded raspberry info.")
 
             val moistureInfoList = async {
-                LocalDbController.INSTANCE.getMoistureInfoForRaspId(raspberryId)
-//                listOf(
-//                    MoistureInfo("0000000000000000", 1.0f, LocalDateTime.of(2021, 1, 1, 1, 1)),
-//                    MoistureInfo("0000000000000000", 3.2f, LocalDateTime.of(2022, 1, 1, 1, 2)),
-//                    MoistureInfo("0000000000000000", 2.1f, LocalDateTime.of(2023, 1, 1, 1, 3)),
-//                )
+                MoistureInfoController.INSTANCE.getMoistureInfoForRaspId(raspberryId)
             }
             println("Loaded moisture info.")
 
@@ -74,7 +70,7 @@ class DetailsPageViewmodel(
             println("Converted moisture info.")
 
             val chartModelProducer = ChartEntryModelProducer(
-                moistureInfoDtoList.map { entryOf(it.measurementTime.seconds / 1000000, it.measurementValuePercent) }
+                moistureInfoDtoList.map { entryOf(it.measurementTime.seconds % 10, it.measurementValuePercent) }
             )
 
             val deviceDetails = DeviceDetails(

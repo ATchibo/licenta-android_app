@@ -16,6 +16,7 @@ class FirebaseController private constructor(
 
     private val deviceLinksCollectionName = "device_links"
     private val raspberryInfoCollectionName = "raspberry_info"
+    private val moistureInfoCollectionName = "humidity_readings"
 
     companion object {
         private lateinit var userData: UserData
@@ -102,6 +103,14 @@ class FirebaseController private constructor(
 
         return db.collection("moisture_info")
             .whereIn("raspberryId", raspberryIds)
+            .get()
+            .await()
+            .toObjects(MoistureInfo::class.java)
+    }
+
+    suspend fun getMoistureInfoForRaspId(rpiId: String): List<MoistureInfo?> {
+        return db.collection(moistureInfoCollectionName)
+            .whereEqualTo("raspberryId", rpiId)
             .get()
             .await()
             .toObjects(MoistureInfo::class.java)

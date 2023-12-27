@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 
-class LocalDbController private constructor(
+class LocalDbController_deprecated private constructor(
     private val raspberryInfoRepo: OfflineRaspberryRepo,
     private val moistureInfoRepo: MoistureInfoRepo,
 ) {
@@ -23,14 +23,14 @@ class LocalDbController private constructor(
             applicationContext = context.applicationContext
         }
 
-        val INSTANCE: LocalDbController by lazy {
+        val INSTANCE: LocalDbController_deprecated by lazy {
             if (!::applicationContext.isInitialized) {
                 throw IllegalStateException("LocalDbController must be initialized with a context")
             }
 
             val db = AppDatabase.getInstance(applicationContext)
 
-            LocalDbController(
+            LocalDbController_deprecated(
                 OfflineRaspberryRepo(db.raspberryInfoDao()),
                 MoistureInfoRepo(db.moistureInfoDao()),
             )
