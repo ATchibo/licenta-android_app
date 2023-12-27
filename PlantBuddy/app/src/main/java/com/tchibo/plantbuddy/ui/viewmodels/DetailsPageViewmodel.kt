@@ -7,12 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.google.firebase.Timestamp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import com.tchibo.plantbuddy.controller.MoistureInfoController
 import com.tchibo.plantbuddy.controller.RaspberryInfoController
-import com.tchibo.plantbuddy.domain.DeviceDetails
 import com.tchibo.plantbuddy.domain.MoistureInfoDto
+import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -21,7 +22,8 @@ import kotlin.random.Random
 
 data class DetailsPageState(
     val screenInfo: ScreenInfo = ScreenInfo(),
-    val deviceDetails: DeviceDetails = DeviceDetails(),
+    val raspberryInfo: RaspberryInfo = RaspberryInfo(),
+    val moistureMaps: Map<Float, Pair<Timestamp, Float>> = mutableMapOf(),
     val isRefreshing: Boolean = false,
 
     val chartModelProducer: ChartEntryModelProducer =
@@ -67,22 +69,24 @@ class DetailsPageViewmodel(
                 .filter { it != null }
                 .map { MoistureInfoDto(it!!.measurementValuePercent, it.measurementTime) }
                 .collect(toList())
-            println("Converted moisture info.")
+            println("Converted moisture info: $moistureInfoDtoList")
 
             val chartModelProducer = ChartEntryModelProducer(
-                moistureInfoDtoList.map { entryOf(it.measurementTime.seconds % 10, it.measurementValuePercent) }
+                moistureInfoDtoList.map {
+                    entryOf(moistureInfoDtoList.indexOf(it) + 1, it.measurementValuePercent)
+                }
             )
 
-            val deviceDetails = DeviceDetails(
-                raspberryInfo = raspberryInfo.await()!!,
-                moistureReadings = moistureInfoDtoList,
-            )
+            val moistureMaps = moistureInfoDtoList.map {
+                moistureInfoDtoList.indexOf(it) + 1.0f to (it.measurementTime to it.measurementValuePercent)
+            }.toMap()
 
             println("Loaded initial data.")
 
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
-                deviceDetails = deviceDetails,
+                raspberryInfo = raspberryInfo.await()!!,
+                moistureMaps = moistureMaps,
                 isRefreshing = false,
                 chartModelProducer = chartModelProducer,
             )

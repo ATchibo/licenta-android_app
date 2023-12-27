@@ -43,7 +43,7 @@ fun DetailsPage(rpiId: String) {
             modifier = Modifier.padding(paddingValues = paddingValues)
         ) {
             Text(
-                text = state.deviceDetails.raspberryInfo.raspberryName,
+                text = state.raspberryInfo.raspberryName,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(30.dp, 10.dp, 0.dp, 0.dp),
@@ -53,13 +53,13 @@ fun DetailsPage(rpiId: String) {
             )
 
             Text(
-                text = state.deviceDetails.raspberryInfo.raspberryStatus.toString(),
+                text = state.raspberryInfo.raspberryStatus.toString(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(30.dp, 10.dp, 0.dp, 20.dp),
                 fontSize = TEXT_SIZE_NORMAL,
                 fontWeight = FontWeight.Medium,
-                color = when (state.deviceDetails.raspberryInfo.raspberryStatus) {
+                color = when (state.raspberryInfo.raspberryStatus) {
                     RaspberryStatus.ONLINE -> MaterialTheme.colorScheme.primary
                     RaspberryStatus.OFFLINE -> MaterialTheme.colorScheme.error
                     else -> MaterialTheme.colorScheme.onBackground

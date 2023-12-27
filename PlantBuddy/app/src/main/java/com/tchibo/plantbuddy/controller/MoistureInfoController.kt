@@ -12,7 +12,6 @@ class MoistureInfoController private constructor() {
 
     suspend fun getMoistureInfoForRaspId(raspberryId: String): List<MoistureInfo?> {
         val moistureInfoList = FirebaseController.INSTANCE.getMoistureInfoForRaspId(raspberryId)
-        println("Moisture info list: $moistureInfoList")
-        return moistureInfoList
+        return moistureInfoList.sortedBy { it?.measurementTime }
     }
 }
