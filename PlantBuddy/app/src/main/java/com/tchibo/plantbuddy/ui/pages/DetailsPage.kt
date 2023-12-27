@@ -2,20 +2,27 @@ package com.tchibo.plantbuddy.ui.pages
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tchibo.plantbuddy.LocalNavController
+import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
@@ -42,37 +49,112 @@ fun DetailsPage(rpiId: String) {
         Column (
             modifier = Modifier.padding(paddingValues = paddingValues)
         ) {
-            Text(
-                text = state.raspberryInfo.raspberryName,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(30.dp, 10.dp, 0.dp, 0.dp),
-                fontSize = TEXT_SIZE_BIG,
-                fontWeight = FontWeight.Medium,
-                color = Color.White,
-            )
+            if (state.isRefreshing) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 10.dp, 0.dp, 0.dp),
+                    contentAlignment = androidx.compose.ui.Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.loading),
+                        fontSize = TEXT_SIZE_NORMAL,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                    )
+                }
+            } else {
 
-            Text(
-                text = state.raspberryInfo.raspberryStatus.toString(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(30.dp, 10.dp, 0.dp, 20.dp),
-                fontSize = TEXT_SIZE_NORMAL,
-                fontWeight = FontWeight.Medium,
-                color = when (state.raspberryInfo.raspberryStatus) {
-                    RaspberryStatus.ONLINE -> MaterialTheme.colorScheme.primary
-                    RaspberryStatus.OFFLINE -> MaterialTheme.colorScheme.error
-                    else -> MaterialTheme.colorScheme.onBackground
-                },
-            )
-
-            Box(
-                modifier = Modifier
-                    .padding(10.dp)
-            ) {
-                HumidityGraph(
-                    state = state
+                Text(
+                    text = state.raspberryInfo.raspberryName,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(30.dp, 10.dp, 0.dp, 0.dp),
+                    fontSize = TEXT_SIZE_BIG,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White,
                 )
+
+                Text(
+                    text = state.raspberryInfo.raspberryStatus.toString(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(30.dp, 10.dp, 0.dp, 20.dp),
+                    fontSize = TEXT_SIZE_NORMAL,
+                    fontWeight = FontWeight.Medium,
+                    color = when (state.raspberryInfo.raspberryStatus) {
+                        RaspberryStatus.ONLINE -> MaterialTheme.colorScheme.primary
+                        RaspberryStatus.OFFLINE -> MaterialTheme.colorScheme.error
+                        else -> MaterialTheme.colorScheme.onBackground
+                    },
+                )
+
+                Box(
+                    modifier = Modifier
+                        .padding(10.dp)
+                ) {
+                    HumidityGraph(
+                        state = state
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    content = {
+                        item {
+                            Button(
+                                modifier = Modifier.padding(10.dp, 5.dp),
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Text(text = "Action 1")
+                            }
+                        }
+
+                        item {
+                            Button(
+                                modifier = Modifier.padding(10.dp, 5.dp),
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Text(text = "Action 2")
+                            }
+                        }
+
+                        item {
+                            Button(
+                                modifier = Modifier.padding(10.dp, 5.dp),
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Text(text = "Action 3")
+                            }
+                        }
+
+                        item {
+                            Button(
+                                modifier = Modifier.padding(10.dp, 5.dp),
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Text(text = "Action 4")
+                            }
+                        }
+                    }
+                )
+
+                Button(
+                    modifier = Modifier
+                        .padding(10.dp, 15.dp, 10.dp, 30.dp)
+                        .fillMaxWidth(),
+                    colors = buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                    onClick = { /*TODO*/ }
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.unlink_device),
+                    )
+                }
             }
         }
     }

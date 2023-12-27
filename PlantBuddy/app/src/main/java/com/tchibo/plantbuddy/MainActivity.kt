@@ -158,7 +158,7 @@ class MainActivity : ComponentActivity() {
                             CircularProgressIndicator()
 
                             Text(
-                                text = stringResource(id = R.string.initial_loading),
+                                text = stringResource(id = R.string.loading),
                                 modifier = Modifier.padding(start = 10.dp),
                                 fontSize = TEXT_SIZE_NORMAL
                             )
