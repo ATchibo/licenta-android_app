@@ -4,13 +4,13 @@ import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfoDao
 import kotlinx.coroutines.flow.Flow
 
-class OfflineRaspberryInfoRepo(
+class OfflineRaspberryRepo(
     private val raspberryInfoDao: RaspberryInfoDao
-): RaspberryInfoRepo {
-    override fun getAllItemsStream(): Flow<List<RaspberryInfo>> =
+): GenericRepo<RaspberryInfo> {
+    fun getAllItemsStream(): Flow<List<RaspberryInfo>> =
         raspberryInfoDao.getAll()
 
-    override fun getItemStream(id: String): Flow<RaspberryInfo?> =
+    fun getItemStream(id: String): Flow<RaspberryInfo?> =
         raspberryInfoDao.getById(id)
 
     override suspend fun insertItem(item: RaspberryInfo) =

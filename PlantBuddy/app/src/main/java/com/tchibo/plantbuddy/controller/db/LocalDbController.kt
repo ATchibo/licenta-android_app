@@ -2,16 +2,20 @@ package com.tchibo.plantbuddy.controller.db
 
 import android.content.Context
 import com.tchibo.plantbuddy.controller.FirebaseController
+import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfoDto
-import com.tchibo.plantbuddy.repo.OfflineRaspberryInfoRepo
+import com.tchibo.plantbuddy.repo.MoistureInfoRepo
+import com.tchibo.plantbuddy.repo.OfflineRaspberryRepo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 
 class LocalDbController private constructor(
-    private val raspberryInfoRepo: OfflineRaspberryInfoRepo,
+    private val raspberryInfoRepo: OfflineRaspberryRepo,
+    private val moistureInfoRepo: MoistureInfoRepo,
 ) {
     companion object {
         private lateinit var applicationContext: Context
@@ -28,7 +32,8 @@ class LocalDbController private constructor(
             val db = AppDatabase.getInstance(applicationContext)
 
             LocalDbController(
-                OfflineRaspberryInfoRepo(db.raspberryInfoDao())
+                OfflineRaspberryRepo(db.raspberryInfoDao()),
+                MoistureInfoRepo(db.moistureInfoDao()),
             )
         }
     }
@@ -37,6 +42,7 @@ class LocalDbController private constructor(
         println("Loading initial data...")
 
         loadRaspberryInfoList()
+        loadMoistureInfoList()
     }
 
     private suspend fun setRaspberryInfoList(raspberryInfoList: List<RaspberryInfo>) {
@@ -44,6 +50,14 @@ class LocalDbController private constructor(
 
         for (raspberryInfo in raspberryInfoList) {
             raspberryInfoRepo.insertItem(raspberryInfo)
+        }
+    }
+
+    private suspend fun setMoistureInfoList(moistureInfoList: List<MoistureInfo>) {
+        moistureInfoRepo.clear()
+
+        for (moistureInfo in moistureInfoList) {
+            moistureInfoRepo.insertItem(moistureInfo)
         }
     }
 
@@ -74,11 +88,23 @@ class LocalDbController private constructor(
         return raspberryInfoRepo.getItemStream(rpiId).first()
     }
 
+    fun getMoistureInfoForRaspId(rpiId: String): Flow<MoistureInfo?> {
+        return moistureInfoRepo.getItemsWithRaspIdStream(rpiId)
+    }
+
     private suspend fun loadRaspberryInfoList() {
         // load all raspberry info from firebase
         // for each raspberry info, add it to the local db
 
         val raspberryInfo = FirebaseController.INSTANCE.getRaspberryInfoList()
         setRaspberryInfoList(raspberryInfo)
+    }
+
+    private suspend fun loadMoistureInfoList() {
+        // load all moisture info from firebase
+        // for each moisture info, add it to the local db
+
+        val moistureInfo = FirebaseController.INSTANCE.getMoistureInfoList()
+        setMoistureInfoList(moistureInfo)
     }
 }

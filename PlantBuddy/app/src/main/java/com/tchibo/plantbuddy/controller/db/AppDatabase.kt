@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.tchibo.plantbuddy.domain.MoistureInfoDao
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfoDao
 
-@Database(entities = [RaspberryInfo::class], version = 2)
+@Database(entities = [RaspberryInfo::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun raspberryInfoDao(): RaspberryInfoDao
+    abstract fun moistureInfoDao(): MoistureInfoDao
 
     companion object {
         @Volatile

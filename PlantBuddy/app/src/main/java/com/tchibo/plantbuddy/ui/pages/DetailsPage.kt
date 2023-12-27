@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.ui.pages
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,13 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.ui.components.Appbar
+import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
@@ -48,7 +46,7 @@ fun DetailsPage(rpiId: String) {
                 text = state.raspberryInfo.raspberryName,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(30.dp, 10.dp, 0.dp, 0.dp),
                 fontSize = TEXT_SIZE_BIG,
                 fontWeight = FontWeight.Medium,
                 color = Color.White,
@@ -58,7 +56,7 @@ fun DetailsPage(rpiId: String) {
                 text = state.raspberryInfo.raspberryStatus.toString(),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp, 0.dp),
+                    .padding(30.dp, 10.dp, 0.dp, 20.dp),
                 fontSize = TEXT_SIZE_NORMAL,
                 fontWeight = FontWeight.Medium,
                 color = when (state.raspberryInfo.raspberryStatus) {
@@ -68,16 +66,14 @@ fun DetailsPage(rpiId: String) {
                 },
             )
 
-            Chart(
-                chart = lineChart(),
-                chartModelProducer = state.chartModelProducer,
-                startAxis = rememberStartAxis(
-                    title = "Moisture percentage",
-                ),
-                bottomAxis = rememberBottomAxis(
-                    title = "Time",
-                ),
-            )
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+            ) {
+                HumidityGraph(
+                    state = state
+                )
+            }
         }
     }
 }

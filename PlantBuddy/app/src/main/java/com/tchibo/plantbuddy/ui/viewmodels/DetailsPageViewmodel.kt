@@ -10,14 +10,18 @@ import androidx.navigation.NavHostController
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import com.tchibo.plantbuddy.controller.db.LocalDbController
-import com.tchibo.plantbuddy.domain.RaspberryInfo
+import com.tchibo.plantbuddy.domain.DeviceDetails
+import com.tchibo.plantbuddy.domain.MoistureInfo
+import com.tchibo.plantbuddy.domain.MoistureInfoDto
 import com.tchibo.plantbuddy.domain.ScreenInfo
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import java.util.stream.Collectors.toList
 import kotlin.random.Random
 
 data class DetailsPageState(
     val screenInfo: ScreenInfo = ScreenInfo(),
-    val raspberryInfo: RaspberryInfo = RaspberryInfo(),
+    val deviceDetails: DeviceDetails = DeviceDetails(),
     val isRefreshing: Boolean = false,
 
     val chartModelProducer: ChartEntryModelProducer =
@@ -52,10 +56,25 @@ class DetailsPageViewmodel(
             val raspberryInfo = LocalDbController.INSTANCE.getRaspberryInfo(raspberryId)
             println("Raspberry info: $raspberryInfo")
 
+            val moistureInfoList: List<MoistureInfo?> =
+                LocalDbController.INSTANCE.getMoistureInfoForRaspId(raspberryId).toList()
+
+            val moistureInfoDtoList = moistureInfoList.stream()
+                .filter { it != null }
+                .map { MoistureInfoDto(it!!.measurementValuePercent, it.measurementTime) }
+                .collect(toList())
+
+            val chartModelProducer = ChartEntryModelProducer(
+                moistureInfoDtoList.map { entryOf(it.measurementTime.nanos, it.measurementValuePercent.toFloat()) }
+            )
+
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
-                raspberryInfo = raspberryInfo ?: RaspberryInfo(),
+                deviceDetails = if (raspberryInfo != null)
+                    DeviceDetails(raspberryInfo, moistureInfoDtoList)
+                            else DeviceDetails(),
                 isRefreshing = false,
+                chartModelProducer = chartModelProducer,
             )
         }
     }

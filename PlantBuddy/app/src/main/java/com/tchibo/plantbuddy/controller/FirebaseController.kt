@@ -5,6 +5,7 @@ import android.widget.Toast
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
+import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.UserData
 import kotlinx.coroutines.tasks.await
@@ -81,5 +82,28 @@ class FirebaseController private constructor(
             .get()
             .await()
             .toObjects(RaspberryInfo::class.java)
+    }
+
+    suspend fun getRaspberryInfo(raspberryId: String): RaspberryInfo? {
+        return db.collection(raspberryInfoCollectionName)
+            .whereEqualTo("raspberryId", raspberryId)
+            .get()
+            .await()
+            .toObjects(RaspberryInfo::class.java)
+            .firstOrNull()
+    }
+
+    suspend fun getMoistureInfoList(): List<MoistureInfo> {
+        val raspberryIds = db.collection(deviceLinksCollectionName)
+            .whereEqualTo("ownerEmail", userData.email)
+            .get()
+            .await()
+            .map { it -> it.get("raspberryId") }
+
+        return db.collection("moisture_info")
+            .whereIn("raspberryId", raspberryIds)
+            .get()
+            .await()
+            .toObjects(MoistureInfo::class.java)
     }
 }
