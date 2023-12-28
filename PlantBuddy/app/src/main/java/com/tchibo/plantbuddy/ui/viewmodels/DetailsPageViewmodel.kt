@@ -15,6 +15,7 @@ import com.tchibo.plantbuddy.controller.RaspberryInfoController
 import com.tchibo.plantbuddy.domain.MoistureInfoDto
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.ScreenInfo
+import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.stream.Collectors.toList
@@ -91,5 +92,11 @@ class DetailsPageViewmodel(
                 chartModelProducer = chartModelProducer,
             )
         }
+    }
+
+    fun goToWateringOptions() {
+        navigator.navigate(
+            Routes.getNavigateWateringOptions(raspberryId),
+        )
     }
 }

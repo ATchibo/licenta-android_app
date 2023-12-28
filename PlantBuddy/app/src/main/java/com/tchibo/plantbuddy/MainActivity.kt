@@ -42,6 +42,7 @@ import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
 import com.tchibo.plantbuddy.ui.pages.SettingsPage
+import com.tchibo.plantbuddy.ui.pages.WateringOptionsPage
 import com.tchibo.plantbuddy.ui.viewmodels.SignInViewModel
 import com.tchibo.plantbuddy.utils.GoogleAuthClient
 import com.tchibo.plantbuddy.utils.Routes
@@ -196,6 +197,10 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
+            }
+            composable(Routes.getNavigateWateringOptionsRaw()) {
+                val rpiId = it.arguments?.getString("id")
+                WateringOptionsPage(raspberryPiId = rpiId.orEmpty())
             }
         }
 

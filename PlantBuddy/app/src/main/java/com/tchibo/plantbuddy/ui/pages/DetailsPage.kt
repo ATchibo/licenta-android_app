@@ -2,13 +2,17 @@ package com.tchibo.plantbuddy.ui.pages
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -106,9 +110,12 @@ fun DetailsPage(rpiId: String) {
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.goToWateringOptions() }
                             ) {
-                                Text(text = "Action 1")
+                                Row {
+                                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                                    Text(text = "Watering options")
+                                }
                             }
                         }
 

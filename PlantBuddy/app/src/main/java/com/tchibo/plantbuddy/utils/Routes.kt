@@ -1,13 +1,11 @@
 package com.tchibo.plantbuddy.utils
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-
 class Routes {
     companion object {
         private const val LOGIN = "/login"
         private const val HOME = "/"
         private const val DETAILS = "/details/{id}"
+        private const val WATERING_OPTIONS = "/watering-options/{id}"
         private const val ADD = "/add"
         private const val EDIT = "$DETAILS/edit"
         private const val SETTINGS = "/settings"
@@ -41,6 +39,14 @@ class Routes {
 
         fun getNavigateSettings() : String {
             return SETTINGS
+        }
+
+        fun getNavigateWateringOptionsRaw() : String {
+            return WATERING_OPTIONS
+        }
+
+        fun getNavigateWateringOptions(rpiId: String) : String {
+            return WATERING_OPTIONS.replace("{id}", rpiId)
         }
     }
 }
