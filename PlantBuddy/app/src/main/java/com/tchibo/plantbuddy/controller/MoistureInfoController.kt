@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.controller
 
+import com.google.firebase.Timestamp
 import com.tchibo.plantbuddy.domain.MoistureInfo
 
 class MoistureInfoController private constructor() {
@@ -10,8 +11,16 @@ class MoistureInfoController private constructor() {
         }
     }
 
-    suspend fun getMoistureInfoForRaspId(raspberryId: String): List<MoistureInfo?> {
-        val moistureInfoList = FirebaseController.INSTANCE.getMoistureInfoForRaspId(raspberryId)
+    suspend fun getMoistureInfoForRaspId(
+        raspberryId: String,
+        startTimestamp: Timestamp,
+        endTimestamp: Timestamp
+    ): List<MoistureInfo?> {
+        val moistureInfoList = FirebaseController.INSTANCE.getMoistureInfoForRaspId(
+            raspberryId,
+            startTimestamp,
+            endTimestamp,
+        )
         return moistureInfoList.sortedBy { it?.measurementTime }
     }
 }

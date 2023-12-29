@@ -2,6 +2,7 @@ package com.tchibo.plantbuddy.controller
 
 import android.content.Context
 import android.widget.Toast
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -113,9 +114,15 @@ class FirebaseController private constructor(
             .toObjects(MoistureInfo::class.java)
     }
 
-    suspend fun getMoistureInfoForRaspId(rpiId: String): List<MoistureInfo?> {
+    suspend fun getMoistureInfoForRaspId(
+        rpiId: String,
+        startTimestamp: Timestamp,
+        endTimestamp: Timestamp
+    ): List<MoistureInfo?> {
         return db.collection(moistureInfoCollectionName)
             .whereEqualTo("raspberryId", rpiId)
+            .whereGreaterThanOrEqualTo("measurementTime", startTimestamp)
+            .whereLessThanOrEqualTo("measurementTime", endTimestamp)
             .get()
             .await()
             .toObjects(MoistureInfo::class.java)

@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -95,6 +98,16 @@ fun DetailsPage(rpiId: String) {
                     },
                 )
 
+                Text(
+                    text = stringResource(id = R.string.moisture_history),
+                    modifier = Modifier
+                        .padding(10.dp, 10.dp)
+                        .fillMaxWidth(),
+                    fontSize = TEXT_SIZE_NORMAL,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White,
+                )
+
                 Box(
                     modifier = Modifier
                         .padding(10.dp)
@@ -102,6 +115,78 @@ fun DetailsPage(rpiId: String) {
                     HumidityGraph(
                         state = state
                     )
+                }
+
+                Column (
+                    modifier = Modifier
+                        .padding(10.dp, 10.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Last updated: 10:00",
+                        modifier = Modifier
+                            .padding(0.dp, 10.dp, 0.dp, 10.dp),
+                        fontSize = TEXT_SIZE_SMALL,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                    )
+
+                    Button(onClick = { /*TODO*/ }) {
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(imageVector = Icons.Default.Refresh, contentDescription = null)
+                            Text(
+                                text = stringResource(id = R.string.update),
+                                fontSize = TEXT_SIZE_SMALL,
+                            )
+                        }
+                    }
+
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(0.dp, 0.dp, 10.dp, 0.dp),
+                            text = stringResource(id = R.string.change_period),
+                        )
+
+                        Column {
+                            Button(
+                                onClick = {
+                                    viewModel.toggleHumidityDropdown()
+                                }
+                            ) {
+                                Text(
+                                    text = viewModel.getCurrentHumidityDropdownOption()
+                                )
+                            }
+
+                            DropdownMenu(
+                                expanded = state.isHumidityDropdownExpanded.value,
+                                onDismissRequest = {
+                                    viewModel.closeHumidityDropdown()
+                                }
+                            ) {
+
+                                state.humidityDropdownOptions.forEachIndexed { index, s ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = s,
+                                                fontSize = TEXT_SIZE_SMALL,
+                                            )
+                                        },
+                                        onClick = {
+                                            viewModel.onHumidityDropdownOptionSelected(index)
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -115,13 +200,11 @@ fun DetailsPage(rpiId: String) {
                                 onClick = { viewModel.goToWateringOptions() }
                             ) {
                                 Row (
-                                    modifier = Modifier
-                                        .padding(0.dp, 0.dp, 0.dp, 0.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(imageVector = Icons.Default.WaterDrop, contentDescription = null)
                                     Text(
-                                        text = "Watering options",
+                                        text = stringResource(id = R.string.watering_options),
                                         fontSize = TEXT_SIZE_SMALL,
                                     )
                                 }

@@ -35,4 +35,9 @@
     <string name="loading">Loading…</string>
     <string name="no_devices_found">No devices found</string>
     <string name="unlink_device">Unpair device</string>
+    <string name="moisture_history">Moisture history</string>
+    <string name="watering_options">Watering options</string>
+    <string name="update">Update</string>
+    <string name="change_period">Change period:</string>
+    <string name="no_data">No data</string>
 </resources>
