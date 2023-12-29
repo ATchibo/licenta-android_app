@@ -132,4 +132,24 @@ class FirebaseController private constructor(
                 callback(snapshot, e)
             }
     }
+
+    fun startWatering(raspberryId: String) {
+        db.collection(wateringNowCollectionName)
+            .document(raspberryId)
+            .set(
+                hashMapOf(
+                    "command" to "water_now"
+                )
+            )
+    }
+
+    fun stopWatering(raspberryId: String) {
+        db.collection(wateringNowCollectionName)
+            .document(raspberryId)
+            .set(
+                hashMapOf(
+                    "command" to "stop_watering"
+                )
+            )
+    }
 }

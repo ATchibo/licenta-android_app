@@ -1,5 +1,7 @@
 package com.tchibo.plantbuddy.ui.pages
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -31,4 +33,14 @@ fun WateringOptionsPage (
     }
     
     Text(text = "WateringOptionsPage")
+
+    Column {
+        Button(onClick = { viewModel.startWatering() }) {
+            Text(text = "Water now")
+        }
+
+        Button(onClick = { viewModel.stopWatering() }) {
+            Text(text = "Stop watering")
+        }
+    }
 }

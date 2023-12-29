@@ -68,4 +68,12 @@ class WateringOptionsViewModel (
             Log.d("TAG", "Current data: null")
         }
     }
+
+    fun startWatering() {
+        FirebaseController.INSTANCE.startWatering(raspberryId)
+    }
+
+    fun stopWatering() {
+        FirebaseController.INSTANCE.stopWatering(raspberryId)
+    }
 }

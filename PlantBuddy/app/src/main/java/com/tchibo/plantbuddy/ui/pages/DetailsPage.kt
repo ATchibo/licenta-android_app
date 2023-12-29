@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -33,6 +34,7 @@ import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
 
 @Composable
 fun DetailsPage(rpiId: String) {
@@ -112,9 +114,16 @@ fun DetailsPage(rpiId: String) {
                                 modifier = Modifier.padding(10.dp, 5.dp),
                                 onClick = { viewModel.goToWateringOptions() }
                             ) {
-                                Row {
-                                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
-                                    Text(text = "Watering options")
+                                Row (
+                                    modifier = Modifier
+                                        .padding(0.dp, 0.dp, 0.dp, 0.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(imageVector = Icons.Default.WaterDrop, contentDescription = null)
+                                    Text(
+                                        text = "Watering options",
+                                        fontSize = TEXT_SIZE_SMALL,
+                                    )
                                 }
                             }
                         }
@@ -160,6 +169,7 @@ fun DetailsPage(rpiId: String) {
                 ) {
                     Text(
                         text = stringResource(id = R.string.unlink_device),
+                        fontSize = TEXT_SIZE_SMALL,
                     )
                 }
             }
