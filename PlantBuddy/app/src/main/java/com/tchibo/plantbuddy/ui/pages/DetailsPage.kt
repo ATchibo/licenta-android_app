@@ -9,10 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -105,6 +107,7 @@ fun DetailsPage(rpiId: String) {
                         .fillMaxWidth(),
                     fontSize = TEXT_SIZE_NORMAL,
                     fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
                     color = Color.White,
                 )
 
@@ -123,6 +126,7 @@ fun DetailsPage(rpiId: String) {
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // TODO: actual update hour
                     Text(
                         text = "Last updated: 10:00",
                         modifier = Modifier
@@ -132,7 +136,7 @@ fun DetailsPage(rpiId: String) {
                         color = Color.White,
                     )
 
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = { /*TODO: add update spinner and custom loading variable in state*/ }) {
                         Row (
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -214,47 +218,72 @@ fun DetailsPage(rpiId: String) {
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.goToWateringOptions() }
                             ) {
-                                Text(text = "Action 2")
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(imageVector = Icons.Default.FormatListNumbered, contentDescription = null)
+                                    Text(
+                                        text = stringResource(id = R.string.view_logs),
+                                        fontSize = TEXT_SIZE_SMALL,
+                                    )
+                                }
                             }
                         }
 
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.goToWateringOptions() }
                             ) {
-                                Text(text = "Action 3")
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(imageVector = Icons.Default.WaterDrop, contentDescription = null)
+                                    Text(
+                                        text = stringResource(id = R.string.watering_options),
+                                        fontSize = TEXT_SIZE_SMALL,
+                                    )
+                                }
                             }
                         }
 
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.goToWateringOptions() }
                             ) {
-                                Text(text = "Action 4")
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+                                    Text(
+                                        text = stringResource(id = R.string.device_settings),
+                                        fontSize = TEXT_SIZE_SMALL,
+                                    )
+                                }
                             }
                         }
                     }
                 )
 
-                Button(
-                    modifier = Modifier
-                        .padding(10.dp, 15.dp, 10.dp, 30.dp)
-                        .fillMaxWidth(),
-                    colors = buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    ),
-                    onClick = { /*TODO*/ }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.unlink_device),
-                        fontSize = TEXT_SIZE_SMALL,
-                    )
-                }
+
+//                Button(
+//                    modifier = Modifier
+//                        .padding(10.dp, 15.dp, 10.dp, 30.dp)
+//                        .fillMaxWidth(),
+//                    colors = buttonColors(
+//                        containerColor = MaterialTheme.colorScheme.error,
+//                        contentColor = MaterialTheme.colorScheme.onError
+//                    ),
+//                    onClick = { /*TODO*/ }
+//                ) {
+//                    Text(
+//                        text = stringResource(id = R.string.unlink_device),
+//                        fontSize = TEXT_SIZE_SMALL,
+//                    )
+//                }
             }
         }
     }

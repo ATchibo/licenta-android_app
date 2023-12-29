@@ -1,6 +1,8 @@
 package com.tchibo.plantbuddy.ui.viewmodels
 
 import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,10 +12,12 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.tchibo.plantbuddy.controller.FirebaseController
+import com.tchibo.plantbuddy.domain.ScreenInfo
 import kotlinx.coroutines.launch
 
 
 data class WateringOptionsState(
+    val screenInfo: ScreenInfo = ScreenInfo(),
     val isRefreshing: Boolean = false,
 )
 
@@ -37,8 +41,16 @@ class WateringOptionsViewModel (
                 isRefreshing = true,
             )
 
+            val screenInfo = ScreenInfo(
+                navigationIcon = Icons.Filled.ArrowBack,
+                onNavigationIconClick = {
+                    navigator.popBackStack()
+                },
+            )
+
             _state.value = _state.value.copy(
                 isRefreshing = false,
+                screenInfo = screenInfo
             )
         }
     }

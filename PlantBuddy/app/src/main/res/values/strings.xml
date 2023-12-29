@@ -40,4 +40,6 @@
     <string name="update">Update</string>
     <string name="change_period">Change period:</string>
     <string name="no_data">No data</string>
+    <string name="view_logs">View logs</string>
+    <string name="device_settings">Device settings</string>
 </resources>
