@@ -6,7 +6,7 @@ import com.google.firebase.Timestamp
 
 @Entity(primaryKeys = ["raspberryId", "measurementTime"])
 data class MoistureInfo (
-    @ColumnInfo val raspberryId: String,
-    @ColumnInfo val measurementValuePercent: Float,
-    @ColumnInfo val measurementTime: Timestamp,
+    @ColumnInfo val raspberryId: String = "",
+    @ColumnInfo val measurementValuePercent: Float = 0.0f,
+    @ColumnInfo val measurementTime: Timestamp = Timestamp.now(),
 )

@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.tchibo.plantbuddy.controller.db.LocalDbController
+import com.tchibo.plantbuddy.controller.RaspberryInfoController
 import com.tchibo.plantbuddy.domain.RaspberryInfoDto
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.utils.Routes
@@ -36,7 +36,7 @@ class HomePageViewModel(
                 isRefreshing = true,
             )
 
-            val raspberryDtoList = LocalDbController.INSTANCE.getRaspberryInfoDtoList()
+            val raspberryDtoList = RaspberryInfoController.INSTANCE.getRaspberryInfoDtoList()
             println("Raspberry dto list: $raspberryDtoList")
 
             val screenInfo = ScreenInfo(
@@ -62,7 +62,7 @@ class HomePageViewModel(
                 isRefreshing = true,
             )
 
-            val raspberryDtoList = LocalDbController.INSTANCE.refreshRaspberryInfoDtoList()
+            val raspberryDtoList = RaspberryInfoController.INSTANCE.getRaspberryInfoDtoList()
             println("Raspberry dto list: $raspberryDtoList")
 
             _state.value = _state.value.copy(

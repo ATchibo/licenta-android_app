@@ -111,14 +111,37 @@ fun HomePage(
                     fontSize = TEXT_SIZE_NORMAL,
                     color = Color.White,
                 )
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    content = {
-                        items(state.raspberryDtoList.size) { index ->
-                            RaspberryShortcutCard(state.raspberryDtoList[index])
-                        }
+
+                if (state.isRefreshing) {
+                    Text(
+                        text = stringResource(id = R.string.loading),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp, 0.dp),
+                        fontSize = TEXT_SIZE_NORMAL,
+                        color = Color.White,
+                    )
+                } else {
+                    if (state.raspberryDtoList.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.no_devices_found),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp, 0.dp),
+                            fontSize = TEXT_SIZE_NORMAL,
+                            color = Color.White,
+                        )
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            content = {
+                                items(state.raspberryDtoList.size) { index ->
+                                    RaspberryShortcutCard(state.raspberryDtoList[index])
+                                }
+                            }
+                        )
                     }
-                )
+                }
             }
 
             PullRefreshIndicator(

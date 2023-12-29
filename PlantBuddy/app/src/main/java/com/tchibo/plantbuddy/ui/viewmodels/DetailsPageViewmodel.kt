@@ -7,12 +7,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.google.firebase.Timestamp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
-import com.tchibo.plantbuddy.controller.db.LocalDbController
-import com.tchibo.plantbuddy.domain.DeviceDetails
+import com.tchibo.plantbuddy.controller.MoistureInfoController
+import com.tchibo.plantbuddy.controller.RaspberryInfoController
 import com.tchibo.plantbuddy.domain.MoistureInfoDto
+import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.ScreenInfo
+import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.stream.Collectors.toList
@@ -20,7 +23,8 @@ import kotlin.random.Random
 
 data class DetailsPageState(
     val screenInfo: ScreenInfo = ScreenInfo(),
-    val deviceDetails: DeviceDetails = DeviceDetails(),
+    val raspberryInfo: RaspberryInfo = RaspberryInfo(),
+    val moistureMaps: Map<Float, Pair<Timestamp, Float>> = mutableMapOf(),
     val isRefreshing: Boolean = false,
 
     val chartModelProducer: ChartEntryModelProducer =
@@ -53,17 +57,12 @@ class DetailsPageViewmodel(
             )
 
             val raspberryInfo = async {
-                LocalDbController.INSTANCE.getRaspberryInfo(raspberryId)
+                RaspberryInfoController.INSTANCE.getRaspberryInfo(raspberryId)
             }
             println("Loaded raspberry info.")
 
             val moistureInfoList = async {
-                LocalDbController.INSTANCE.getMoistureInfoForRaspId(raspberryId)
-//                listOf(
-//                    MoistureInfo("0000000000000000", 1.0f, LocalDateTime.of(2021, 1, 1, 1, 1)),
-//                    MoistureInfo("0000000000000000", 3.2f, LocalDateTime.of(2022, 1, 1, 1, 2)),
-//                    MoistureInfo("0000000000000000", 2.1f, LocalDateTime.of(2023, 1, 1, 1, 3)),
-//                )
+                MoistureInfoController.INSTANCE.getMoistureInfoForRaspId(raspberryId)
             }
             println("Loaded moisture info.")
 
@@ -71,25 +70,33 @@ class DetailsPageViewmodel(
                 .filter { it != null }
                 .map { MoistureInfoDto(it!!.measurementValuePercent, it.measurementTime) }
                 .collect(toList())
-            println("Converted moisture info.")
+            println("Converted moisture info: $moistureInfoDtoList")
 
             val chartModelProducer = ChartEntryModelProducer(
-                moistureInfoDtoList.map { entryOf(it.measurementTime.seconds / 1000000, it.measurementValuePercent) }
+                moistureInfoDtoList.map {
+                    entryOf(moistureInfoDtoList.indexOf(it) + 1, it.measurementValuePercent)
+                }
             )
 
-            val deviceDetails = DeviceDetails(
-                raspberryInfo = raspberryInfo.await()!!,
-                moistureReadings = moistureInfoDtoList,
-            )
+            val moistureMaps = moistureInfoDtoList.map {
+                moistureInfoDtoList.indexOf(it) + 1.0f to (it.measurementTime to it.measurementValuePercent)
+            }.toMap()
 
             println("Loaded initial data.")
 
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
-                deviceDetails = deviceDetails,
+                raspberryInfo = raspberryInfo.await()!!,
+                moistureMaps = moistureMaps,
                 isRefreshing = false,
                 chartModelProducer = chartModelProducer,
             )
         }
+    }
+
+    fun goToWateringOptions() {
+        navigator.navigate(
+            Routes.getNavigateWateringOptions(raspberryId),
+        )
     }
 }

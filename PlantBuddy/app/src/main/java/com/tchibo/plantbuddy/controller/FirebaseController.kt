@@ -3,12 +3,16 @@ package com.tchibo.plantbuddy.controller
 import android.content.Context
 import android.widget.Toast
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
 import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.UserData
 import kotlinx.coroutines.tasks.await
+import kotlin.reflect.KFunction2
 
 class FirebaseController private constructor(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -16,6 +20,8 @@ class FirebaseController private constructor(
 
     private val deviceLinksCollectionName = "device_links"
     private val raspberryInfoCollectionName = "raspberry_info"
+    private val moistureInfoCollectionName = "humidity_readings"
+    private val wateringNowCollectionName = "watering_info"
 
     companion object {
         private lateinit var userData: UserData
@@ -105,5 +111,45 @@ class FirebaseController private constructor(
             .get()
             .await()
             .toObjects(MoistureInfo::class.java)
+    }
+
+    suspend fun getMoistureInfoForRaspId(rpiId: String): List<MoistureInfo?> {
+        return db.collection(moistureInfoCollectionName)
+            .whereEqualTo("raspberryId", rpiId)
+            .get()
+            .await()
+            .toObjects(MoistureInfo::class.java)
+    }
+
+    fun createListenerForWateringNow(
+        raspberryId: String,
+        callback: KFunction2<DocumentSnapshot?, FirebaseFirestoreException?, Unit>
+    ): ListenerRegistration {
+
+        return db.collection(wateringNowCollectionName)
+            .document(raspberryId)
+            .addSnapshotListener { snapshot, e ->
+                callback(snapshot, e)
+            }
+    }
+
+    fun startWatering(raspberryId: String) {
+        db.collection(wateringNowCollectionName)
+            .document(raspberryId)
+            .set(
+                hashMapOf(
+                    "command" to "water_now"
+                )
+            )
+    }
+
+    fun stopWatering(raspberryId: String) {
+        db.collection(wateringNowCollectionName)
+            .document(raspberryId)
+            .set(
+                hashMapOf(
+                    "command" to "stop_watering"
+                )
+            )
     }
 }

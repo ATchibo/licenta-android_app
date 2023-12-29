@@ -1,7 +1,6 @@
 package com.tchibo.plantbuddy
 
 import android.os.Bundle
-import com.google.android.gms.auth.api.identity.Identity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -18,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,23 +27,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.PlantBuddyTheme
+import com.google.android.gms.auth.api.identity.Identity
 import com.tchibo.plantbuddy.controller.FirebaseController
-import com.tchibo.plantbuddy.controller.db.LocalDbController
+import com.tchibo.plantbuddy.controller.db.LocalDbController_deprecated
 import com.tchibo.plantbuddy.ui.pages.AddRpiPage
 import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
 import com.tchibo.plantbuddy.ui.pages.SettingsPage
+import com.tchibo.plantbuddy.ui.pages.WateringOptionsPage
+import com.tchibo.plantbuddy.ui.viewmodels.SignInViewModel
+import com.tchibo.plantbuddy.utils.GoogleAuthClient
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
-import com.tchibo.plantbuddy.utils.GoogleAuthClient
-import com.tchibo.plantbuddy.ui.viewmodels.SignInViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -64,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 val context = LocalContext.current
-                LocalDbController.initialize(context)
+                LocalDbController_deprecated.initialize(context)
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -80,7 +81,7 @@ class MainActivity : ComponentActivity() {
 
     private suspend fun initialiseDbs() {
         FirebaseController.initialize(googleAuthClient.getSignedInUser()!!)
-        LocalDbController.INSTANCE.loadInitialData()
+//        LocalDbController.INSTANCE.loadInitialData()
     }
 
     @Composable
@@ -158,7 +159,7 @@ class MainActivity : ComponentActivity() {
                             CircularProgressIndicator()
 
                             Text(
-                                text = stringResource(id = R.string.initial_loading),
+                                text = stringResource(id = R.string.loading),
                                 modifier = Modifier.padding(start = 10.dp),
                                 fontSize = TEXT_SIZE_NORMAL
                             )
@@ -196,6 +197,10 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
+            }
+            composable(Routes.getNavigateWateringOptionsRaw()) {
+                val rpiId = it.arguments?.getString("id")
+                WateringOptionsPage(raspberryPiId = rpiId.orEmpty())
             }
         }
 

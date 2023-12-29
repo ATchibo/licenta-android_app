@@ -7,3 +7,4 @@ val DB_NAME = "plantbuddy-db"
 
 val TEXT_SIZE_BIG = 26.sp
 val TEXT_SIZE_NORMAL = 18.sp
+val TEXT_SIZE_SMALL = 14.sp
