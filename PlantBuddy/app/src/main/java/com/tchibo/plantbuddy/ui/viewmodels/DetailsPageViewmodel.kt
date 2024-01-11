@@ -147,9 +147,9 @@ class DetailsPageViewmodel(
                 }
             )
 
-            val moistureMaps = moistureInfoDtoList.map {
+            val moistureMaps = moistureInfoDtoList.associate {
                 moistureInfoDtoList.indexOf(it) + 1.0f to (it.measurementTime to it.measurementValuePercent)
-            }.toMap()
+            }
 
             _state.value = _state.value.copy(
                 moistureMaps = moistureMaps,

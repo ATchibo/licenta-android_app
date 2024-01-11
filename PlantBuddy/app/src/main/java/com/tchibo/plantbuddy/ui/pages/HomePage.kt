@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -92,7 +94,7 @@ fun HomePage(
                 Text(
                     text = stringResource(
                         id = R.string.main_screen_title,
-                        userData.username // temp
+                        userData.username
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -113,14 +115,13 @@ fun HomePage(
                 )
 
                 if (state.isRefreshing) {
-                    Text(
-                        text = stringResource(id = R.string.loading),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp, 0.dp),
-                        fontSize = TEXT_SIZE_NORMAL,
-                        color = Color.White,
-                    )
+                    Box(modifier = Modifier.padding(20.dp)) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.width(32.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                    }
                 } else {
                     if (state.raspberryDtoList.isEmpty()) {
                         Text(

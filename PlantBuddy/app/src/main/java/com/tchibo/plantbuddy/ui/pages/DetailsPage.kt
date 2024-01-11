@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
@@ -14,6 +16,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -65,13 +68,12 @@ fun DetailsPage(rpiId: String) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(0.dp, 10.dp, 0.dp, 0.dp),
-                    contentAlignment = androidx.compose.ui.Alignment.Center
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.loading),
-                        fontSize = TEXT_SIZE_NORMAL,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White,
+                    CircularProgressIndicator(
+                        modifier = Modifier.width(64.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 }
             } else {
@@ -267,6 +269,8 @@ fun DetailsPage(rpiId: String) {
                         }
                     }
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
 
 
 //                Button(

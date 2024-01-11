@@ -42,4 +42,10 @@
     <string name="no_data">No data</string>
     <string name="view_logs">View logs</string>
     <string name="device_settings">Device settings</string>
+    <string name="watering_options_description">Here you can change the preset of your watering program or control the watering manually.</string>
+    <string name="manual_watering">Manual controls</string>
+    <string name="watering_presets">Watering presets</string>
+    <string name="add_watering_preset">Create preset</string>
+    <string name="stop_watering">Stop watering</string>
+    <string name="start_watering">Start watering</string>
 </resources>
