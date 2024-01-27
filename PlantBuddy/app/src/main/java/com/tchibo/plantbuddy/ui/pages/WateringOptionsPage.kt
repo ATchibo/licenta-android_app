@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -135,24 +136,19 @@ fun WateringOptionsPage (
                         }
                     }
 
-                    Box(
+                    Text(
+                        text = stringResource(
+                            id = R.string.current_watering_stats,
+                            state.currentWateringVolume,
+                            state.currentWateringDuration,
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(0.dp, 10.dp, 0.dp, 10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(
-                                id = R.string.current_watering_stats,
-                                state.currentWateringVolume,
-                                state.currentWateringDuration,
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            fontSize = TEXT_SIZE_NORMAL,
-                            fontWeight = FontWeight.Normal,
-                        )
-                    }
+                        textAlign = TextAlign.Center,
+                        fontSize = TEXT_SIZE_NORMAL,
+                        fontWeight = FontWeight.Normal,
+                    )
                 }
 
                 Column (
