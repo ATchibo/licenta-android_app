@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
@@ -16,7 +15,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -38,6 +36,7 @@ import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.ui.components.Appbar
+import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
@@ -64,18 +63,7 @@ fun DetailsPage(rpiId: String) {
             modifier = Modifier.padding(paddingValues = paddingValues)
         ) {
             if (state.isRefreshing) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 10.dp, 0.dp, 0.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.width(64.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    )
-                }
+                ProgressIndicator()
             } else {
 
                 Text(
@@ -117,9 +105,13 @@ fun DetailsPage(rpiId: String) {
                     modifier = Modifier
                         .padding(10.dp)
                 ) {
-                    HumidityGraph(
-                        state = state
-                    )
+                    if (state.isGraphRefreshing) {
+                        ProgressIndicator()
+                    } else {
+                        HumidityGraph(
+                            state = state
+                        )
+                    }
                 }
 
                 Column (
@@ -130,7 +122,10 @@ fun DetailsPage(rpiId: String) {
                 ) {
                     // TODO: actual update hour
                     Text(
-                        text = "Last updated: 10:00",
+                        text = stringResource(
+                            id = R.string.last_update,
+                            state.lastUpdatedTime.value
+                        ),
                         modifier = Modifier
                             .padding(0.dp, 10.dp, 0.dp, 10.dp),
                         fontSize = TEXT_SIZE_SMALL,
@@ -138,7 +133,7 @@ fun DetailsPage(rpiId: String) {
                         color = Color.White,
                     )
 
-                    Button(onClick = { /*TODO: add update spinner and custom loading variable in state*/ }) {
+                    Button(onClick = { viewModel.updateHumidityValuesList() }) {
                         Row (
                             verticalAlignment = Alignment.CenterVertically
                         ) {

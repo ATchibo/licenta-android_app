@@ -20,6 +20,7 @@ import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.Date
 import java.util.stream.Collectors.toList
 import kotlin.random.Random
 
@@ -28,12 +29,15 @@ data class DetailsPageState(
     val raspberryInfo: RaspberryInfo = RaspberryInfo(),
     val moistureMaps: Map<Float, Pair<Timestamp, Float>> = mutableMapOf(),
     val isRefreshing: Boolean = false,
+    val isGraphRefreshing: Boolean = false,
+    val lastUpdatedTime: MutableState<String> = mutableStateOf(""),
     val isHumidityDropdownExpanded: MutableState<Boolean> = mutableStateOf(false),
     val humidityDropdownOptions: MutableList<String> = mutableListOf("Last 24h", "Last 7 days", "Last 30 days"),
     val currentHumidityDropdownOptionIndex: MutableState<Int> = mutableIntStateOf(0),
     val chartModelProducer: ChartEntryModelProducer =
         ChartEntryModelProducer(List(4) { entryOf(it, Random.nextFloat() * 16f) })
-)
+) {
+}
 
 class DetailsPageViewmodel(
     private val navigator: NavHostController,
@@ -96,12 +100,6 @@ class DetailsPageViewmodel(
         )
     }
 
-//    fun openHumidityDropdown() {
-//        _state.value = _state.value.copy(
-//            isHumidityDropdownExpanded = mutableStateOf(true),
-//        )
-//    }
-
     fun toggleHumidityDropdown() {
         _state.value = _state.value.copy(
             isHumidityDropdownExpanded = mutableStateOf(!_state.value.isHumidityDropdownExpanded.value),
@@ -114,10 +112,10 @@ class DetailsPageViewmodel(
         ]
     }
 
-    private fun updateHumidityValuesList() {
+    fun updateHumidityValuesList() {
         viewModelScope.launch {
             _state.value = _state.value.copy(
-                isRefreshing = true,
+                isGraphRefreshing = true,
             )
 
             val endTimestamp: Timestamp = Timestamp.now()
@@ -151,11 +149,18 @@ class DetailsPageViewmodel(
                 moistureInfoDtoList.indexOf(it) + 1.0f to (it.measurementTime to it.measurementValuePercent)
             }
 
+            val currentDateTime = getCurrentTime()
+
             _state.value = _state.value.copy(
                 moistureMaps = moistureMaps,
                 chartModelProducer = chartModelProducer,
-                isRefreshing = false,
+                isGraphRefreshing = false,
+                lastUpdatedTime = mutableStateOf(currentDateTime.toString()),
             )
         }
+    }
+
+    private fun getCurrentTime(): Date {
+        return Timestamp.now().toDate()
     }
 }

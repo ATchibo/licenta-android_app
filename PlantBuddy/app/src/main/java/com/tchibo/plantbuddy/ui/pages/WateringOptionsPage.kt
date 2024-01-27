@@ -134,6 +134,25 @@ fun WateringOptionsPage (
                             )
                         }
                     }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 10.dp, 0.dp, 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(
+                                id = R.string.current_watering_stats,
+                                state.currentWateringVolume,
+                                state.currentWateringDuration,
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            fontSize = TEXT_SIZE_NORMAL,
+                            fontWeight = FontWeight.Normal,
+                        )
+                    }
                 }
 
                 Column (

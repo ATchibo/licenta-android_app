@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,6 +35,7 @@ import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.ui.components.Appbar
+import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
@@ -115,13 +114,14 @@ fun HomePage(
                 )
 
                 if (state.isRefreshing) {
-                    Box(modifier = Modifier.padding(20.dp)) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.width(32.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                        )
-                    }
+//                    Box(modifier = Modifier.padding(20.dp)) {
+//                        CircularProgressIndicator(
+//                            modifier = Modifier.width(32.dp),
+//                            color = MaterialTheme.colorScheme.secondary,
+//                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+//                        )
+//                    }
+                    ProgressIndicator()
                 } else {
                     if (state.raspberryDtoList.isEmpty()) {
                         Text(

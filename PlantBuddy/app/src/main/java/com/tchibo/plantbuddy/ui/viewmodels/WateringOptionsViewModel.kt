@@ -21,6 +21,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.domain.ScreenInfo
+import com.tchibo.plantbuddy.domain.WateringInfo
 import kotlinx.coroutines.launch
 
 
@@ -28,6 +29,8 @@ data class WateringOptionsState(
     val screenInfo: ScreenInfo = ScreenInfo(),
     val isRefreshing: Boolean = false,
     val isWatering: Boolean = false,
+    val currentWateringVolume: String = "0",
+    val currentWateringDuration: String = "0",
 )
 
 class WateringOptionsViewModel (
@@ -59,7 +62,9 @@ class WateringOptionsViewModel (
 
             _state.value = _state.value.copy(
                 isRefreshing = false,
-                screenInfo = screenInfo
+                screenInfo = screenInfo,
+                currentWateringDuration = "0",
+                currentWateringVolume = "0",
             )
         }
     }
@@ -85,6 +90,17 @@ class WateringOptionsViewModel (
             // Handle the updated data
             Log.d("TAG", "Current data: ${snapshot.data}")
             // Update your UI or perform necessary actions
+
+            val wateringInfo = WateringInfo().fromMap(snapshot.data!!)
+
+            _state.value = _state.value.copy(
+                currentWateringDuration = wateringInfo.getWateringDuration(),
+                currentWateringVolume = wateringInfo.getWateringVolume(),
+            )
+
+            if (wateringInfo.getWateringCommand() == "stop_watering") {
+                stopWatering();
+            }
         } else {
             Log.d("TAG", "Current data: null")
         }

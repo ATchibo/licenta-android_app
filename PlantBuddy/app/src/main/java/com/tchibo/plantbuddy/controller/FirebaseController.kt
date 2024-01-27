@@ -143,20 +143,20 @@ class FirebaseController private constructor(
     fun startWatering(raspberryId: String) {
         db.collection(wateringNowCollectionName)
             .document(raspberryId)
-            .set(
+            .update(
                 hashMapOf(
-                    "command" to "water_now"
-                )
+                    "command" to "start_watering"
+                ) as Map<String, Any>
             )
     }
 
     fun stopWatering(raspberryId: String) {
         db.collection(wateringNowCollectionName)
             .document(raspberryId)
-            .set(
+            .update(
                 hashMapOf(
                     "command" to "stop_watering"
-                )
+                ) as Map<String, Any>
             )
     }
 }
