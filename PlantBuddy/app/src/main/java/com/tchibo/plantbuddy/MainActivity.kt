@@ -79,9 +79,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun initialiseDbs() {
+    private fun initialiseDbs() {
         FirebaseController.initialize(googleAuthClient.getSignedInUser()!!)
-//        LocalDbController.INSTANCE.loadInitialData()
     }
 
     @Composable

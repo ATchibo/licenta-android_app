@@ -5,13 +5,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FormatListNumbered
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +36,7 @@ import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.ui.components.Appbar
+import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
@@ -56,19 +63,7 @@ fun DetailsPage(rpiId: String) {
             modifier = Modifier.padding(paddingValues = paddingValues)
         ) {
             if (state.isRefreshing) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 10.dp, 0.dp, 0.dp),
-                    contentAlignment = androidx.compose.ui.Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.loading),
-                        fontSize = TEXT_SIZE_NORMAL,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White,
-                    )
-                }
+                ProgressIndicator()
             } else {
 
                 Text(
@@ -95,13 +90,104 @@ fun DetailsPage(rpiId: String) {
                     },
                 )
 
+                Text(
+                    text = stringResource(id = R.string.moisture_history),
+                    modifier = Modifier
+                        .padding(10.dp, 10.dp)
+                        .fillMaxWidth(),
+                    fontSize = TEXT_SIZE_NORMAL,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                )
+
                 Box(
                     modifier = Modifier
                         .padding(10.dp)
                 ) {
-                    HumidityGraph(
-                        state = state
+                    if (state.isGraphRefreshing) {
+                        ProgressIndicator()
+                    } else {
+                        HumidityGraph(
+                            state = state
+                        )
+                    }
+                }
+
+                Column (
+                    modifier = Modifier
+                        .padding(10.dp, 10.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // TODO: actual update hour
+                    Text(
+                        text = stringResource(
+                            id = R.string.last_update,
+                            state.lastUpdatedTime.value
+                        ),
+                        modifier = Modifier
+                            .padding(0.dp, 10.dp, 0.dp, 10.dp),
+                        fontSize = TEXT_SIZE_SMALL,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
                     )
+
+                    Button(onClick = { viewModel.updateHumidityValuesList() }) {
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(imageVector = Icons.Default.Refresh, contentDescription = null)
+                            Text(
+                                text = stringResource(id = R.string.update),
+                                fontSize = TEXT_SIZE_SMALL,
+                            )
+                        }
+                    }
+
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(0.dp, 0.dp, 10.dp, 0.dp),
+                            text = stringResource(id = R.string.change_period),
+                        )
+
+                        Column {
+                            Button(
+                                onClick = {
+                                    viewModel.toggleHumidityDropdown()
+                                }
+                            ) {
+                                Text(
+                                    text = viewModel.getCurrentHumidityDropdownOption()
+                                )
+                            }
+
+                            DropdownMenu(
+                                expanded = state.isHumidityDropdownExpanded.value,
+                                onDismissRequest = {
+                                    viewModel.closeHumidityDropdown()
+                                }
+                            ) {
+
+                                state.humidityDropdownOptions.forEachIndexed { index, s ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = s,
+                                                fontSize = TEXT_SIZE_SMALL,
+                                            )
+                                        },
+                                        onClick = {
+                                            viewModel.onHumidityDropdownOptionSelected(index)
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -115,13 +201,11 @@ fun DetailsPage(rpiId: String) {
                                 onClick = { viewModel.goToWateringOptions() }
                             ) {
                                 Row (
-                                    modifier = Modifier
-                                        .padding(0.dp, 0.dp, 0.dp, 0.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(imageVector = Icons.Default.WaterDrop, contentDescription = null)
                                     Text(
-                                        text = "Watering options",
+                                        text = stringResource(id = R.string.watering_options),
                                         fontSize = TEXT_SIZE_SMALL,
                                     )
                                 }
@@ -131,47 +215,74 @@ fun DetailsPage(rpiId: String) {
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.goToWateringOptions() }
                             ) {
-                                Text(text = "Action 2")
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(imageVector = Icons.Default.FormatListNumbered, contentDescription = null)
+                                    Text(
+                                        text = stringResource(id = R.string.view_logs),
+                                        fontSize = TEXT_SIZE_SMALL,
+                                    )
+                                }
                             }
                         }
 
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.goToWateringOptions() }
                             ) {
-                                Text(text = "Action 3")
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(imageVector = Icons.Default.WaterDrop, contentDescription = null)
+                                    Text(
+                                        text = stringResource(id = R.string.watering_options),
+                                        fontSize = TEXT_SIZE_SMALL,
+                                    )
+                                }
                             }
                         }
 
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.goToWateringOptions() }
                             ) {
-                                Text(text = "Action 4")
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+                                    Text(
+                                        text = stringResource(id = R.string.device_settings),
+                                        fontSize = TEXT_SIZE_SMALL,
+                                    )
+                                }
                             }
                         }
                     }
                 )
 
-                Button(
-                    modifier = Modifier
-                        .padding(10.dp, 15.dp, 10.dp, 30.dp)
-                        .fillMaxWidth(),
-                    colors = buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    ),
-                    onClick = { /*TODO*/ }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.unlink_device),
-                        fontSize = TEXT_SIZE_SMALL,
-                    )
-                }
+                Spacer(modifier = Modifier.height(20.dp))
+
+
+//                Button(
+//                    modifier = Modifier
+//                        .padding(10.dp, 15.dp, 10.dp, 30.dp)
+//                        .fillMaxWidth(),
+//                    colors = buttonColors(
+//                        containerColor = MaterialTheme.colorScheme.error,
+//                        contentColor = MaterialTheme.colorScheme.onError
+//                    ),
+//                    onClick = { /*TODO*/ }
+//                ) {
+//                    Text(
+//                        text = stringResource(id = R.string.unlink_device),
+//                        fontSize = TEXT_SIZE_SMALL,
+//                    )
+//                }
             }
         }
     }

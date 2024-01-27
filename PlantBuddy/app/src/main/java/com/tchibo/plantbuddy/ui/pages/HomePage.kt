@@ -35,6 +35,7 @@ import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.ui.components.Appbar
+import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
@@ -92,7 +93,7 @@ fun HomePage(
                 Text(
                     text = stringResource(
                         id = R.string.main_screen_title,
-                        userData.username // temp
+                        userData.username
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -113,14 +114,14 @@ fun HomePage(
                 )
 
                 if (state.isRefreshing) {
-                    Text(
-                        text = stringResource(id = R.string.loading),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp, 0.dp),
-                        fontSize = TEXT_SIZE_NORMAL,
-                        color = Color.White,
-                    )
+//                    Box(modifier = Modifier.padding(20.dp)) {
+//                        CircularProgressIndicator(
+//                            modifier = Modifier.width(32.dp),
+//                            color = MaterialTheme.colorScheme.secondary,
+//                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+//                        )
+//                    }
+                    ProgressIndicator()
                 } else {
                     if (state.raspberryDtoList.isEmpty()) {
                         Text(
