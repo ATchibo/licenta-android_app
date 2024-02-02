@@ -22,6 +22,7 @@ import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.domain.WateringInfo
+import com.tchibo.plantbuddy.domain.WateringProgram
 import kotlinx.coroutines.launch
 
 
@@ -31,6 +32,10 @@ data class WateringOptionsState(
     val isWatering: Boolean = false,
     val currentWateringVolume: String = "0",
     val currentWateringDuration: String = "0",
+
+    val wateringPrograms: List<WateringProgram> = mutableListOf(),
+    var currentWateringProgramOptionIndex: Int = -1,
+    var isWateringProgramsEnabled: Boolean = true,
 )
 
 class WateringOptionsViewModel (
@@ -60,11 +65,16 @@ class WateringOptionsViewModel (
                 },
             )
 
+            val wateringPrograms = FirebaseController.INSTANCE.getWateringPrograms(raspberryId)
+
             _state.value = _state.value.copy(
                 isRefreshing = false,
                 screenInfo = screenInfo,
                 currentWateringDuration = "0",
                 currentWateringVolume = "0",
+                wateringPrograms = wateringPrograms,
+                currentWateringProgramOptionIndex = -1,
+                isWateringProgramsEnabled = true,
             )
         }
     }
@@ -163,5 +173,27 @@ class WateringOptionsViewModel (
         } else {
             Icons.Filled.PlayArrow
         }
+    }
+
+    fun onWateringProgramOptionSelected(index: Int) {
+        _state.value = _state.value.copy(
+            currentWateringProgramOptionIndex = index,
+        )
+    }
+
+    fun toggleEnabledWateringPrograms() {
+        _state.value = _state.value.copy(
+            isWateringProgramsEnabled = !_state.value.isWateringProgramsEnabled,
+        )
+    }
+
+    @Composable
+    fun getCurrentWateringProgramName(): String {
+        if (state.value.currentWateringProgramOptionIndex == -1) {
+            return stringResource(id = R.string.no_watering_program)
+        }
+        return state.value.wateringPrograms[
+            state.value.currentWateringProgramOptionIndex
+        ].getName()
     }
 }

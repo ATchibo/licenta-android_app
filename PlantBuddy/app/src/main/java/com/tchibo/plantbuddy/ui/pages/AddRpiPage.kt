@@ -35,7 +35,7 @@ import com.tchibo.plantbuddy.ui.components.addpage.BulletpointText
 import com.tchibo.plantbuddy.ui.components.addpage.QrScanner
 import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.utils.Routes
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.domain.UserData
 
@@ -67,7 +67,7 @@ fun AddRpiPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 40.dp),
-            fontSize = TEXT_SIZE_BIG
+            fontSize = TEXT_SIZE_UGE
         )
 
         QrScanner(

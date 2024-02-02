@@ -12,6 +12,7 @@ import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.UserData
+import com.tchibo.plantbuddy.domain.WateringProgram
 import kotlinx.coroutines.tasks.await
 import kotlin.reflect.KFunction2
 
@@ -23,6 +24,8 @@ class FirebaseController private constructor(
     private val raspberryInfoCollectionName = "raspberry_info"
     private val moistureInfoCollectionName = "humidity_readings"
     private val wateringNowCollectionName = "watering_info"
+    private val wateringProgramsCollectionName = "watering_programs"
+    private val globalWateringProgramsCollectionName = "global_watering_programs"
 
     companion object {
         private lateinit var userData: UserData
@@ -158,5 +161,23 @@ class FirebaseController private constructor(
                     "command" to "stop_watering"
                 ) as Map<String, Any>
             )
+    }
+
+
+    suspend fun getWateringPrograms(raspberryId: String): List<WateringProgram> {
+        val wateringPrograms = db.collection(wateringProgramsCollectionName)
+            .whereEqualTo("raspberryId", raspberryId)
+            .get()
+            .await()
+            .toObjects(WateringProgram::class.java)
+
+        val globalWateringPrograms = db.collection(globalWateringProgramsCollectionName)
+            .get()
+            .await()
+            .toObjects(WateringProgram::class.java)
+
+        wateringPrograms.addAll(globalWateringPrograms)
+
+        return wateringPrograms
     }
 }

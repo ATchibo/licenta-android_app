@@ -39,7 +39,7 @@ import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
 
@@ -71,7 +71,7 @@ fun DetailsPage(rpiId: String) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(30.dp, 10.dp, 0.dp, 0.dp),
-                    fontSize = TEXT_SIZE_BIG,
+                    fontSize = TEXT_SIZE_UGE,
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
                 )

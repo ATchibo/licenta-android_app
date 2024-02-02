@@ -40,7 +40,7 @@ import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
 import com.tchibo.plantbuddy.ui.viewmodels.HomePageViewModel
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -98,7 +98,7 @@ fun HomePage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp),
-                    fontSize = TEXT_SIZE_BIG,
+                    fontSize = TEXT_SIZE_UGE,
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
                 )

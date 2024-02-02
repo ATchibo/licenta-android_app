@@ -52,4 +52,10 @@
     <string name="start_watering">Start watering</string>
     <string name="last_update">Last update: %s</string>
     <string name="current_watering_stats">Water amount: %sL\nTime running: %ss</string>
+
+<!-- Watering screen -->
+    <string name="no_watering_program">No watering program selected</string>
+    <string name="enable_watering_presets">Use presets</string>
+    <string name="active_watering_preset">Active:</string>
+
 </resources>

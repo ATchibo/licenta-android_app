@@ -4,17 +4,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -31,10 +36,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.ui.components.Appbar
+import com.tchibo.plantbuddy.ui.components.wateringpage.WateringProgramLine
 import com.tchibo.plantbuddy.ui.viewmodels.WateringOptionsViewModel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
 @Composable
 fun WateringOptionsPage (
@@ -85,7 +92,7 @@ fun WateringOptionsPage (
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(30.dp, 10.dp, 30.dp, 0.dp),
-                    fontSize = TEXT_SIZE_BIG,
+                    fontSize = TEXT_SIZE_UGE,
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
                 )
@@ -111,7 +118,7 @@ fun WateringOptionsPage (
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(0.dp, 0.dp, 0.dp, 20.dp),
-                        fontSize = TEXT_SIZE_NORMAL,
+                        fontSize = TEXT_SIZE_BIG,
                         fontWeight = FontWeight.Medium,
                     )
 
@@ -159,59 +166,100 @@ fun WateringOptionsPage (
                         text = stringResource(id = R.string.watering_presets),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp, 0.dp, 0.dp, 20.dp),
-                        fontSize = TEXT_SIZE_NORMAL,
+                            .padding(0.dp, 0.dp, 0.dp, 20.dp)
+                            .weight(0.1f),
+                        fontSize = TEXT_SIZE_BIG,
                         fontWeight = FontWeight.Medium,
                     )
 
-                    Column {
-                        Button(
-                            onClick = {
-                                // viewModel.toggleHumidityDropdown()
-                            }
-                        ) {
-                            Text(
-                                text = "v"
-//                                text = viewModel.getCurrentHumidityDropdownOption()
-                            )
-                        }
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .wrapContentHeight(align = Alignment.CenterVertically),
+                            text = stringResource(id = R.string.enable_watering_presets),
+                            fontSize = TEXT_SIZE_NORMAL,
+                        )
 
-//                        DropdownMenu(
-//                            expanded = state.isHumidityDropdownExpanded.value,
-//                            onDismissRequest = {
-//                                viewModel.closeHumidityDropdown()
-//                            }
-//                        ) {
-//
-//                            state.humidityDropdownOptions.forEachIndexed { index, s ->
-//                                DropdownMenuItem(
-//                                    text = {
-//                                        Text(
-//                                            text = s,
-//                                            fontSize = TEXT_SIZE_SMALL,
-//                                        )
-//                                    },
-//                                    onClick = {
-//                                        viewModel.onHumidityDropdownOptionSelected(index)
-//                                    }
-//                                )
-//                            }
-//                        }
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Switch(
+                            checked = state.isWateringProgramsEnabled,
+                            onCheckedChange = { viewModel.toggleEnabledWateringPrograms() },
+                        )
                     }
 
-                    Button(onClick = {  }, modifier = Modifier.fillMaxWidth()) {
-                        Row (
+                    if (state.isWateringProgramsEnabled) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.1f),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = null)
                             Text(
-                                text = stringResource(id = R.string.add_watering_preset),
-                                fontSize = TEXT_SIZE_SMALL,
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .wrapContentHeight(align = Alignment.CenterVertically),
+                                text = stringResource(id = R.string.active_watering_preset),
+                                fontSize = TEXT_SIZE_NORMAL,
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .wrapContentHeight(align = Alignment.CenterVertically),
+                                text = viewModel.getCurrentWateringProgramName(),
+                                fontSize = TEXT_SIZE_NORMAL,
+                                fontWeight = FontWeight.Medium,
                             )
                         }
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.5f),
+                            content = {
+                                items(state.wateringPrograms.size) { index ->
+                                    val wateringProgram = state.wateringPrograms[index]
+                                    WateringProgramLine(wateringProgram = wateringProgram)
+
+                                    if (index < state.wateringPrograms.size - 1)
+                                        Divider(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            thickness = 1.dp
+                                        )
+                                }
+                            }
+                        )
+
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            onClick = { }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                                Text(
+                                    text = stringResource(id = R.string.add_watering_preset),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.weight(0.7f))
                     }
                 }
             }
         }
     }
 }
+
