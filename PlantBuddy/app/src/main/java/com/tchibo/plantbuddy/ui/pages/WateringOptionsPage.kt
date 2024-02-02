@@ -2,7 +2,6 @@
 
 package com.tchibo.plantbuddy.ui.pages
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -73,107 +74,132 @@ fun WateringOptionsPage (
     val state = viewModel.state.value
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isRefreshing,
-        onRefresh = { viewModel.reloadWateringPrograms() }
+        onRefresh = viewModel::reloadWateringPrograms
     )
 
     Scaffold (
         topBar = { Appbar(screenInfo = state.screenInfo) },
     ) { paddingValues ->
-        Box (
+        Column (
             modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
                 .padding(paddingValues = paddingValues)
                 .pullRefresh(pullRefreshState)
         ) {
-            Column {
-                if (!state.isRefreshing) {
+            Text(
+                text = stringResource(id = R.string.watering_options),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp, 10.dp, 30.dp, 0.dp),
+                fontSize = TEXT_SIZE_UGE,
+                fontWeight = FontWeight.Medium,
+                color = Color.White,
+            )
+
+            Text(
+                text = stringResource(id = R.string.watering_options_description),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp, 10.dp, 30.dp, 40.dp),
+                fontSize = TEXT_SIZE_SMALL,
+                color = Color.White,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            if (!state.isRefreshing) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 10.dp)
+                        .verticalScroll(rememberScrollState()),
+                ) {
                     Text(
-                        text = stringResource(id = R.string.watering_options),
+                        text = stringResource(id = R.string.manual_watering),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(30.dp, 10.dp, 30.dp, 0.dp),
-                        fontSize = TEXT_SIZE_UGE,
+                            .padding(0.dp, 0.dp, 0.dp, 20.dp),
+                        fontSize = TEXT_SIZE_BIG,
                         fontWeight = FontWeight.Medium,
-                        color = Color.White,
                     )
+
+                    Button(
+                        onClick = { viewModel.toggleWatering() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = viewModel.getWateringButtonColor(),
+                            contentColor = viewModel.getWateringButtonTextColor(),
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = viewModel.getWateringButtonIcon(),
+                                contentDescription = null
+                            )
+                            Text(
+                                text = viewModel.getWateringButtonText(),
+                                fontSize = TEXT_SIZE_SMALL,
+                            )
+                        }
+                    }
 
                     Text(
-                        text = stringResource(id = R.string.watering_options_description),
+                        text = stringResource(
+                            id = R.string.current_watering_stats,
+                            state.currentWateringVolume,
+                            state.currentWateringDuration,
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(30.dp, 10.dp, 30.dp, 40.dp),
-                        fontSize = TEXT_SIZE_SMALL,
-                        color = Color.White,
+                            .padding(0.dp, 10.dp, 0.dp, 10.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = TEXT_SIZE_NORMAL,
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 20.dp, 10.dp, 40.dp),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.watering_presets),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 0.dp, 0.dp, 20.dp)
+                            .weight(0.1f),
+                        fontSize = TEXT_SIZE_BIG,
+                        fontWeight = FontWeight.Medium,
                     )
 
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Column(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp, 10.dp),
+                            .weight(0.1f),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = stringResource(id = R.string.manual_watering),
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(0.dp, 0.dp, 0.dp, 20.dp),
-                            fontSize = TEXT_SIZE_BIG,
-                            fontWeight = FontWeight.Medium,
+                                .fillMaxHeight()
+                                .wrapContentHeight(align = Alignment.CenterVertically),
+                            text = stringResource(id = R.string.enable_watering_presets),
+                            fontSize = TEXT_SIZE_NORMAL,
                         )
 
-                        Button(
-                            onClick = { viewModel.toggleWatering() },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = viewModel.getWateringButtonColor(),
-                                contentColor = viewModel.getWateringButtonTextColor(),
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = viewModel.getWateringButtonIcon(),
-                                    contentDescription = null
-                                )
-                                Text(
-                                    text = viewModel.getWateringButtonText(),
-                                    fontSize = TEXT_SIZE_SMALL,
-                                )
-                            }
-                        }
+                        Spacer(modifier = Modifier.weight(1f))
 
-                        Text(
-                            text = stringResource(
-                                id = R.string.current_watering_stats,
-                                state.currentWateringVolume,
-                                state.currentWateringDuration,
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(0.dp, 10.dp, 0.dp, 10.dp),
-                            textAlign = TextAlign.Center,
-                            fontSize = TEXT_SIZE_NORMAL,
-                            fontWeight = FontWeight.Normal,
+                        Switch(
+                            checked = state.isWateringProgramsEnabled,
+                            onCheckedChange = { viewModel.toggleEnabledWateringPrograms() },
                         )
                     }
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp, 20.dp, 10.dp, 40.dp),
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.watering_presets),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(0.dp, 0.dp, 0.dp, 20.dp)
-                                .weight(0.1f),
-                            fontSize = TEXT_SIZE_BIG,
-                            fontWeight = FontWeight.Medium,
-                        )
-
+                    if (state.isWateringProgramsEnabled) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -184,131 +210,107 @@ fun WateringOptionsPage (
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .wrapContentHeight(align = Alignment.CenterVertically),
-                                text = stringResource(id = R.string.enable_watering_presets),
+                                text = stringResource(id = R.string.active_watering_preset),
                                 fontSize = TEXT_SIZE_NORMAL,
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
 
-                            Switch(
-                                checked = state.isWateringProgramsEnabled,
-                                onCheckedChange = { viewModel.toggleEnabledWateringPrograms() },
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .wrapContentHeight(align = Alignment.CenterVertically),
+                                text = viewModel.getCurrentWateringProgramName(),
+                                fontSize = TEXT_SIZE_NORMAL,
+                                fontWeight = FontWeight.Medium,
                             )
                         }
 
-                        if (state.isWateringProgramsEnabled) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(0.1f),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .wrapContentHeight(align = Alignment.CenterVertically),
-                                    text = stringResource(id = R.string.active_watering_preset),
-                                    fontSize = TEXT_SIZE_NORMAL,
-                                )
-
-                                Spacer(modifier = Modifier.weight(1f))
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .wrapContentHeight(align = Alignment.CenterVertically),
-                                    text = viewModel.getCurrentWateringProgramName(),
-                                    fontSize = TEXT_SIZE_NORMAL,
-                                    fontWeight = FontWeight.Medium,
-                                )
-                            }
-
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(0.5f),
-                                content = {
-                                    items(state.wateringPrograms.size) { index ->
-                                        val wateringProgram = state.wateringPrograms[index]
-                                        WateringProgramLine(
-                                            index = index,
-                                            wateringProgram = wateringProgram,
-                                            onTap = viewModel::onWateringProgramTap,
-                                            onEdit = { }
-                                        )
-
-                                        if (index < state.wateringPrograms.size - 1)
-                                            Divider(
-                                                color = MaterialTheme.colorScheme.primary,
-                                                thickness = 1.dp
-                                            )
-                                    }
-                                }
-                            )
-
-                            Button(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                onClick = { }
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                                    Text(
-                                        text = stringResource(id = R.string.add_watering_preset),
-                                        fontSize = TEXT_SIZE_SMALL,
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.5f),
+                            content = {
+                                items(state.wateringPrograms.size) { index ->
+                                    val wateringProgram = state.wateringPrograms[index]
+                                    WateringProgramLine(
+                                        index = index,
+                                        wateringProgram = wateringProgram,
+                                        onTap = viewModel::onWateringProgramTap,
+                                        onEdit = { }
                                     )
-                                }
-                            }
-                        } else {
-                            Spacer(modifier = Modifier.weight(0.7f))
-                        }
-                    }
 
-                    if (state.isWateringProgramInfoPopupOpen) {
-                        AlertDialog(
-                            onDismissRequest = {
-                                viewModel.closeWateringProgramInfoPopup()
-                            },
-                            title = {
-                                Text(
-                                    text = viewModel.getPreviewWateringProgramName(),
-                                    fontSize = TEXT_SIZE_NORMAL,
-                                )
-                            },
-                            text = {
-                                Text(
-                                    text = stringResource(
-                                        id = R.string.watering_program_description,
-                                        viewModel.getPreviewWateringProgramFrequencyDays(),
-                                        viewModel.getPreviewWateringProgramTimeOfDay(),
-                                        viewModel.getPreviewWateringProgramQuantityL(),
-                                    ),
-                                    fontSize = TEXT_SIZE_SMALL,
-                                )
-                            },
-                            dismissButton = {
-                                Button(
-                                    onClick = {
-                                        viewModel.closeWateringProgramInfoPopup()
-                                    }
-                                ) {
-                                    Text(text = stringResource(id = R.string.cancel))
-                                }
-                            },
-                            confirmButton = {
-                                Button(
-                                    onClick = {
-                                        viewModel.selectWateringOption(state.previewWateringOptionIndex)
-                                        viewModel.closeWateringProgramInfoPopup()
-                                    }
-                                ) {
-                                    Text(text = stringResource(id = R.string.set_program))
+                                    if (index < state.wateringPrograms.size - 1)
+                                        Divider(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            thickness = 1.dp
+                                        )
                                 }
                             }
                         )
+
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            onClick = { }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                                Text(
+                                    text = stringResource(id = R.string.add_watering_preset),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.weight(0.7f))
                     }
+                }
+
+                if (state.isWateringProgramInfoPopupOpen) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            viewModel.closeWateringProgramInfoPopup()
+                        },
+                        title = {
+                            Text(
+                                text = viewModel.getPreviewWateringProgramName(),
+                                fontSize = TEXT_SIZE_NORMAL,
+                            )
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(
+                                    id = R.string.watering_program_description,
+                                    viewModel.getPreviewWateringProgramFrequencyDays(),
+                                    viewModel.getPreviewWateringProgramTimeOfDay(),
+                                    viewModel.getPreviewWateringProgramQuantityL(),
+                                ),
+                                fontSize = TEXT_SIZE_SMALL,
+                            )
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = {
+                                    viewModel.closeWateringProgramInfoPopup()
+                                }
+                            ) {
+                                Text(text = stringResource(id = R.string.cancel))
+                            }
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    viewModel.selectWateringOption(state.previewWateringOptionIndex)
+                                    viewModel.closeWateringProgramInfoPopup()
+                                }
+                            ) {
+                                Text(text = stringResource(id = R.string.set_program))
+                            }
+                        }
+                    )
                 }
             }
         }
