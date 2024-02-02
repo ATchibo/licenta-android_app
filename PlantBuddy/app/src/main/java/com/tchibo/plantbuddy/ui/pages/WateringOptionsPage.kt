@@ -99,7 +99,6 @@ fun WateringOptionsPage (
                     color = Color.White,
                 )
 
-
                 Spacer(modifier = Modifier.weight(1f))
 
                 Column (

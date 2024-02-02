@@ -100,6 +100,8 @@ class WateringOptionsViewModel (
 
             if (wateringInfo.getWateringCommand() == "stop_watering") {
                 stopWatering();
+            } else if (wateringInfo.getWateringCommand() == "start_watering") {
+                startWatering();
             }
         } else {
             Log.d("TAG", "Current data: null")
