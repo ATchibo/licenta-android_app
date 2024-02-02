@@ -36,6 +36,8 @@ data class WateringOptionsState(
     val wateringPrograms: List<WateringProgram> = mutableListOf(),
     var currentWateringProgramOptionIndex: Int = -1,
     var isWateringProgramsEnabled: Boolean = true,
+    var isWateringProgramInfoPopupOpen: Boolean = false,
+    var previewWateringOptionIndex: Int = -1,
 )
 
 class WateringOptionsViewModel (
@@ -75,6 +77,8 @@ class WateringOptionsViewModel (
                 wateringPrograms = wateringPrograms,
                 currentWateringProgramOptionIndex = -1,
                 isWateringProgramsEnabled = true,
+                isWateringProgramInfoPopupOpen = false,
+                previewWateringOptionIndex = -1,
             )
         }
     }
@@ -175,8 +179,9 @@ class WateringOptionsViewModel (
         }
     }
 
-    fun onWateringProgramOptionSelected(index: Int) {
+    fun selectWateringOption(index: Int) {
         _state.value = _state.value.copy(
+            previewWateringOptionIndex = -1,
             currentWateringProgramOptionIndex = index,
         )
     }
@@ -195,5 +200,88 @@ class WateringOptionsViewModel (
         return state.value.wateringPrograms[
             state.value.currentWateringProgramOptionIndex
         ].getName()
+    }
+
+    fun onWateringProgramTap(index: Int) {
+        Log.d("INDEX", "onWateringProgramTap: $index")
+        _state.value = _state.value.copy(
+            isWateringProgramInfoPopupOpen = true,
+            previewWateringOptionIndex = index,
+        )
+    }
+
+    fun closeWateringProgramInfoPopup() {
+        _state.value = _state.value.copy(
+            isWateringProgramInfoPopupOpen = false,
+            previewWateringOptionIndex = -1,
+        )
+    }
+
+    fun getPreviewWateringProgramName(): String {
+        if (state.value.previewWateringOptionIndex == -1) {
+            return ""
+        }
+        return state.value.wateringPrograms[
+            state.value.previewWateringOptionIndex
+        ].getName()
+    }
+
+    fun getPreviewWateringProgramFrequencyDays(): Int {
+        Log.d("INDEX", "getPreviewWateringProgramFrequencyDays: ${state.value.previewWateringOptionIndex}")
+        Log.d("INDEX", "program: ${state.value.wateringPrograms[
+            state.value.previewWateringOptionIndex
+        ]}")
+
+        if (state.value.previewWateringOptionIndex == -1) {
+            return 0
+        }
+        return state.value.wateringPrograms[
+            state.value.previewWateringOptionIndex
+        ].getFrequencyDays()
+    }
+
+    fun getPreviewWateringProgramQuantityL(): Float {
+        if (state.value.previewWateringOptionIndex == -1) {
+            return 0.0f
+        }
+        return state.value.wateringPrograms[
+            state.value.previewWateringOptionIndex
+        ].getQuantityL()
+    }
+
+    fun getPreviewWateringProgramTimeOfDayMin(): Int {
+        if (state.value.previewWateringOptionIndex == -1) {
+            return 0
+        }
+        return state.value.wateringPrograms[
+            state.value.previewWateringOptionIndex
+        ].getTimeOfDayMin()
+    }
+
+    fun getPreviewWateringProgramTimeOfDay(): String {
+        if (state.value.previewWateringOptionIndex == -1) {
+            return ""
+        }
+        val timeOfDayMin = state.value.wateringPrograms[
+            state.value.previewWateringOptionIndex
+        ].getTimeOfDayMin()
+        val hours = timeOfDayMin / 60
+        val minutes = timeOfDayMin % 60
+        return String.format("%02d:%02d", hours, minutes)
+    }
+
+    fun reloadWateringPrograms() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(
+                isRefreshing = true,
+            )
+
+            val wateringPrograms = FirebaseController.INSTANCE.getWateringPrograms(raspberryId)
+
+            _state.value = _state.value.copy(
+                isRefreshing = false,
+                wateringPrograms = wateringPrograms,
+            )
+        }
     }
 }

@@ -40,8 +40,8 @@ import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
 import com.tchibo.plantbuddy.ui.viewmodels.HomePageViewModel
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -114,13 +114,6 @@ fun HomePage(
                 )
 
                 if (state.isRefreshing) {
-//                    Box(modifier = Modifier.padding(20.dp)) {
-//                        CircularProgressIndicator(
-//                            modifier = Modifier.width(32.dp),
-//                            color = MaterialTheme.colorScheme.secondary,
-//                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-//                        )
-//                    }
                     ProgressIndicator()
                 } else {
                     if (state.raspberryDtoList.isEmpty()) {

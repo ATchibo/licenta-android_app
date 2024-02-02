@@ -57,5 +57,7 @@
     <string name="no_watering_program">No watering program selected</string>
     <string name="enable_watering_presets">Use presets</string>
     <string name="active_watering_preset">Active:</string>
+    <string name="set_program">Set program</string>
+    <string name="watering_program_description"><![CDATA[Frequency: once every %s days\nTime of day: %s\nWater quantity: %s liters]]></string>
 
 </resources>

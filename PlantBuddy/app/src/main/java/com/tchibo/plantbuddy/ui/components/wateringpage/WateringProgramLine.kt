@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.ui.components.wateringpage
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,13 +17,19 @@ import com.tchibo.plantbuddy.domain.WateringProgram
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
 
 @Composable
-fun WateringProgramLine(wateringProgram: WateringProgram) {
+fun WateringProgramLine(
+    index: Int,
+    wateringProgram: WateringProgram,
+    onTap: (Int) -> Unit,
+    onEdit: (Int) -> Unit,
+) {
 
     Row (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(5.dp)
+            .clickable { onTap(index) },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             modifier = Modifier.weight(0.8f),
@@ -32,7 +39,7 @@ fun WateringProgramLine(wateringProgram: WateringProgram) {
 
         IconButton(
             modifier = Modifier.weight(0.2f),
-            onClick = { /*TODO*/ }
+            onClick = { onEdit(index) }
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
