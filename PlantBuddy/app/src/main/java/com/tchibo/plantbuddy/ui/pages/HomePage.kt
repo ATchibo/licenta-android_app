@@ -113,7 +113,7 @@ fun HomePage(
                     color = Color.White,
                 )
 
-                if (state.isRefreshing) {
+                if (state.isRaspberryListLoading) {
                     ProgressIndicator()
                 } else {
                     if (state.raspberryDtoList.isEmpty()) {
@@ -127,6 +127,7 @@ fun HomePage(
                         )
                     } else {
                         LazyVerticalGrid(
+                            modifier = Modifier.fillMaxHeight(),
                             columns = GridCells.Fixed(2),
                             content = {
                                 items(state.raspberryDtoList.size) { index ->

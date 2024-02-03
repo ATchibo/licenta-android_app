@@ -18,7 +18,7 @@ fun ProgressIndicator(width: Int = 32) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp, 10.dp, 0.dp, 0.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
             modifier = Modifier.width(width.dp),

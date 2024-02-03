@@ -32,6 +32,7 @@ data class WateringOptionsState(
     val isWatering: Boolean = false,
     val currentWateringVolume: String = "0",
     val currentWateringDuration: String = "0",
+    var isLoadingInitData: Boolean = false,
 
     val wateringPrograms: List<WateringProgram> = mutableListOf(),
     var currentWateringProgramOptionIndex: Int = -1,
@@ -57,7 +58,7 @@ class WateringOptionsViewModel (
     private fun initLoading() {
         viewModelScope.launch {
             _state.value = _state.value.copy(
-                isRefreshing = true,
+                isLoadingInitData = true,
             )
 
             val screenInfo = ScreenInfo(
@@ -79,7 +80,7 @@ class WateringOptionsViewModel (
             val isWateringProgramsEnabled = FirebaseController.INSTANCE.getIsWateringProgramsActive(raspberryId)
 
             _state.value = _state.value.copy(
-                isRefreshing = false,
+                isLoadingInitData = false,
                 screenInfo = screenInfo,
                 currentWateringDuration = "0",
                 currentWateringVolume = "0",

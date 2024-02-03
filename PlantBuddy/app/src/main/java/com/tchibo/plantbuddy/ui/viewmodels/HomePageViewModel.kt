@@ -17,6 +17,7 @@ data class HomePageState(
     val raspberryDtoList: List<RaspberryInfoDto> = listOf(),
     val screenInfo: ScreenInfo = ScreenInfo(),
     val isRefreshing: Boolean = false,
+    val isRaspberryListLoading: Boolean = false,
 )
 
 class HomePageViewModel(
@@ -33,11 +34,10 @@ class HomePageViewModel(
     private fun initLoading() {
         viewModelScope.launch {
             _state.value = _state.value.copy(
-                isRefreshing = true,
+                isRaspberryListLoading = true,
             )
 
             val raspberryDtoList = RaspberryInfoController.INSTANCE.getRaspberryInfoDtoList()
-            println("Raspberry dto list: $raspberryDtoList")
 
             val screenInfo = ScreenInfo(
                 navigationIcon = Icons.Filled.Settings,
@@ -49,7 +49,7 @@ class HomePageViewModel(
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
                 raspberryDtoList = raspberryDtoList,
-                isRefreshing = false,
+                isRaspberryListLoading = false,
             )
         }
     }
