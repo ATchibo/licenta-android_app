@@ -13,6 +13,7 @@ import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.domain.WateringProgram
+import com.tchibo.plantbuddy.exceptions.DeserializationException
 import kotlinx.coroutines.tasks.await
 import kotlin.reflect.KFunction2
 
@@ -171,7 +172,10 @@ class FirebaseController private constructor(
             .await()
             .documents.map { documentSnapshot ->
                 val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
-                    ?: throw FirebaseFirestoreException("Error deserializing document", FirebaseFirestoreException.Code.ABORTED)
+                    ?: throw DeserializationException(
+                        "Error deserializing watering program document",
+                        FirebaseFirestoreException.Code.ABORTED
+                    )
                 wateringProgram.copy(id = documentSnapshot.id)
             }
             .toMutableList()
@@ -181,7 +185,10 @@ class FirebaseController private constructor(
             .await()
             .documents.map { documentSnapshot ->
                 val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
-                    ?: throw FirebaseFirestoreException("Error deserializing document", FirebaseFirestoreException.Code.ABORTED)
+                    ?: throw DeserializationException(
+                        "Error deserializing watering program document",
+                        FirebaseFirestoreException.Code.ABORTED
+                    )
                 wateringProgram.copy(id = documentSnapshot.id)
             }
 

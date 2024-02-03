@@ -70,8 +70,8 @@ data class WateringProgram (
         return "Frequency: once every $frequencyDays days\n" +
                 "Time of day: $time\n" +
                 "Quantity: $quantityL L\n" +
-                "Moisture range: $minMoisture% - $maxMoisture%\n" +
-                "Id: $id\n"
+                "Moisture range: $minMoisture% - $maxMoisture%"
+//                "Id: $id\n"
     }
 
     override fun toString(): String {
