@@ -275,21 +275,20 @@ fun WateringOptionsPage (
                             viewModel.closeWateringProgramInfoPopup()
                         },
                         title = {
-                            Text(
-                                text = viewModel.getPreviewWateringProgramName(),
-                                fontSize = TEXT_SIZE_NORMAL,
-                            )
+                            viewModel.getPreviewWateringProgram()?.let {
+                                Text(
+                                    text = it.getName(),
+                                    fontSize = TEXT_SIZE_NORMAL,
+                                )
+                            }
                         },
                         text = {
-                            Text(
-                                text = stringResource(
-                                    id = R.string.watering_program_description,
-                                    viewModel.getPreviewWateringProgramFrequencyDays(),
-                                    viewModel.getPreviewWateringProgramTimeOfDay(),
-                                    viewModel.getPreviewWateringProgramQuantityL(),
-                                ),
-                                fontSize = TEXT_SIZE_SMALL,
-                            )
+                            viewModel.getPreviewWateringProgram()?.let {
+                                Text(
+                                    text = it.toStringBody(),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
                         },
                         dismissButton = {
                             Button(

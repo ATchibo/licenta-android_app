@@ -169,12 +169,21 @@ class FirebaseController private constructor(
             .whereEqualTo("raspberryId", raspberryId)
             .get()
             .await()
-            .toObjects(WateringProgram::class.java)
+            .documents.map { documentSnapshot ->
+                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
+                    ?: throw FirebaseFirestoreException("Error deserializing document", FirebaseFirestoreException.Code.ABORTED)
+                wateringProgram.copy(id = documentSnapshot.id)
+            }
+            .toMutableList()
 
         val globalWateringPrograms = db.collection(globalWateringProgramsCollectionName)
             .get()
             .await()
-            .toObjects(WateringProgram::class.java)
+            .documents.map { documentSnapshot ->
+                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
+                    ?: throw FirebaseFirestoreException("Error deserializing document", FirebaseFirestoreException.Code.ABORTED)
+                wateringProgram.copy(id = documentSnapshot.id)
+            }
 
         wateringPrograms.addAll(globalWateringPrograms)
 

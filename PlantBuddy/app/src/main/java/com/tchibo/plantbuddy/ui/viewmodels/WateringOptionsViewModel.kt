@@ -217,57 +217,13 @@ class WateringOptionsViewModel (
         )
     }
 
-    fun getPreviewWateringProgramName(): String {
+    fun getPreviewWateringProgram() : WateringProgram? {
         if (state.value.previewWateringOptionIndex == -1) {
-            return ""
+            return null
         }
         return state.value.wateringPrograms[
             state.value.previewWateringOptionIndex
-        ].getName()
-    }
-
-    fun getPreviewWateringProgramFrequencyDays(): Int {
-        Log.d("INDEX", "getPreviewWateringProgramFrequencyDays: ${state.value.previewWateringOptionIndex}")
-        Log.d("INDEX", "program: ${state.value.wateringPrograms[
-            state.value.previewWateringOptionIndex
-        ]}")
-
-        if (state.value.previewWateringOptionIndex == -1) {
-            return 0
-        }
-        return state.value.wateringPrograms[
-            state.value.previewWateringOptionIndex
-        ].getFrequencyDays()
-    }
-
-    fun getPreviewWateringProgramQuantityL(): Float {
-        if (state.value.previewWateringOptionIndex == -1) {
-            return 0.0f
-        }
-        return state.value.wateringPrograms[
-            state.value.previewWateringOptionIndex
-        ].getQuantityL()
-    }
-
-    fun getPreviewWateringProgramTimeOfDayMin(): Int {
-        if (state.value.previewWateringOptionIndex == -1) {
-            return 0
-        }
-        return state.value.wateringPrograms[
-            state.value.previewWateringOptionIndex
-        ].getTimeOfDayMin()
-    }
-
-    fun getPreviewWateringProgramTimeOfDay(): String {
-        if (state.value.previewWateringOptionIndex == -1) {
-            return ""
-        }
-        val timeOfDayMin = state.value.wateringPrograms[
-            state.value.previewWateringOptionIndex
-        ].getTimeOfDayMin()
-        val hours = timeOfDayMin / 60
-        val minutes = timeOfDayMin % 60
-        return String.format("%02d:%02d", hours, minutes)
+        ]
     }
 
     fun reloadWateringPrograms() {
