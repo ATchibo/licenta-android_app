@@ -217,4 +217,24 @@ class FirebaseController private constructor(
                 ) as Map<String, Any>
             )
     }
+
+    suspend fun getIsWateringProgramsActive(raspberryId: String): Boolean {
+        return db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .get()
+            .await()
+            .get("wateringProgramsEnabled")
+            .toString()
+            .toBoolean()
+    }
+
+    fun setIsWateringProgramsActive(raspberryId: String, isActive: Boolean) {
+        db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "wateringProgramsEnabled" to isActive
+                ) as Map<String, Any>
+            )
+    }
 }

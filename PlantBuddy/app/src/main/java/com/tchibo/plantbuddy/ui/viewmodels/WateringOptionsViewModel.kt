@@ -76,6 +76,7 @@ class WateringOptionsViewModel (
                     break
                 }
             }
+            val isWateringProgramsEnabled = FirebaseController.INSTANCE.getIsWateringProgramsActive(raspberryId)
 
             _state.value = _state.value.copy(
                 isRefreshing = false,
@@ -84,7 +85,7 @@ class WateringOptionsViewModel (
                 currentWateringVolume = "0",
                 wateringPrograms = wateringPrograms,
                 currentWateringProgramOptionIndex = activeWateringProgramIndex,
-                isWateringProgramsEnabled = true,
+                isWateringProgramsEnabled = isWateringProgramsEnabled,
                 isWateringProgramInfoPopupOpen = false,
                 previewWateringOptionIndex = -1,
             )
@@ -198,6 +199,10 @@ class WateringOptionsViewModel (
     }
 
     fun toggleEnabledWateringPrograms() {
+        FirebaseController.INSTANCE.setIsWateringProgramsActive(
+            raspberryId,
+            !_state.value.isWateringProgramsEnabled
+        )
         _state.value = _state.value.copy(
             isWateringProgramsEnabled = !_state.value.isWateringProgramsEnabled,
         )
