@@ -26,6 +26,7 @@ class FirebaseController private constructor(
     private val moistureInfoCollectionName = "humidity_readings"
     private val wateringNowCollectionName = "watering_info"
     private val wateringProgramsCollectionName = "watering_programs"
+    private val wateringProgramsCollectionNestedCollectionName = "programs"
     private val globalWateringProgramsCollectionName = "global_watering_programs"
 
     companion object {
@@ -167,7 +168,8 @@ class FirebaseController private constructor(
 
     suspend fun getWateringPrograms(raspberryId: String): List<WateringProgram> {
         val wateringPrograms = db.collection(wateringProgramsCollectionName)
-            .whereEqualTo("raspberryId", raspberryId)
+            .document(raspberryId)
+            .collection(wateringProgramsCollectionNestedCollectionName)
             .get()
             .await()
             .documents.map { documentSnapshot ->
@@ -195,5 +197,24 @@ class FirebaseController private constructor(
         wateringPrograms.addAll(globalWateringPrograms)
 
         return wateringPrograms
+    }
+
+    suspend fun getActiveWateringProgramId(raspberryId: String): String {
+        return db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .get()
+            .await()
+            .get("activeProgramId")
+            .toString()
+    }
+
+    fun setActiveWateringProgramId(raspberryId: String, programId: String) {
+        db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "activeProgramId" to programId
+                ) as Map<String, Any>
+            )
     }
 }

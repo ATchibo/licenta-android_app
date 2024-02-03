@@ -68,6 +68,14 @@ class WateringOptionsViewModel (
             )
 
             val wateringPrograms = FirebaseController.INSTANCE.getWateringPrograms(raspberryId)
+            val activeWateringProgramId = FirebaseController.INSTANCE.getActiveWateringProgramId(raspberryId)
+            var activeWateringProgramIndex = -1
+            for (program in wateringPrograms) {
+                if (program.getId() == activeWateringProgramId) {
+                    activeWateringProgramIndex = wateringPrograms.indexOf(program)
+                    break
+                }
+            }
 
             _state.value = _state.value.copy(
                 isRefreshing = false,
@@ -75,7 +83,7 @@ class WateringOptionsViewModel (
                 currentWateringDuration = "0",
                 currentWateringVolume = "0",
                 wateringPrograms = wateringPrograms,
-                currentWateringProgramOptionIndex = -1,
+                currentWateringProgramOptionIndex = activeWateringProgramIndex,
                 isWateringProgramsEnabled = true,
                 isWateringProgramInfoPopupOpen = false,
                 previewWateringOptionIndex = -1,
@@ -180,8 +188,11 @@ class WateringOptionsViewModel (
     }
 
     fun selectWateringOption(index: Int) {
+        FirebaseController.INSTANCE.setActiveWateringProgramId(
+            raspberryId,
+            state.value.wateringPrograms[index].getId()
+        )
         _state.value = _state.value.copy(
-            previewWateringOptionIndex = -1,
             currentWateringProgramOptionIndex = index,
         )
     }
@@ -203,7 +214,6 @@ class WateringOptionsViewModel (
     }
 
     fun onWateringProgramTap(index: Int) {
-        Log.d("INDEX", "onWateringProgramTap: $index")
         _state.value = _state.value.copy(
             isWateringProgramInfoPopupOpen = true,
             previewWateringOptionIndex = index,
