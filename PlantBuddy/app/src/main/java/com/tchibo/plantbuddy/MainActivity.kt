@@ -204,7 +204,7 @@ class MainActivity : ComponentActivity() {
                 val rpiId = it.arguments?.getString("id")
                 WateringOptionsPage(raspberryPiId = rpiId.orEmpty())
             }
-            composable(Routes.getNavigateAddProgram()) {
+            composable(Routes.getNavigateAddProgramRaw()) {
                 val rpiId = it.arguments?.getString("id").orEmpty()
                 AddProgramPage(raspberryId = rpiId)
             }

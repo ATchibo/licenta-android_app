@@ -1,10 +1,12 @@
 package com.tchibo.plantbuddy.ui.viewmodels
 
+import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.domain.WateringProgram
 import java.util.Calendar
@@ -183,7 +185,32 @@ class ProgramViewModel (
     }
 
     fun onSaveButtonClicked() {
-        // TODO: save program
-        navigator.popBackStack()
+        FirebaseController.INSTANCE.addWateringProgram(
+            raspberryId,
+            WateringProgram(
+                id = _state.value.id,
+                name = _state.value.name,
+                frequencyDays = _state.value.frequencyDays.toFloat(),
+                quantityL = _state.value.quantityL.toFloat(),
+                timeOfDayMin = _state.value.timeOfDayMin.toInt(),
+                minMoisture = _state.value.minMoisture.toFloat(),
+                maxMoisture = _state.value.maxMoisture.toFloat(),
+            ),
+            onSuccess = {
+                Toast.makeText(
+                    navigator.context,
+                    "Watering program saved successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+                navigator.popBackStack()
+            },
+            onFailure = {
+                Toast.makeText(
+                    navigator.context,
+                    "Failed to save watering program",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
     }
 }

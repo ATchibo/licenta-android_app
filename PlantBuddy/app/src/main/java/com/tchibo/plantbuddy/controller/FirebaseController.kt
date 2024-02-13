@@ -237,4 +237,22 @@ class FirebaseController private constructor(
                 ) as Map<String, Any>
             )
     }
+
+    fun addWateringProgram(
+        raspberryId: String,
+        wateringProgram: WateringProgram,
+        onSuccess: () -> Unit = {},
+        onFailure: () -> Unit = {}
+    ) {
+        db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .collection(wateringProgramsCollectionNestedCollectionName)
+            .add(wateringProgram)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure()
+            }
+    }
 }

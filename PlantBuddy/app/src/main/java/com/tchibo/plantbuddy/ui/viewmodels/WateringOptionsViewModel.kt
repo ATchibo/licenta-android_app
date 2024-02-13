@@ -259,6 +259,6 @@ class WateringOptionsViewModel (
     }
 
     fun goToAddWateringProgram() {
-        navigator.navigate(Routes.getNavigateAddProgram())
+        navigator.navigate(Routes.getNavigateAddProgram(raspberryId))
     }
 }
