@@ -259,7 +259,9 @@ fun WateringOptionsPage (
                             Button(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                onClick = { }
+                                onClick = {
+                                    viewModel.goToAddWateringProgram()
+                                }
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically

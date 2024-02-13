@@ -23,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,7 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.PlantBuddyTheme
 import com.google.android.gms.auth.api.identity.Identity
 import com.tchibo.plantbuddy.controller.FirebaseController
-import com.tchibo.plantbuddy.controller.db.LocalDbController_deprecated
+import com.tchibo.plantbuddy.ui.pages.AddProgramPage
 import com.tchibo.plantbuddy.ui.pages.AddRpiPage
 import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
@@ -64,8 +63,8 @@ class MainActivity : ComponentActivity() {
             PlantBuddyTheme {
                 val navController = rememberNavController()
 
-                val context = LocalContext.current
-                LocalDbController_deprecated.initialize(context)
+//                val context = LocalContext.current
+//                LocalDbController_deprecated.initialize(context)
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -204,6 +203,10 @@ class MainActivity : ComponentActivity() {
             composable(Routes.getNavigateWateringOptionsRaw()) {
                 val rpiId = it.arguments?.getString("id")
                 WateringOptionsPage(raspberryPiId = rpiId.orEmpty())
+            }
+            composable(Routes.getNavigateAddProgram()) {
+                val rpiId = it.arguments?.getString("id").orEmpty()
+                AddProgramPage(raspberryId = rpiId)
             }
         }
 

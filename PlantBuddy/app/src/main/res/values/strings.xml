@@ -59,5 +59,12 @@
     <string name="active_watering_preset">Active:</string>
     <string name="set_program">Set program</string>
     <string name="watering_program_description"><![CDATA[Frequency: once every %s days\nTime of day: %s\nWater quantity: %s liters]]></string>
+    <string name="save">Save</string>
+    <string name="name">Name</string>
+    <string name="frequency_days">Watering frequency (in days)</string>
+    <string name="quantity_l">Water quantity (in liters)</string>
+    <string name="min_moisture">Minimum moisture</string>
+    <string name="max_moisture">Maximum moisture</string>
+    <string name="time_of_day_min">Time of day when the watering first occurs</string>
 
 </resources>

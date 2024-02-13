@@ -6,7 +6,8 @@ class Routes {
         private const val HOME = "/"
         private const val DETAILS = "/details/{id}"
         private const val WATERING_OPTIONS = "/watering-options/{id}"
-        private const val ADD = "/add"
+        private const val ADD_DEVICE = "$WATERING_OPTIONS/add_device"
+        private const val ADD_PROGRAM = "/add_program"
         private const val EDIT = "$DETAILS/edit"
         private const val SETTINGS = "/settings"
 
@@ -34,7 +35,11 @@ class Routes {
         }
 
         fun getNavigateAdd() : String {
-            return ADD
+            return ADD_DEVICE
+        }
+
+        fun getNavigateAddProgram() : String {
+            return ADD_PROGRAM
         }
 
         fun getNavigateSettings() : String {

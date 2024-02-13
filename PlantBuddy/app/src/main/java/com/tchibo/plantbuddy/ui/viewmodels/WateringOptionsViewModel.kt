@@ -23,6 +23,7 @@ import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.domain.WateringInfo
 import com.tchibo.plantbuddy.domain.WateringProgram
+import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.launch
 
 
@@ -255,5 +256,9 @@ class WateringOptionsViewModel (
                 wateringPrograms = wateringPrograms,
             )
         }
+    }
+
+    fun goToAddWateringProgram() {
+        navigator.navigate(Routes.getNavigateAddProgram())
     }
 }
