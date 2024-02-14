@@ -69,25 +69,13 @@ class WateringOptionsViewModel (
                 },
             )
 
-            val wateringPrograms = FirebaseController.INSTANCE.getWateringPrograms(raspberryId)
-            val activeWateringProgramId = FirebaseController.INSTANCE.getActiveWateringProgramId(raspberryId)
-            var activeWateringProgramIndex = -1
-            for (program in wateringPrograms) {
-                if (program.getId() == activeWateringProgramId) {
-                    activeWateringProgramIndex = wateringPrograms.indexOf(program)
-                    break
-                }
-            }
-            val isWateringProgramsEnabled = FirebaseController.INSTANCE.getIsWateringProgramsActive(raspberryId)
+            reloadWateringPrograms()
 
             _state.value = _state.value.copy(
                 isLoadingInitData = false,
                 screenInfo = screenInfo,
                 currentWateringDuration = "0",
                 currentWateringVolume = "0",
-                wateringPrograms = wateringPrograms,
-                currentWateringProgramOptionIndex = activeWateringProgramIndex,
-                isWateringProgramsEnabled = isWateringProgramsEnabled,
                 isWateringProgramInfoPopupOpen = false,
                 previewWateringOptionIndex = -1,
             )
@@ -250,10 +238,21 @@ class WateringOptionsViewModel (
             )
 
             val wateringPrograms = FirebaseController.INSTANCE.getWateringPrograms(raspberryId)
+            val activeWateringProgramId = FirebaseController.INSTANCE.getActiveWateringProgramId(raspberryId)
+            var activeWateringProgramIndex = -1
+            for (program in wateringPrograms) {
+                if (program.getId() == activeWateringProgramId) {
+                    activeWateringProgramIndex = wateringPrograms.indexOf(program)
+                    break
+                }
+            }
+            val isWateringProgramsEnabled = FirebaseController.INSTANCE.getIsWateringProgramsActive(raspberryId)
 
             _state.value = _state.value.copy(
                 isRefreshing = false,
                 wateringPrograms = wateringPrograms,
+                currentWateringProgramOptionIndex = activeWateringProgramIndex,
+                isWateringProgramsEnabled = isWateringProgramsEnabled,
             )
         }
     }
