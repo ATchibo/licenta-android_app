@@ -23,7 +23,7 @@ import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.domain.ScreenInfo
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.domain.UserData
 
@@ -67,7 +67,7 @@ fun SettingsPage(
                         text = userData.username,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Bold,
-                        fontSize = TEXT_SIZE_BIG
+                        fontSize = TEXT_SIZE_UGE
                     )
                     Text(
                         text = userData.email,

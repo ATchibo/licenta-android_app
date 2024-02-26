@@ -40,8 +40,8 @@ import com.tchibo.plantbuddy.ui.components.homepage.HomePageActionButton
 import com.tchibo.plantbuddy.ui.components.homepage.RaspberryShortcutCard
 import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
 import com.tchibo.plantbuddy.ui.viewmodels.HomePageViewModel
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -98,7 +98,7 @@ fun HomePage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp),
-                    fontSize = TEXT_SIZE_BIG,
+                    fontSize = TEXT_SIZE_UGE,
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
                 )
@@ -113,14 +113,7 @@ fun HomePage(
                     color = Color.White,
                 )
 
-                if (state.isRefreshing) {
-//                    Box(modifier = Modifier.padding(20.dp)) {
-//                        CircularProgressIndicator(
-//                            modifier = Modifier.width(32.dp),
-//                            color = MaterialTheme.colorScheme.secondary,
-//                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-//                        )
-//                    }
+                if (state.isRaspberryListLoading) {
                     ProgressIndicator()
                 } else {
                     if (state.raspberryDtoList.isEmpty()) {
@@ -134,6 +127,7 @@ fun HomePage(
                         )
                     } else {
                         LazyVerticalGrid(
+                            modifier = Modifier.fillMaxHeight(),
                             columns = GridCells.Fixed(2),
                             content = {
                                 items(state.raspberryDtoList.size) { index ->

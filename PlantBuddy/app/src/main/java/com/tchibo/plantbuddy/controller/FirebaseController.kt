@@ -12,6 +12,8 @@ import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.UserData
+import com.tchibo.plantbuddy.domain.WateringProgram
+import com.tchibo.plantbuddy.exceptions.DeserializationException
 import kotlinx.coroutines.tasks.await
 import kotlin.reflect.KFunction2
 
@@ -23,6 +25,9 @@ class FirebaseController private constructor(
     private val raspberryInfoCollectionName = "raspberry_info"
     private val moistureInfoCollectionName = "humidity_readings"
     private val wateringNowCollectionName = "watering_info"
+    private val wateringProgramsCollectionName = "watering_programs"
+    private val wateringProgramsCollectionNestedCollectionName = "programs"
+    private val globalWateringProgramsCollectionName = "global_watering_programs"
 
     companion object {
         private lateinit var userData: UserData
@@ -158,5 +163,96 @@ class FirebaseController private constructor(
                     "command" to "stop_watering"
                 ) as Map<String, Any>
             )
+    }
+
+
+    suspend fun getWateringPrograms(raspberryId: String): List<WateringProgram> {
+        val wateringPrograms = db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .collection(wateringProgramsCollectionNestedCollectionName)
+            .get()
+            .await()
+            .documents.map { documentSnapshot ->
+                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
+                    ?: throw DeserializationException(
+                        "Error deserializing watering program document",
+                        FirebaseFirestoreException.Code.ABORTED
+                    )
+                wateringProgram.copy(id = documentSnapshot.id)
+            }
+            .toMutableList()
+
+        val globalWateringPrograms = db.collection(globalWateringProgramsCollectionName)
+            .get()
+            .await()
+            .documents.map { documentSnapshot ->
+                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
+                    ?: throw DeserializationException(
+                        "Error deserializing watering program document",
+                        FirebaseFirestoreException.Code.ABORTED
+                    )
+                wateringProgram.copy(id = documentSnapshot.id)
+            }
+
+        wateringPrograms.addAll(globalWateringPrograms)
+
+        return wateringPrograms
+    }
+
+    suspend fun getActiveWateringProgramId(raspberryId: String): String {
+        return db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .get()
+            .await()
+            .get("activeProgramId")
+            .toString()
+    }
+
+    fun setActiveWateringProgramId(raspberryId: String, programId: String) {
+        db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "activeProgramId" to programId
+                ) as Map<String, Any>
+            )
+    }
+
+    suspend fun getIsWateringProgramsActive(raspberryId: String): Boolean {
+        return db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .get()
+            .await()
+            .get("wateringProgramsEnabled")
+            .toString()
+            .toBoolean()
+    }
+
+    fun setIsWateringProgramsActive(raspberryId: String, isActive: Boolean) {
+        db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "wateringProgramsEnabled" to isActive
+                ) as Map<String, Any>
+            )
+    }
+
+    fun addWateringProgram(
+        raspberryId: String,
+        wateringProgram: WateringProgram,
+        onSuccess: () -> Unit = {},
+        onFailure: () -> Unit = {}
+    ) {
+        db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .collection(wateringProgramsCollectionNestedCollectionName)
+            .add(wateringProgram)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure()
+            }
     }
 }
