@@ -1,6 +1,7 @@
 package com.tchibo.plantbuddy.controller
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
@@ -8,12 +9,16 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.SetOptions
 import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.domain.WateringProgram
 import com.tchibo.plantbuddy.exceptions.DeserializationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlin.reflect.KFunction2
 
@@ -21,7 +26,7 @@ class FirebaseController private constructor(
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) {
 
-    private val deviceLinksCollectionName = "device_links"
+    private val ownerInfoCollectionName = "owner_info"
     private val raspberryInfoCollectionName = "raspberry_info"
     private val moistureInfoCollectionName = "humidity_readings"
     private val wateringNowCollectionName = "watering_info"
@@ -50,74 +55,185 @@ class FirebaseController private constructor(
         onSuccess: () -> Unit = {},
         onFailure: () -> Unit = {}
     ) {
-        val dbLinks: CollectionReference = db.collection(deviceLinksCollectionName)
+        val dbLinks: CollectionReference = db.collection(ownerInfoCollectionName)
 
-        dbLinks.whereEqualTo("raspberryId", firebaseDeviceLinking.raspberryId)
-            .get()
-            .addOnSuccessListener {
-                if (it.isEmpty) {
-                    dbLinks.add(firebaseDeviceLinking).addOnSuccessListener {
+        try {
+            dbLinks.whereArrayContains("raspberry_ids", firebaseDeviceLinking.raspberryId)
+                .get()
+                .addOnSuccessListener { it ->
+                    if (it.isEmpty) {
+                        dbLinks.document(firebaseDeviceLinking.ownerEmail)
+                            .set(
+                                hashMapOf(
+                                    "raspberry_ids" to firebaseDeviceLinking.raspberryId
+                                ) as Map<String, String>,
+                                SetOptions.merge()
+                            )
+                            .addOnSuccessListener {
+                                Toast.makeText(
+                                    context,
+                                    "Device linked successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                onSuccess()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
+                                    .show()
+
+                                onFailure()
+                            }
+
+                    } else {
                         Toast.makeText(
                             context,
-                            "Device linked successfully",
+                            "Device already linked to another account",
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        onSuccess()
-                    }.addOnFailureListener { e ->
-                        Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
-                            .show()
-
                         onFailure()
                     }
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Device already linked to another account",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    onFailure()
                 }
-            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
+                .show()
+            onFailure()
+        }
+
+//        dbLinks.whereEqualTo("raspberryId", firebaseDeviceLinking.raspberryId)
+//            .get()
+//            .addOnSuccessListener {
+//                if (it.isEmpty) {
+//                    dbLinks.add(firebaseDeviceLinking).addOnSuccessListener {
+//                        Toast.makeText(
+//                            context,
+//                            "Device linked successfully",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//
+//                        onSuccess()
+//                    }.addOnFailureListener { e ->
+//                        Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
+//                            .show()
+//
+//                        onFailure()
+//                    }
+//                } else {
+//                    Toast.makeText(
+//                        context,
+//                        "Device already linked to another account",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//
+//                    onFailure()
+//                }
+//            }
     }
 
     suspend fun getRaspberryInfoList(): List<RaspberryInfo> {
-        val raspberryIds = db.collection(deviceLinksCollectionName)
-            .whereEqualTo("ownerEmail", userData.email)
-            .get()
-            .await()
-            .map { it -> it.get("raspberryId") }
+//        val raspberryIds = db.collection(deviceLinksCollectionName)
+//            .whereEqualTo("ownerEmail", userData.email)
+//            .get()
+//            .await()
+//            .map { it -> it.get("raspberryId") }
 
-        return db.collection(raspberryInfoCollectionName)
-            .whereIn("raspberryId", raspberryIds)
+//        return db.collection(raspberryInfoCollectionName)
+//            .whereIn("raspberryId", raspberryIds)
+//            .get()
+//            .await()
+//            .toObjects(RaspberryInfo::class.java)
+
+        val raspberryIds = db.collection(ownerInfoCollectionName)
+            .document(userData.email)
             .get()
             .await()
-            .toObjects(RaspberryInfo::class.java)
+            .get("raspberry_ids") as List<*>
+
+        return try {
+
+            runBlocking {
+                val x = raspberryIds.map { raspId ->
+                    async {
+                        val raspInfo = db.collection(raspberryInfoCollectionName)
+                            .document(raspId.toString())
+                            .get()
+                            .await()
+                            .data
+
+                        if (raspInfo == null)
+                            return@async null
+
+                        RaspberryInfo(raspId.toString())
+                            .fromMap(raspInfo as Map<String, Any>)
+                    }
+                }.awaitAll().filterNotNull()
+
+                Log.d("RaspberryInfo", "Final list: $x")
+
+                x
+            }
+
+
+//            db.collection(raspberryInfoCollectionName)
+////                .where(Filter.inArray(FieldPath.documentId(), raspberryIds))
+////                .whereIn("id", raspberryIds)
+//                .get()
+//                .await()
+//                .map { it ->
+//                   RaspberryInfo(
+//                       it.id,
+//                       it.get("name") as String,
+//                       it.get("location") as String,
+//                       it.get("description") as String,
+//                       RaspberryStatus.valueOf(it.get("status") as String),
+//                       // TODO: notifications settings
+//                   )
+//                }
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     suspend fun getRaspberryInfo(raspberryId: String): RaspberryInfo? {
-        return db.collection(raspberryInfoCollectionName)
-            .whereEqualTo("raspberryId", raspberryId)
-            .get()
-            .await()
-            .toObjects(RaspberryInfo::class.java)
-            .firstOrNull()
+//        return db.collection(raspberryInfoCollectionName)
+//            .whereEqualTo("raspberryId", raspberryId)
+//            .get()
+//            .await()
+//            .toObjects(RaspberryInfo::class.java)
+//            .firstOrNull()
+
+            return try {
+                val raspInfo = db.collection(raspberryInfoCollectionName)
+                    .document(raspberryId)
+                    .get()
+                    .await()
+                    .data
+
+                if (raspInfo == null)
+                    return null
+
+                RaspberryInfo(raspberryId)
+                    .fromMap(raspInfo as Map<String, Any>)
+
+            } catch (e: Exception) {
+                null
+            }
     }
 
-    suspend fun getMoistureInfoList(): List<MoistureInfo> {
-        val raspberryIds = db.collection(deviceLinksCollectionName)
-            .whereEqualTo("ownerEmail", userData.email)
-            .get()
-            .await()
-            .map { it -> it.get("raspberryId") }
-
-        return db.collection("moisture_info")
-            .whereIn("raspberryId", raspberryIds)
-            .get()
-            .await()
-            .toObjects(MoistureInfo::class.java)
-    }
+//    suspend fun getMoistureInfoList(): List<MoistureInfo> {
+//        val raspberryIds = db.collection(deviceLinksCollectionName)
+//            .whereEqualTo("ownerEmail", userData.email)
+//            .get()
+//            .await()
+//            .map { it -> it.get("raspberryId") }
+//
+//        return db.collection("moisture_info")
+//            .whereIn("raspberryId", raspberryIds)
+//            .get()
+//            .await()
+//            .toObjects(MoistureInfo::class.java)
+//    }
 
     suspend fun getMoistureInfoForRaspId(
         rpiId: String,
