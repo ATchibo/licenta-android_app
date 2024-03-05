@@ -85,13 +85,26 @@ class FirebaseController private constructor(
                             }
 
                     } else {
-                        Toast.makeText(
-                            context,
-                            "Device already linked to another account",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if (it.documents.size > 1)
+                            throw IllegalStateException("More than one document found for the same raspberry id")
 
-                        onFailure()
+                        if (it.documents[0].id == firebaseDeviceLinking.ownerEmail) {
+                            Toast.makeText(
+                                context,
+                                "Device already linked to this account",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            onSuccess()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Device already linked to another account",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            onFailure()
+                        }
                     }
                 }
         } catch (e: Exception) {
