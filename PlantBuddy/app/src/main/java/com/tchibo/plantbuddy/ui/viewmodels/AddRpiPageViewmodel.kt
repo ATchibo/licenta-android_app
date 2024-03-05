@@ -12,6 +12,9 @@ import com.tchibo.plantbuddy.controller.backend.MessageService
 import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.utils.Routes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 data class AddRpiPageState @OptIn(ExperimentalPermissionsApi::class) constructor(
@@ -92,7 +95,7 @@ class AddRpiPageViewmodel @OptIn(ExperimentalPermissionsApi::class) constructor(
             processingQrCode = true
         )
 
-//        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             // log device in
             logDeviceIn(qrCode)
 
@@ -103,7 +106,7 @@ class AddRpiPageViewmodel @OptIn(ExperimentalPermissionsApi::class) constructor(
             _state.value = _state.value.copy(
                 processingQrCode = false
             )
-//        }
+        }
     }
 
     fun stopProcessingQrCode() {

@@ -79,7 +79,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
-    val cameraxVersion = "1.4.0-alpha03"
+    val cameraxVersion = "1.4.0-alpha04"
     implementation ("androidx.camera:camera-camera2:${cameraxVersion}")
     implementation ("androidx.camera:camera-lifecycle:${cameraxVersion}")
     implementation ("androidx.camera:camera-view:${cameraxVersion}")
