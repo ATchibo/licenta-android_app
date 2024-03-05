@@ -1,7 +1,6 @@
 package com.tchibo.plantbuddy.controller
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
@@ -100,50 +99,9 @@ class FirebaseController private constructor(
                 .show()
             onFailure()
         }
-
-//        dbLinks.whereEqualTo("raspberryId", firebaseDeviceLinking.raspberryId)
-//            .get()
-//            .addOnSuccessListener {
-//                if (it.isEmpty) {
-//                    dbLinks.add(firebaseDeviceLinking).addOnSuccessListener {
-//                        Toast.makeText(
-//                            context,
-//                            "Device linked successfully",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//
-//                        onSuccess()
-//                    }.addOnFailureListener { e ->
-//                        Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
-//                            .show()
-//
-//                        onFailure()
-//                    }
-//                } else {
-//                    Toast.makeText(
-//                        context,
-//                        "Device already linked to another account",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//
-//                    onFailure()
-//                }
-//            }
     }
 
     suspend fun getRaspberryInfoList(): List<RaspberryInfo> {
-//        val raspberryIds = db.collection(deviceLinksCollectionName)
-//            .whereEqualTo("ownerEmail", userData.email)
-//            .get()
-//            .await()
-//            .map { it -> it.get("raspberryId") }
-
-//        return db.collection(raspberryInfoCollectionName)
-//            .whereIn("raspberryId", raspberryIds)
-//            .get()
-//            .await()
-//            .toObjects(RaspberryInfo::class.java)
-
         val raspberryIds = db.collection(ownerInfoCollectionName)
             .document(userData.email)
             .get()
@@ -151,9 +109,8 @@ class FirebaseController private constructor(
             .get("raspberry_ids") as List<*>
 
         return try {
-
             runBlocking {
-                val x = raspberryIds.map { raspId ->
+                raspberryIds.map { raspId ->
                     async {
                         val raspInfo = db.collection(raspberryInfoCollectionName)
                             .document(raspId.toString())
@@ -168,41 +125,13 @@ class FirebaseController private constructor(
                             .fromMap(raspInfo as Map<String, Any>)
                     }
                 }.awaitAll().filterNotNull()
-
-                Log.d("RaspberryInfo", "Final list: $x")
-
-                x
             }
-
-
-//            db.collection(raspberryInfoCollectionName)
-////                .where(Filter.inArray(FieldPath.documentId(), raspberryIds))
-////                .whereIn("id", raspberryIds)
-//                .get()
-//                .await()
-//                .map { it ->
-//                   RaspberryInfo(
-//                       it.id,
-//                       it.get("name") as String,
-//                       it.get("location") as String,
-//                       it.get("description") as String,
-//                       RaspberryStatus.valueOf(it.get("status") as String),
-//                       // TODO: notifications settings
-//                   )
-//                }
         } catch (e: Exception) {
             emptyList()
         }
     }
 
     suspend fun getRaspberryInfo(raspberryId: String): RaspberryInfo? {
-//        return db.collection(raspberryInfoCollectionName)
-//            .whereEqualTo("raspberryId", raspberryId)
-//            .get()
-//            .await()
-//            .toObjects(RaspberryInfo::class.java)
-//            .firstOrNull()
-
             return try {
                 val raspInfo = db.collection(raspberryInfoCollectionName)
                     .document(raspberryId)
@@ -220,20 +149,6 @@ class FirebaseController private constructor(
                 null
             }
     }
-
-//    suspend fun getMoistureInfoList(): List<MoistureInfo> {
-//        val raspberryIds = db.collection(deviceLinksCollectionName)
-//            .whereEqualTo("ownerEmail", userData.email)
-//            .get()
-//            .await()
-//            .map { it -> it.get("raspberryId") }
-//
-//        return db.collection("moisture_info")
-//            .whereIn("raspberryId", raspberryIds)
-//            .get()
-//            .await()
-//            .toObjects(MoistureInfo::class.java)
-//    }
 
     suspend fun getMoistureInfoForRaspId(
         rpiId: String,
