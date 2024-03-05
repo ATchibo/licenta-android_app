@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.ui.pages
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,17 +21,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.domain.UserData
@@ -42,12 +48,22 @@ import com.tchibo.plantbuddy.ui.theme.translucent_bg_tint
 import com.tchibo.plantbuddy.ui.viewmodels.HomePageViewModel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
+import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomePage(
     userData: UserData
 ) {
+
+    val clipboardManager = LocalClipboardManager.current
+
+    LaunchedEffect(key1 = Unit) {
+        val localToken = Firebase.messaging.token.await()
+        Log.d("Token","Token: $localToken")
+        clipboardManager.setText(AnnotatedString(localToken))
+    }
+
 
     val navigator = LocalNavController.current
 

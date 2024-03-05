@@ -87,7 +87,7 @@ dependencies {
 
     implementation ("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
 
-    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-auth")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -113,4 +113,9 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose-m3:1.13.1")
 
     implementation("androidx.compose.material:material-icons-extended")
+
+    implementation("com.google.firebase:firebase-messaging")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
 }

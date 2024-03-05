@@ -41,7 +41,7 @@ class LocalDbController_deprecated private constructor(
         println("Loading initial data...")
 
         loadRaspberryInfoList()
-        loadMoistureInfoList()
+//        loadMoistureInfoList()
     }
 
     private suspend fun setRaspberryInfoList(raspberryInfoList: List<RaspberryInfo>) {
@@ -118,11 +118,11 @@ class LocalDbController_deprecated private constructor(
         setRaspberryInfoList(raspberryInfo)
     }
 
-    private suspend fun loadMoistureInfoList() {
-        // load all moisture info from firebase
-        // for each moisture info, add it to the local db
-
-        val moistureInfo = FirebaseController.INSTANCE.getMoistureInfoList()
-        setMoistureInfoList(moistureInfo)
-    }
+//    private suspend fun loadMoistureInfoList() {
+//        // load all moisture info from firebase
+//        // for each moisture info, add it to the local db
+//
+//        val moistureInfo = FirebaseController.INSTANCE.getMoistureInfoList()
+//        setMoistureInfoList(moistureInfo)
+//    }
 }
