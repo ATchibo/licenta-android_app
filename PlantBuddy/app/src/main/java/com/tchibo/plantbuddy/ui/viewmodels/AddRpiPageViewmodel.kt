@@ -5,27 +5,26 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.firebase.auth.FirebaseAuth
 import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.controller.backend.MessageService
 import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
-import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.json.JSONObject
 
-data class AddRpiPageState @OptIn(ExperimentalPermissionsApi::class) constructor(
+data class AddRpiPageState constructor(
     val isLoading: Boolean = false,
     val processingQrCode: Boolean = false,
-    val messageService: MessageService
+    val messageService: MessageService,
+    val toastMessage: String? = null,
 )
 
-class AddRpiPageViewmodel @OptIn(ExperimentalPermissionsApi::class) constructor(
+class AddRpiPageViewmodel (
     private val navigator: NavHostController,
-    private val userData: UserData,
 ): ViewModel() {
 
     private val _state = mutableStateOf(AddRpiPageState(
@@ -37,6 +36,8 @@ class AddRpiPageViewmodel @OptIn(ExperimentalPermissionsApi::class) constructor(
         )
     ))
     val state: MutableState<AddRpiPageState> = _state
+
+    private var wsCode: String = ""
 
     init {
         initLoading()
@@ -64,10 +65,6 @@ class AddRpiPageViewmodel @OptIn(ExperimentalPermissionsApi::class) constructor(
     }
 
     private fun logDeviceIn(qrCode: String) {
-        _state.value.messageService.connect(qrCode)
-
-        Log.d("AddRpiPageViewmodel", "logDeviceIn: connected to $qrCode")
-
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val email = FirebaseAuth.getInstance().currentUser?.email
 
@@ -75,15 +72,18 @@ class AddRpiPageViewmodel @OptIn(ExperimentalPermissionsApi::class) constructor(
         message["uid"] = uid ?: ""
         message["email"] = email ?: ""
 
-        if (_state.value.messageService.isConnected.value) {
-            Log.d("AddRpiPageViewmodel", "logDeviceIn: connected")
 
+
+        if (_state.value.messageService.isConnected.value) {
             _state.value.messageService.sendMessage(JSONObject(message).toString())
             Log.d("AddRpiPageViewmodel", "logDeviceIn: sent message")
-
-            _state.value.messageService.disconnect()
         } else {
             Log.d("AddRpiPageViewmodel", "logDeviceIn: not connected")
+
+            _state.value = _state.value.copy(
+                processingQrCode = false,
+                toastMessage = "Error linking device"
+            )
         }
     }
 
@@ -97,15 +97,20 @@ class AddRpiPageViewmodel @OptIn(ExperimentalPermissionsApi::class) constructor(
 
         CoroutineScope(Dispatchers.IO).launch {
             // log device in
-            logDeviceIn(qrCode)
+//            logDeviceIn(qrCode)
+
+            wsCode = qrCode
+
+            _state.value.messageService.connect(qrCode)
+            Log.d("AddRpiPageViewmodel", "logDeviceIn: connected to $qrCode")
 
             // adding device to my account
-            val firebaseDeviceLinking = FirebaseDeviceLinking(qrCode, userData.email)
+//            val firebaseDeviceLinking = FirebaseDeviceLinking(qrCode, userData.email)
 //            linkDevice(firebaseDeviceLinking)
 
-            _state.value = _state.value.copy(
-                processingQrCode = false
-            )
+//            _state.value = _state.value.copy(
+//                processingQrCode = false
+//            )
         }
     }
 
@@ -117,10 +122,28 @@ class AddRpiPageViewmodel @OptIn(ExperimentalPermissionsApi::class) constructor(
 
     private fun onMessageReceived(message: String) {
         Log.d("AddRpiPageViewmodel", "onMessageReceived: $message")
+
+        val msgMap = Json.decodeFromString<Map<String, String>>(message)
+        val decodedMessage = msgMap["body"]
+        if (decodedMessage == "OK") {
+            _state.value = _state.value.copy(
+                processingQrCode = false,
+                toastMessage = "Linking successful"
+            )
+
+            _state.value.messageService.disconnect()
+        } else if (decodedMessage == "FAIL") {
+            _state.value = _state.value.copy(
+                processingQrCode = false,
+                toastMessage = "Error linking device"
+            )
+        }
     }
 
     private fun onConnected() {
         Log.d("AddRpiPageViewmodel", "onConnected")
+
+        logDeviceIn(wsCode)
     }
     private fun onDisconnected() {
         Log.d("AddRpiPageViewmodel", "onDisconnected")

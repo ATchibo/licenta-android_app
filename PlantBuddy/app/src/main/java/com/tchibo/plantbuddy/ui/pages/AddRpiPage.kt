@@ -1,6 +1,7 @@
 package com.tchibo.plantbuddy.ui.pages
 
 import android.Manifest
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -55,12 +57,17 @@ fun AddRpiPage(
     val viewModel = viewModel<AddRpiPageViewmodel>(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return AddRpiPageViewmodel(navigator, userData) as T
+                return AddRpiPageViewmodel(navigator) as T
             }
         }
     )
     val state = viewModel.state.value
 
+    LaunchedEffect(key1 = state.toastMessage) {
+        state.toastMessage?.let {
+            Toast.makeText(navigator.context, it, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -159,8 +166,10 @@ fun AddRpiPage(
             ) {
                 Row(
                     modifier = Modifier
-                        .background(color = MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(8.dp))
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(8.dp)
+                        )
                         .padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

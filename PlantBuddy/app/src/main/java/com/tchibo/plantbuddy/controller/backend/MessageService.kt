@@ -20,9 +20,6 @@ class MessageService(
     private val _isConnected = MutableStateFlow(false)
     val isConnected = _isConnected.asStateFlow()
 
-    private val _messages = MutableStateFlow(emptyList<String>())
-    val messages = _messages.asStateFlow()
-
     private val okHttpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
 
@@ -58,7 +55,7 @@ class MessageService(
 
     fun connect(token: String) {
 //        val webSocketUrl = "ws://localhost:8080/api/ws/register/$token"
-        val webSocketUrl = "wss://ead75984a70656.lhr.life/api/ws/register/$token"
+        val webSocketUrl = "ws://82.208.160.92:8181/api/ws/register/$token"
 
         val request = Request.Builder()
             .url(webSocketUrl)
