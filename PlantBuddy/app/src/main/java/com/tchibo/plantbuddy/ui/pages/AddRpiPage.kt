@@ -69,6 +69,14 @@ fun AddRpiPage(
         }
     }
 
+    LaunchedEffect(key1 = state.loginSuccessful) {
+        state.loginSuccessful?.let {
+            if (it) {
+                navigator.popBackStack()
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

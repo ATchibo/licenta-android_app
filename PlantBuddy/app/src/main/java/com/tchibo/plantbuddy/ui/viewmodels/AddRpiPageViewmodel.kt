@@ -6,10 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
-import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.controller.backend.MessageService
-import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
-import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +18,7 @@ data class AddRpiPageState constructor(
     val processingQrCode: Boolean = false,
     val messageService: MessageService,
     val toastMessage: String? = null,
+    val loginSuccessful: Boolean? = null
 )
 
 class AddRpiPageViewmodel (
@@ -47,32 +45,30 @@ class AddRpiPageViewmodel (
 
     }
 
-    private fun linkDevice(firebaseDeviceLinking: FirebaseDeviceLinking) {
-        val context = navigator.context
-        FirebaseController.INSTANCE.addDeviceAccountLink(firebaseDeviceLinking, context,
-            onSuccess = {
-                _state.value = _state.value.copy(
-                    processingQrCode = false
-                )
-                navigator.navigate(Routes.getNavigateHome())
-            },
-            onFailure = {
-                _state.value = _state.value.copy(
-                    processingQrCode = false
-                )
-            }
-        )
-    }
+//    private fun linkDevice(firebaseDeviceLinking: FirebaseDeviceLinking) {
+//        val context = navigator.context
+//        FirebaseController.INSTANCE.addDeviceAccountLink(firebaseDeviceLinking, context,
+//            onSuccess = {
+//                _state.value = _state.value.copy(
+//                    processingQrCode = false
+//                )
+//                navigator.navigate(Routes.getNavigateHome())
+//            },
+//            onFailure = {
+//                _state.value = _state.value.copy(
+//                    processingQrCode = false
+//                )
+//            }
+//        )
+//    }
 
-    private fun logDeviceIn(qrCode: String) {
+    private fun logDeviceIn() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val email = FirebaseAuth.getInstance().currentUser?.email
 
         val message: MutableMap<Any?, Any?> = HashMap()
         message["uid"] = uid ?: ""
         message["email"] = email ?: ""
-
-
 
         if (_state.value.messageService.isConnected.value) {
             _state.value.messageService.sendMessage(JSONObject(message).toString())
@@ -96,21 +92,9 @@ class AddRpiPageViewmodel (
         )
 
         CoroutineScope(Dispatchers.IO).launch {
-            // log device in
-//            logDeviceIn(qrCode)
-
             wsCode = qrCode
-
             _state.value.messageService.connect(qrCode)
             Log.d("AddRpiPageViewmodel", "logDeviceIn: connected to $qrCode")
-
-            // adding device to my account
-//            val firebaseDeviceLinking = FirebaseDeviceLinking(qrCode, userData.email)
-//            linkDevice(firebaseDeviceLinking)
-
-//            _state.value = _state.value.copy(
-//                processingQrCode = false
-//            )
         }
     }
 
@@ -128,7 +112,8 @@ class AddRpiPageViewmodel (
         if (decodedMessage == "OK") {
             _state.value = _state.value.copy(
                 processingQrCode = false,
-                toastMessage = "Linking successful"
+                toastMessage = "Linking successful",
+                loginSuccessful = true
             )
 
             _state.value.messageService.disconnect()
@@ -142,8 +127,7 @@ class AddRpiPageViewmodel (
 
     private fun onConnected() {
         Log.d("AddRpiPageViewmodel", "onConnected")
-
-        logDeviceIn(wsCode)
+        logDeviceIn()
     }
     private fun onDisconnected() {
         Log.d("AddRpiPageViewmodel", "onDisconnected")

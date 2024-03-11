@@ -7,11 +7,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
+import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.controller.RaspberryInfoController
 import com.tchibo.plantbuddy.domain.RaspberryInfoDto
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 data class HomePageState(
     val raspberryDtoList: List<RaspberryInfoDto> = listOf(),
@@ -45,6 +49,9 @@ class HomePageViewModel(
                     navigator.navigate(Routes.getNavigateSettings())
                 },
             )
+
+            val localToken = Firebase.messaging.token.await()
+            FirebaseController.INSTANCE.updateLocalToken(localToken)
 
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
