@@ -25,6 +25,7 @@ fun LoginRequestAlertComponent (
             viewModel.showNotification(
                 title = intent.getStringExtra("title")!!,
                 message = intent.getStringExtra("body")!!,
+                // intent.getStringExtra("data")!!
                 onOk = {
                     Log.d("LoginRequestAlertComponent", "onOk")
                 },

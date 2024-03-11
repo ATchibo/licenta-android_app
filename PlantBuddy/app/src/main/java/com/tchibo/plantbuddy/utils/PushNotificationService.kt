@@ -1,14 +1,18 @@
 package com.tchibo.plantbuddy.utils
 
+import android.Manifest
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_MUTABLE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.tchibo.plantbuddy.MainActivity
-import kotlinx.serialization.json.Json
 
 class PushNotificationService : FirebaseMessagingService() {
 
@@ -26,32 +30,28 @@ class PushNotificationService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
 
         val title = remoteMessage.notification?.title ?: "Title"
-        var message = remoteMessage.notification?.body ?: "Message"
-
-        message.plus("\n")
-
-        if (remoteMessage.data.isNotEmpty() && remoteMessage.data.get("data") != null) {
-
-            Log.d("PushNotificationService", "Data: ${remoteMessage.data.get("data")}")
-
-            try {
-                val data = Json.decodeFromString<HashMap<String, String>>(remoteMessage.data.get("data")!!)
-                Log.d("PushNotificationService", "Data: ${data}")
-
-                data.forEach {
-                    message = message.plus("${it.key}: ${it.value}\n")
-                }
-            } catch (e: Exception) {
-                Log.d("PushNotificationService", "Exception: ${e.message}")
-            }
-        }
+        val message = remoteMessage.notification?.body ?: "Message"
 
         val intent = Intent(this, MainActivity::class.java).apply {
             flags= Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
 
+        if (remoteMessage.data.isNotEmpty() && remoteMessage.data["data"] != null) {
+//            try {
+//                val data = Json.decodeFromString<HashMap<String, String>>(remoteMessage.data.get("data")!!)
+//
+//                data.forEach {
+//                    message = message.plus("${it.key}: ${it.value}\n")
+//                }
+//            } catch (e: Exception) {
+//                Log.d("PushNotificationService", "Exception: ${e.message}")
+//            }
+
+            intent.putExtra("data", remoteMessage.data["data"])
+        }
+
         intent.putExtra("title",title)
-        intent.putExtra("body",message)
+        intent.putExtra("body", message)
 
         // it should be unqiue when push comes.
         var requestCode = System.currentTimeMillis().toInt()
@@ -65,33 +65,33 @@ class PushNotificationService : FirebaseMessagingService() {
                     PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
 
-        pendingIntent.send()
+//        pendingIntent.send()
 
-//        val builder = NotificationCompat.Builder(this,"Global").setAutoCancel(true)
-//            .setContentTitle(title)
-//            .setContentText(message)
-//            .setPriority(NotificationCompat.PRIORITY_HIGH)
-//            .setStyle(NotificationCompat.BigTextStyle().bigText((message)))
-//            .setContentIntent(pendingIntent)
-//            .setSmallIcon(android.R.drawable.ic_dialog_info)
-//
-//
-//        with(NotificationManagerCompat.from(this)){
-//            if (ActivityCompat.checkSelfPermission(
-//                    applicationContext,
-//                    Manifest.permission.POST_NOTIFICATIONS
-//                ) != PackageManager.PERMISSION_GRANTED
-//            ) {
-//                // TODO: Consider calling
-//                //    ActivityCompat#requestPermissions
-//                // here to request the missing permissions, and then overriding
-//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                //                                          int[] grantResults)
-//                // to handle the case where the user grants the permission. See the documentation
-//                // for ActivityCompat#requestPermissions for more details.
-//                return
-//            }
-//            notify(requestCode,builder.build())
-//        }
+        val builder = NotificationCompat.Builder(this,"Login").setAutoCancel(true)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setStyle(NotificationCompat.BigTextStyle().bigText((message)))
+            .setContentIntent(pendingIntent)
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+
+
+        with(NotificationManagerCompat.from(this)){
+            if (ActivityCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            notify(requestCode,builder.build())
+        }
     }
 }
