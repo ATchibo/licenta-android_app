@@ -38,6 +38,7 @@ import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.ui.components.addpage.BulletpointText
 import com.tchibo.plantbuddy.ui.components.addpage.QrScanner
 import com.tchibo.plantbuddy.ui.viewmodels.AddRpiPageViewmodel
+import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
@@ -72,7 +73,7 @@ fun AddRpiPage(
     LaunchedEffect(key1 = state.loginSuccessful) {
         state.loginSuccessful?.let {
             if (it) {
-                navigator.popBackStack()
+                navigator.navigate(Routes.getNavigateHome())
             }
         }
     }

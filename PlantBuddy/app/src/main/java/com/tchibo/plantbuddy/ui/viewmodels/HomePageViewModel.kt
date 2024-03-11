@@ -52,6 +52,7 @@ class HomePageViewModel(
 
             val localToken = Firebase.messaging.token.await()
             FirebaseController.INSTANCE.updateLocalToken(localToken)
+            navigator.clearBackStack(Routes.getNavigateAdd())
 
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
