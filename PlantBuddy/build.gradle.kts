@@ -7,4 +7,6 @@ plugins {
 
     kotlin("jvm") version "1.9.0"
     kotlin("plugin.serialization") version "1.9.0"
+
+    id("com.google.dagger.hilt.android") version "2.50" apply false
 }

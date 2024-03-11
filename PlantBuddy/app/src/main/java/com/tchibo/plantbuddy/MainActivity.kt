@@ -39,6 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.PlantBuddyTheme
 import com.google.android.gms.auth.api.identity.Identity
 import com.tchibo.plantbuddy.controller.FirebaseController
+import com.tchibo.plantbuddy.ui.components.LoginRequestAlertComponent
 import com.tchibo.plantbuddy.ui.pages.AddProgramPage
 import com.tchibo.plantbuddy.ui.pages.AddRpiPage
 import com.tchibo.plantbuddy.ui.pages.DetailsPage
@@ -50,8 +51,10 @@ import com.tchibo.plantbuddy.ui.viewmodels.SignInViewModel
 import com.tchibo.plantbuddy.utils.GoogleAuthClient
 import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val googleAuthClient by lazy {
@@ -77,6 +80,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
+                    LoginRequestAlertComponent(intent)
+
                     CompositionLocalProvider (LocalNavController provides navController) {
                         ComposeNavigation()
                     }
