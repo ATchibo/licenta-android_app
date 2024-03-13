@@ -35,8 +35,6 @@ class AddRpiPageViewmodel (
     ))
     val state: MutableState<AddRpiPageState> = _state
 
-    private var wsCode: String = ""
-
     init {
         initLoading()
     }
@@ -44,23 +42,6 @@ class AddRpiPageViewmodel (
     private fun initLoading() {
 
     }
-
-//    private fun linkDevice(firebaseDeviceLinking: FirebaseDeviceLinking) {
-//        val context = navigator.context
-//        FirebaseController.INSTANCE.addDeviceAccountLink(firebaseDeviceLinking, context,
-//            onSuccess = {
-//                _state.value = _state.value.copy(
-//                    processingQrCode = false
-//                )
-//                navigator.navigate(Routes.getNavigateHome())
-//            },
-//            onFailure = {
-//                _state.value = _state.value.copy(
-//                    processingQrCode = false
-//                )
-//            }
-//        )
-//    }
 
     private fun logDeviceIn() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
@@ -92,7 +73,6 @@ class AddRpiPageViewmodel (
         )
 
         CoroutineScope(Dispatchers.IO).launch {
-            wsCode = qrCode
             _state.value.messageService.connect(qrCode)
             Log.d("AddRpiPageViewmodel", "logDeviceIn: connected to $qrCode")
         }
