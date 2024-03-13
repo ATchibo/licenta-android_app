@@ -37,16 +37,6 @@ class PushNotificationService : FirebaseMessagingService() {
         }
 
         if (remoteMessage.data.isNotEmpty() && remoteMessage.data["data"] != null) {
-//            try {
-//                val data = Json.decodeFromString<HashMap<String, String>>(remoteMessage.data.get("data")!!)
-//
-//                data.forEach {
-//                    message = message.plus("${it.key}: ${it.value}\n")
-//                }
-//            } catch (e: Exception) {
-//                Log.d("PushNotificationService", "Exception: ${e.message}")
-//            }
-
             intent.putExtra("data", remoteMessage.data["data"])
         }
 

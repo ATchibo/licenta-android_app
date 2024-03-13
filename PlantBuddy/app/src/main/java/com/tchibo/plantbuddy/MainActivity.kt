@@ -1,5 +1,7 @@
 package com.tchibo.plantbuddy
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -88,6 +90,28 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        val mainActivityIntent = Intent(this, MainActivity::class.java).apply {
+            flags= Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        mainActivityIntent.putExtra("title", intent?.extras?.getString("title"))
+        mainActivityIntent.putExtra("body", intent?.extras?.getString("body"))
+        mainActivityIntent.putExtra("data", intent?.extras?.getString("data"))
+
+        val requestCode = System.currentTimeMillis().toInt()
+        val pendingIntent : PendingIntent = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this, requestCode,mainActivityIntent, PendingIntent.FLAG_MUTABLE)
+        }else{
+            PendingIntent.getActivity(this, requestCode, mainActivityIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        }
+
+        pendingIntent.send()
     }
 
     private fun initialiseDbs() {
@@ -221,7 +245,6 @@ class MainActivity : ComponentActivity() {
                 AddProgramPage(raspberryId = rpiId)
             }
         }
-
     }
 
     private fun requestNotificationPermissions() {
