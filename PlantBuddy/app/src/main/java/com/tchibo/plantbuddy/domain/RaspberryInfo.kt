@@ -1,16 +1,11 @@
 package com.tchibo.plantbuddy.domain
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity
 data class RaspberryInfo (
-    @PrimaryKey val raspberryId: String = "",
-    @ColumnInfo val raspberryName: String = "",
-    @ColumnInfo val raspberryLocation: String? = null,
-    @ColumnInfo val raspberryDescription: String? = null,
-    @ColumnInfo val raspberryStatus: RaspberryStatus? = RaspberryStatus.OFFLINE,
+    val raspberryId: String = "",
+    val raspberryName: String = "",
+    val raspberryLocation: String? = null,
+    val raspberryDescription: String? = null,
+    val raspberryStatus: RaspberryStatus = RaspberryStatus.NOT_COMPUTED,
 ) {
 
     fun setRaspberryId(raspberryId: String): RaspberryInfo {
@@ -22,7 +17,6 @@ data class RaspberryInfo (
             raspberryName = map["name"] as String,
             raspberryLocation = map["location"] as String,
             raspberryDescription = map["description"] as String,
-            raspberryStatus = RaspberryStatus.valueOf(map["status"] as String),
         )
     }
 }

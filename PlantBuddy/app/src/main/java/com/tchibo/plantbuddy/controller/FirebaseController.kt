@@ -8,13 +8,17 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
+import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.domain.WateringProgram
 import com.tchibo.plantbuddy.exceptions.DeserializationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.reflect.KFunction2
 
 class FirebaseController private constructor(
@@ -28,6 +32,7 @@ class FirebaseController private constructor(
     private val wateringProgramsCollectionName = "watering_programs"
     private val wateringProgramsCollectionNestedCollectionName = "programs"
     private val globalWateringProgramsCollectionName = "global_watering_programs"
+    private val generalWsCollectionName = "general_purpose_ws"
 
     companion object {
         private lateinit var userData: UserData
@@ -306,5 +311,50 @@ class FirebaseController private constructor(
                 "tokens",
                 FieldValue.arrayUnion(localToken)
             )
+    }
+
+    suspend fun getRaspberryStatus(raspberryId: String): RaspberryStatus {
+        var result = RaspberryStatus.OFFLINE
+        val valueRegistered = Mutex(true)
+
+        val listenerRegistration = onRaspberryStatusChange(raspberryId) { snapshot, e ->
+            if (e != null) {
+                result = RaspberryStatus.UNKNOWN
+                valueRegistered.unlock()
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val message = snapshot.data?.get("message") as String
+                if (message == "PONG") {
+                    result = RaspberryStatus.ONLINE
+                    valueRegistered.unlock()
+                }
+            }
+        }
+
+        val docRef = db.collection(generalWsCollectionName).document(raspberryId)
+        docRef.update("message", "PING")
+
+        withTimeoutOrNull(5000) {
+            valueRegistered.lock()
+            valueRegistered.unlock()
+        }
+
+        valueRegistered.withLock {
+            listenerRegistration.remove()
+            return result
+        }
+    }
+
+    private fun onRaspberryStatusChange(
+        raspberryId: String,
+        callback: (snapshot: DocumentSnapshot?, e: FirebaseFirestoreException?) -> Unit
+    ): ListenerRegistration {
+
+        return db.collection(generalWsCollectionName)
+            .document(raspberryId)
+            .addSnapshotListener { snapshot, e ->
+                callback(snapshot, e)
+            }
     }
 }

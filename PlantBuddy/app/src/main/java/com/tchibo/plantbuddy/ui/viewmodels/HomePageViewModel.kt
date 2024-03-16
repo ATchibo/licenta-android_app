@@ -15,6 +15,7 @@ import com.tchibo.plantbuddy.domain.RaspberryInfoDto
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.tasks.await
 
 data class HomePageState(
@@ -42,6 +43,13 @@ class HomePageViewModel(
             )
 
             val raspberryDtoList = RaspberryInfoController.INSTANCE.getRaspberryInfoDtoList()
+            _state.value = _state.value.copy(
+                raspberryDtoList = raspberryDtoList,
+            )
+
+            viewModelScope.launch {
+                fetchRaspberryOnlineStatus(raspberryDtoList)
+            }
 
             val screenInfo = ScreenInfo(
                 navigationIcon = Icons.Filled.Settings,
@@ -50,33 +58,57 @@ class HomePageViewModel(
                 },
             )
 
+            // for notification token
             val localToken = Firebase.messaging.token.await()
             FirebaseController.INSTANCE.updateLocalToken(localToken)
             navigator.clearBackStack(Routes.getNavigateAdd())
 
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
-                raspberryDtoList = raspberryDtoList,
                 isRaspberryListLoading = false,
             )
         }
     }
 
     fun reloadRaspberryDtoList() {
-        println("Loading raspberry dto list...")
-
         viewModelScope.launch {
             _state.value = _state.value.copy(
                 isRefreshing = true,
             )
 
             val raspberryDtoList = RaspberryInfoController.INSTANCE.getRaspberryInfoDtoList()
-            println("Raspberry dto list: $raspberryDtoList")
-
             _state.value = _state.value.copy(
                 raspberryDtoList = raspberryDtoList,
+            )
+
+            viewModelScope.launch {
+                fetchRaspberryOnlineStatus(raspberryDtoList)
+            }
+
+            _state.value = _state.value.copy(
                 isRefreshing = false,
             )
+        }
+    }
+
+    private suspend fun fetchRaspberryOnlineStatus(raspberryDtoList: List<RaspberryInfoDto>) {
+        val newDtos: MutableList<RaspberryInfoDto> = ArrayList(raspberryDtoList)
+
+        val mutex = Mutex(false)
+
+        raspberryDtoList.forEachIndexed { index, raspberryInfoDto ->
+            viewModelScope.launch {
+                val raspberryStatus = FirebaseController.INSTANCE
+                    .getRaspberryStatus(raspberryInfoDto.raspberryId)
+
+                newDtos[index] = raspberryInfoDto.copy(raspberryStatus = raspberryStatus)
+
+                mutex.lock()
+                _state.value = _state.value.copy(
+                    raspberryDtoList = newDtos,
+                )
+                mutex.unlock()
+            }
         }
     }
 

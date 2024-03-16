@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.ui.components.homepage
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,8 @@ fun RaspberryShortcutCard(raspberryInfoDto: RaspberryInfoDto) {
         )
     }
 
+    Log.d("RaspberryShortcutCard", "raspberryInfoDto: $raspberryInfoDto")
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,16 +59,18 @@ fun RaspberryShortcutCard(raspberryInfoDto: RaspberryInfoDto) {
                 fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.onSecondaryContainer
             )
-            Text(
-                text = stringResource(
-                    id = R.string.raspberry_status,
-                    raspberryInfoDto.raspberryStatus.toString()
-                ),
-                modifier = Modifier
-                    .fillMaxWidth(),
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
+            if (raspberryInfoDto.raspberryStatus != RaspberryStatus.NOT_COMPUTED) {
+                Text(
+                    text = stringResource(
+                        id = R.string.raspberry_status,
+                        raspberryInfoDto.raspberryStatus.toString()
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
         }
     }
 }

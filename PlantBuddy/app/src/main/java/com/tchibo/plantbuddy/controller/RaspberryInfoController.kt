@@ -17,7 +17,6 @@ class RaspberryInfoController private constructor(){
                 RaspberryInfoDto(
                     raspberryId = raspberryInfo.raspberryId,
                     raspberryName = raspberryInfo.raspberryName,
-                    raspberryStatus = raspberryInfo.raspberryStatus,
                 )
             }
     }
