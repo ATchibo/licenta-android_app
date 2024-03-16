@@ -1,15 +1,11 @@
 package com.tchibo.plantbuddy.controller
 
-import android.content.Context
-import android.widget.Toast
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.SetOptions
-import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
 import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
 import com.tchibo.plantbuddy.domain.UserData
@@ -48,58 +44,71 @@ class FirebaseController private constructor(
         }
     }
 
-    fun addDeviceAccountLink(
-        firebaseDeviceLinking: FirebaseDeviceLinking,
-        context: Context,
-        onSuccess: () -> Unit = {},
-        onFailure: () -> Unit = {}
-    ) {
-        val dbLinks: CollectionReference = db.collection(ownerInfoCollectionName)
-
-        try {
-            dbLinks.whereArrayContains("raspberry_ids", firebaseDeviceLinking.raspberryId)
-                .get()
-                .addOnSuccessListener { it ->
-                    if (it.isEmpty) {
-                        dbLinks.document(firebaseDeviceLinking.ownerEmail)
-                            .set(
-                                hashMapOf(
-                                    "raspberry_ids" to firebaseDeviceLinking.raspberryId
-                                ) as Map<String, String>,
-                                SetOptions.merge()
-                            )
-                            .addOnSuccessListener {
-                                Toast.makeText(
-                                    context,
-                                    "Device linked successfully",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                                onSuccess()
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
-                                    .show()
-
-                                onFailure()
-                            }
-
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "Device already linked to another account",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        onFailure()
-                    }
-                }
-        } catch (e: Exception) {
-            Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
-                .show()
-            onFailure()
-        }
-    }
+//    fun addDeviceAccountLink(
+//        firebaseDeviceLinking: FirebaseDeviceLinking,
+//        context: Context,
+//        onSuccess: () -> Unit = {},
+//        onFailure: () -> Unit = {}
+//    ) {
+//        val dbLinks: CollectionReference = db.collection(ownerInfoCollectionName)
+//
+//        try {
+//            dbLinks.whereArrayContains("raspberry_ids", firebaseDeviceLinking.raspberryId)
+//                .get()
+//                .addOnSuccessListener { it ->
+//                    if (it.isEmpty) {
+//                        dbLinks.document(firebaseDeviceLinking.ownerEmail)
+//                            .set(
+//                                hashMapOf(
+//                                    "raspberry_ids" to firebaseDeviceLinking.raspberryId
+//                                ) as Map<String, String>,
+//                                SetOptions.merge()
+//                            )
+//                            .addOnSuccessListener {
+//                                Toast.makeText(
+//                                    context,
+//                                    "Device linked successfully",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//
+//                                onSuccess()
+//                            }
+//                            .addOnFailureListener { e ->
+//                                Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
+//                                    .show()
+//
+//                                onFailure()
+//                            }
+//
+//                    } else {
+//                        if (it.documents.size > 1)
+//                            throw IllegalStateException("More than one document found for the same raspberry id")
+//
+//                        if (it.documents[0].id == firebaseDeviceLinking.ownerEmail) {
+//                            Toast.makeText(
+//                                context,
+//                                "Device already linked to this account",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//
+//                            onSuccess()
+//                        } else {
+//                            Toast.makeText(
+//                                context,
+//                                "Device already linked to another account",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//
+//                            onFailure()
+//                        }
+//                    }
+//                }
+//        } catch (e: Exception) {
+//            Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
+//                .show()
+//            onFailure()
+//        }
+//    }
 
     suspend fun getRaspberryInfoList(): List<RaspberryInfo> {
         val raspberryIds = db.collection(ownerInfoCollectionName)
@@ -285,5 +294,17 @@ class FirebaseController private constructor(
             .addOnFailureListener {
                 onFailure()
             }
+    }
+
+    fun updateLocalToken(localToken: String?) {
+        if (localToken == null)
+            return
+
+        db.collection(ownerInfoCollectionName)
+            .document(userData.email)
+            .update(
+                "tokens",
+                FieldValue.arrayUnion(localToken)
+            )
     }
 }

@@ -1,6 +1,7 @@
 package com.tchibo.plantbuddy.ui.pages
 
 import android.Manifest
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,28 +17,30 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
-import com.tchibo.plantbuddy.domain.FirebaseDeviceLinking
+import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.ui.components.addpage.BulletpointText
 import com.tchibo.plantbuddy.ui.components.addpage.QrScanner
-import com.tchibo.plantbuddy.controller.FirebaseController
+import com.tchibo.plantbuddy.ui.viewmodels.AddRpiPageViewmodel
 import com.tchibo.plantbuddy.utils.Routes
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
-import com.tchibo.plantbuddy.domain.UserData
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -46,15 +49,33 @@ fun AddRpiPage(
 ) {
 
     val navigator = LocalNavController.current
-    val context = LocalContext.current
 
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val showCameraAlert = remember {
         mutableStateOf(!cameraPermissionState.status.isGranted)
     }
 
-    val processingQrCode = remember {
-        mutableStateOf(false)
+    val viewModel = viewModel<AddRpiPageViewmodel>(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return AddRpiPageViewmodel(navigator) as T
+            }
+        }
+    )
+    val state = viewModel.state.value
+
+    LaunchedEffect(key1 = state.toastMessage) {
+        state.toastMessage?.let {
+            Toast.makeText(navigator.context, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(key1 = state.loginSuccessful) {
+        state.loginSuccessful?.let {
+            if (it) {
+                navigator.navigate(Routes.getNavigateHome())
+            }
+        }
     }
 
     Column(
@@ -72,20 +93,7 @@ fun AddRpiPage(
 
         QrScanner(
             onQrCodeFound = {qrCode ->
-                if (processingQrCode.value || qrCode.isEmpty())
-                    return@QrScanner
-
-                processingQrCode.value = true
-                val firebaseDeviceLinking = FirebaseDeviceLinking(qrCode, userData.email)
-                FirebaseController.INSTANCE.addDeviceAccountLink(firebaseDeviceLinking, context,
-                    onSuccess = {
-                        processingQrCode.value = false
-                        navigator.navigate(Routes.getNavigateHome())
-                    },
-                    onFailure = {
-                        processingQrCode.value = false
-                    }
-                )
+                viewModel.onQrCodeRead(qrCode)
             }
         )
 
@@ -160,15 +168,17 @@ fun AddRpiPage(
             )
         }
 
-        if (processingQrCode.value) {
+        if (state.processingQrCode) {
             Dialog(
-                onDismissRequest = { processingQrCode.value = false },
+                onDismissRequest = { viewModel.stopProcessingQrCode() },
                 DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
             ) {
                 Row(
                     modifier = Modifier
-                        .background(color = MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(8.dp))
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(8.dp)
+                        )
                         .padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
