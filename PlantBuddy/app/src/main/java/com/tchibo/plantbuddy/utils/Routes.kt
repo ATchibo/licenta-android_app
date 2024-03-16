@@ -10,6 +10,8 @@ class Routes {
         private const val ADD_PROGRAM = "$WATERING_OPTIONS/add_program"
         private const val EDIT = "$DETAILS/edit"
         private const val SETTINGS = "/settings"
+        private const val LOGS = "/logs/{id}"
+        private const val RASPBERRY_SETTINGS = "/raspberry_settings/{id}"
 
         fun getNavigateLogin(): String {
             return LOGIN
@@ -56,6 +58,22 @@ class Routes {
 
         fun getNavigateWateringOptions(rpiId: String) : String {
             return WATERING_OPTIONS.replace("{id}", rpiId)
+        }
+
+        fun getNavigateLogsRaw() : String {
+            return LOGS
+        }
+
+        fun getNavigateLogs(rpiId: String) : String {
+            return LOGS.replace("{id}", rpiId)
+        }
+
+        fun getNavigateRaspberrySettingsRaw() : String {
+            return RASPBERRY_SETTINGS
+        }
+
+        fun getNavigateRaspberrySettings(rpiId: String) : String {
+            return RASPBERRY_SETTINGS.replace("{id}", rpiId)
         }
     }
 }

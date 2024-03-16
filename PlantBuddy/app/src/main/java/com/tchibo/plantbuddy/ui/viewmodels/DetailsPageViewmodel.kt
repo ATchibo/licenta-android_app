@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.ui.viewmodels
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.MutableState
@@ -76,12 +77,6 @@ class DetailsPageViewmodel(
                 isRefreshing = false,
             )
         }
-    }
-
-    fun goToWateringOptions() {
-        navigator.navigate(
-            Routes.getNavigateWateringOptions(raspberryId),
-        )
     }
 
     fun onHumidityDropdownOptionSelected(index: Int) {
@@ -162,5 +157,27 @@ class DetailsPageViewmodel(
 
     private fun getCurrentTime(): Date {
         return Timestamp.now().toDate()
+    }
+
+    fun unlinkRaspberry() {
+        Log.d("hehe", "Not yet implemented")
+    }
+
+    fun goToWateringOptions() {
+        navigator.navigate(
+            Routes.getNavigateWateringOptions(raspberryId),
+        )
+    }
+
+    fun goToRaspberrySettings() {
+        navigator.navigate(
+            Routes.getNavigateRaspberrySettings(raspberryId),
+        )
+    }
+
+    fun goToLogs() {
+        navigator.navigate(
+            Routes.getNavigateLogs(raspberryId),
+        )
     }
 }

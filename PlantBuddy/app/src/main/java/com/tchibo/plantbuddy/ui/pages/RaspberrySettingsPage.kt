@@ -4,7 +4,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun RaspberrySettingsPage() {
+fun RaspberrySettingsPage(raspberryId: String) {
 
     Text(text = "Raspberry Settings Page")
 }
