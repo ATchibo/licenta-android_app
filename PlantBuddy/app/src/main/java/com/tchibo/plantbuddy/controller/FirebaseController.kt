@@ -16,7 +16,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.reflect.KFunction2
@@ -335,15 +334,12 @@ class FirebaseController private constructor(
         val docRef = db.collection(generalWsCollectionName).document(raspberryId)
         docRef.update("message", "PING")
 
-        withTimeoutOrNull(5000) {
+        withTimeoutOrNull(2000) {
             valueRegistered.lock()
-            valueRegistered.unlock()
         }
 
-        valueRegistered.withLock {
-            listenerRegistration.remove()
-            return result
-        }
+        listenerRegistration.remove()
+        return result
     }
 
     private fun onRaspberryStatusChange(
