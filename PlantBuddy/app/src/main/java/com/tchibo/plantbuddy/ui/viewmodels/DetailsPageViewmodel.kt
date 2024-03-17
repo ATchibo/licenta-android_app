@@ -22,7 +22,8 @@ import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.stream.Collectors.toList
 import kotlin.random.Random
 
@@ -32,7 +33,7 @@ data class DetailsPageState(
     val moistureMaps: Map<Float, Pair<Timestamp, Float>> = mutableMapOf(),
     val isRefreshing: Boolean = false,
     val isGraphRefreshing: Boolean = false,
-    val lastUpdatedTime: MutableState<String> = mutableStateOf(""),
+    val lastUpdatedTime: String = "",
     val isHumidityDropdownExpanded: MutableState<Boolean> = mutableStateOf(false),
     val humidityDropdownOptions: MutableList<String> = mutableListOf("Last 24h", "Last 7 days", "Last 30 days"),
     val currentHumidityDropdownOptionIndex: MutableState<Int> = mutableIntStateOf(0),
@@ -153,18 +154,19 @@ class DetailsPageViewmodel(
             }
 
             val currentDateTime = getCurrentTime()
+            val currentDateString = DateTimeFormatter.ofPattern("MMMM dd, yyyy | hh:mm:ss").format(currentDateTime)
 
             _state.value = _state.value.copy(
                 moistureMaps = moistureMaps,
                 chartModelProducer = chartModelProducer,
                 isGraphRefreshing = false,
-                lastUpdatedTime = mutableStateOf(currentDateTime.toString()),
+                lastUpdatedTime = currentDateString,
             )
         }
     }
 
-    private fun getCurrentTime(): Date {
-        return Timestamp.now().toDate()
+    private fun getCurrentTime(): LocalDateTime {
+        return LocalDateTime.now()
     }
 
     fun unlinkRaspberry() {

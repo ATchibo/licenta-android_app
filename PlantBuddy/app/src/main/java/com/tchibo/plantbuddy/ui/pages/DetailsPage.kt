@@ -130,7 +130,7 @@ fun DetailsPage(rpiId: String) {
                     Text(
                         text = stringResource(
                             id = R.string.last_update,
-                            state.lastUpdatedTime.value
+                            state.lastUpdatedTime
                         ),
                         modifier = Modifier
                             .padding(0.dp, 10.dp, 0.dp, 10.dp),
