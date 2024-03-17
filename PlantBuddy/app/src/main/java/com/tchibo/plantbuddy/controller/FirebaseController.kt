@@ -330,6 +330,15 @@ class FirebaseController private constructor(
             }
     }
 
+    fun deleteWateringProgram(raspberryId: String, programToDelete: String) {
+        db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .collection(wateringProgramsCollectionNestedCollectionName)
+            .document(programToDelete)
+            .delete()
+    }
+
+
     fun updateLocalToken(localToken: String?) {
         if (localToken == null)
             return

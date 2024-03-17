@@ -289,7 +289,7 @@ fun WateringOptionsPage (
                                             wateringProgram = wateringProgram,
                                             onTap = viewModel::onWateringProgramTap,
                                             onEdit = viewModel::goToEditWateringProgram,
-                                            onDelete = viewModel::onWateringProgramDelete,
+                                            onDelete = viewModel::onPressWateringProgramDelete,
                                         )
 
                                         if (index < state.wateringPrograms.size - 1)
@@ -365,8 +365,45 @@ fun WateringOptionsPage (
                             }
                         )
                     }
-                }
 
+                    if (state.isProgramDeletePopupOpen) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                viewModel.closeProgramDeletePopup()
+                            },
+                            title = {
+                                Text(
+                                    text = state.programDeletePopupTitle,
+                                    fontSize = TEXT_SIZE_NORMAL,
+                                )
+                            },
+                            text = {
+                                Text(
+                                    text = state.programDeletePopupMessage,
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            },
+                            dismissButton = {
+                                Button(
+                                    onClick = {
+                                        viewModel.closeProgramDeletePopup()
+                                    }
+                                ) {
+                                    Text(text = stringResource(id = R.string.cancel))
+                                }
+                            },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        viewModel.deleteWateringProgram()
+                                    }
+                                ) {
+                                    Text(text = stringResource(id = R.string.delete))
+                                }
+                            }
+                        )
+                    }
+                }
             }
 
             PullRefreshIndicator(

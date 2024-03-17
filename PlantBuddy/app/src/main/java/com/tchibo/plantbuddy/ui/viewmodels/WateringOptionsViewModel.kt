@@ -41,6 +41,10 @@ data class WateringOptionsState(
     var isWateringProgramsEnabled: Boolean = true,
     var isWateringProgramInfoPopupOpen: Boolean = false,
     var previewWateringOptionIndex: Int = -1,
+
+    val isProgramDeletePopupOpen: Boolean = false,
+    val programDeletePopupTitle: String = "",
+    val programDeletePopupMessage: String = "",
 )
 
 class WateringOptionsViewModel (
@@ -52,6 +56,8 @@ class WateringOptionsViewModel (
     val state: State<WateringOptionsState> = _state
 
     private var listenerRegistration: ListenerRegistration? = null
+
+    private var programToDelete: String = ""
 
     init {
         initLoading()
@@ -259,7 +265,7 @@ class WateringOptionsViewModel (
     }
 
     fun goToAddWateringProgram() {
-        navigator.navigate(Routes.getNavigateAddProgram(raspberryId, ""))
+        navigator.navigate(Routes.getNavigateAddProgram(raspberryId))
     }
 
     fun goToEditWateringProgram(programId: String) {
@@ -267,8 +273,33 @@ class WateringOptionsViewModel (
         navigator.navigate(Routes.getNavigateAddProgram(raspberryId, programId))
     }
 
-    fun onWateringProgramDelete(programId: String) {
+    fun onPressWateringProgramDelete(programId: String) {
+        val program = state.value.wateringPrograms.find { it.getId() == programId }
+        if (program != null) {
+            _state.value = _state.value.copy(
+                isProgramDeletePopupOpen = true,
+                programDeletePopupTitle = "Are you sure you want to delete this?",
+                programDeletePopupMessage = program.toStringBody(),
+            )
 
+            programToDelete = programId
+        }
+    }
+
+    fun deleteWateringProgram() {
+        if (programToDelete.isEmpty()) {
+            return
+        }
+
+        FirebaseController.INSTANCE.deleteWateringProgram(raspberryId, programToDelete)
+        closeProgramDeletePopup()
+        reloadWateringPrograms()
+    }
+
+    fun closeProgramDeletePopup() {
+        _state.value = _state.value.copy(
+            isProgramDeletePopupOpen = false,
+        )
     }
 
     fun checkMoisture() {

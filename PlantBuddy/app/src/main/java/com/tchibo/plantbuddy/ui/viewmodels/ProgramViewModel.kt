@@ -50,7 +50,7 @@ class ProgramViewModel(
             },
         )
 
-        if (programId.isNotEmpty()) {
+        if (programId.isNotEmpty() && programId != "NULL") {
             try {
                 FirebaseController.INSTANCE.getWateringProgram(
                     raspberryId,

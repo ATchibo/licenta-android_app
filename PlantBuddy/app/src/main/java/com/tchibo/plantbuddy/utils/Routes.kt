@@ -44,8 +44,8 @@ class Routes {
             return ADD_PROGRAM
         }
 
-        fun getNavigateAddProgram(rpiId: String, programId: String) : String {
-            return ADD_PROGRAM.replace("{id}", rpiId).replace("{programId}", programId)
+        fun getNavigateAddProgram(rpiId: String, programId: String? = null) : String {
+            return ADD_PROGRAM.replace("{id}", rpiId).replace("{programId}", programId ?: "NULL")
         }
 
         fun getNavigateSettings() : String {
