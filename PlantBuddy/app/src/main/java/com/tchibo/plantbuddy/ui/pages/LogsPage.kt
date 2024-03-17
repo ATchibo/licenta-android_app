@@ -134,6 +134,4 @@ fun LogsPage(raspberryId: String) {
             )
         }
     }
-
-    Text(text = "Logs Page")
 }
