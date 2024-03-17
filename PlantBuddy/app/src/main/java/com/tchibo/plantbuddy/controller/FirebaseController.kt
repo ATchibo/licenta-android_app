@@ -34,6 +34,7 @@ class FirebaseController private constructor(
     private val wateringProgramsCollectionNestedCollectionName = "programs"
     private val globalWateringProgramsCollectionName = "global_watering_programs"
     private val generalWsCollectionName = "general_purpose_ws"
+    private val logsCollectionName = "logs"
 
     companion object {
         private lateinit var userData: UserData
@@ -433,5 +434,13 @@ class FirebaseController private constructor(
             .addSnapshotListener { snapshot, e ->
                 callback(snapshot, e)
             }
+    }
+
+    suspend fun getLogs(raspberryId: String): HashMap<String, Any> {
+        return db.collection(logsCollectionName)
+            .document(raspberryId)
+            .get()
+            .await()
+            .get("messages") as HashMap<String, Any>? ?: hashMapOf()
     }
 }

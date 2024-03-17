@@ -69,5 +69,7 @@
     <string name="check_moisture">Check moisture</string>
     <string name="moisture_level">Current soil moisture: %s</string>
     <string name="delete">Delete</string>
+    <string name="logs_page">Event Logs</string>
+    <string name="logs_page_description">Here you can see logs regarding the activity of your device</string>
 
 </resources>
