@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.controller
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -227,19 +228,19 @@ class FirebaseController private constructor(
             }
             .toMutableList()
 
-        val globalWateringPrograms = db.collection(globalWateringProgramsCollectionName)
-            .get()
-            .await()
-            .documents.map { documentSnapshot ->
-                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
-                    ?: throw DeserializationException(
-                        "Error deserializing watering program document",
-                        FirebaseFirestoreException.Code.ABORTED
-                    )
-                wateringProgram.copy(id = documentSnapshot.id)
-            }
-
-        wateringPrograms.addAll(globalWateringPrograms)
+//        val globalWateringPrograms = db.collection(globalWateringProgramsCollectionName)
+//            .get()
+//            .await()
+//            .documents.map { documentSnapshot ->
+//                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
+//                    ?: throw DeserializationException(
+//                        "Error deserializing watering program document",
+//                        FirebaseFirestoreException.Code.ABORTED
+//                    )
+//                wateringProgram.copy(id = documentSnapshot.id)
+//            }
+//
+//        wateringPrograms.addAll(globalWateringPrograms)
 
         return wateringPrograms
     }
@@ -289,12 +290,40 @@ class FirebaseController private constructor(
         onSuccess: () -> Unit = {},
         onFailure: () -> Unit = {}
     ) {
+        val collection = db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .collection(wateringProgramsCollectionNestedCollectionName)
+
+        Log.d("TAG", "addWateringProgram: ${wateringProgram.getId()}")
+
+        if (wateringProgram.getId().isNotEmpty()) {
+            collection
+                .document(wateringProgram.getId())
+                .set(wateringProgram)
+                .addOnSuccessListener { onSuccess() }
+                .addOnFailureListener { onFailure() }
+        } else {
+            collection
+                .add(wateringProgram)
+                .addOnSuccessListener { onSuccess() }
+                .addOnFailureListener { onFailure() }
+        }
+    }
+
+    fun getWateringProgram(
+        raspberryId: String,
+        programId: String,
+        onSuccess: (WateringProgram?) -> Unit,
+        onFailure: () -> Unit
+    ) {
         db.collection(wateringProgramsCollectionName)
             .document(raspberryId)
             .collection(wateringProgramsCollectionNestedCollectionName)
-            .add(wateringProgram)
+            .document(programId)
+            .get()
             .addOnSuccessListener {
-                onSuccess()
+                val wateringProgram = it.toObject(WateringProgram::class.java)?.copy(id = programId)
+                onSuccess(wateringProgram)
             }
             .addOnFailureListener {
                 onFailure()

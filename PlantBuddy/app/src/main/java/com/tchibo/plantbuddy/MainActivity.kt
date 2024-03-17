@@ -241,7 +241,8 @@ class MainActivity : ComponentActivity() {
             }
             composable(Routes.getNavigateAddProgramRaw()) {
                 val rpiId = it.arguments?.getString("id").orEmpty()
-                AddProgramPage(raspberryId = rpiId)
+                val programId = it.arguments?.getString("programId").orEmpty()
+                AddProgramPage(raspberryId = rpiId, programId = programId)
             }
             composable(Routes.getNavigateLogsRaw()) {
                 val rpiId = it.arguments?.getString("id").orEmpty()

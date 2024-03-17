@@ -7,7 +7,7 @@ class Routes {
         private const val DETAILS = "/details/{id}"
         private const val WATERING_OPTIONS = "/watering-options/{id}"
         private const val ADD_DEVICE = "/add_device"
-        private const val ADD_PROGRAM = "$WATERING_OPTIONS/add_program"
+        private const val ADD_PROGRAM = "$WATERING_OPTIONS/add_program/{programId}"
         private const val EDIT = "$DETAILS/edit"
         private const val SETTINGS = "/settings"
         private const val LOGS = "/logs/{id}"
@@ -44,8 +44,8 @@ class Routes {
             return ADD_PROGRAM
         }
 
-        fun getNavigateAddProgram(rpiId: String) : String {
-            return ADD_PROGRAM.replace("{id}", rpiId)
+        fun getNavigateAddProgram(rpiId: String, programId: String) : String {
+            return ADD_PROGRAM.replace("{id}", rpiId).replace("{programId}", programId)
         }
 
         fun getNavigateSettings() : String {

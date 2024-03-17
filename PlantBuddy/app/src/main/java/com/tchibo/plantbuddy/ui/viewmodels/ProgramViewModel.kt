@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.ui.viewmodels
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,9 +25,10 @@ data class ProgramState (
     val maxMoisture: String = "",
 )
 
-class ProgramViewModel (
+class ProgramViewModel(
     private val navigator: NavHostController,
     private val raspberryId: String,
+    private val programId: String,
 ): ViewModel() {
 
     private val _state = mutableStateOf(ProgramState())
@@ -48,17 +50,49 @@ class ProgramViewModel (
             },
         )
 
-        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-        val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
+        if (programId.isNotEmpty()) {
+            try {
+                FirebaseController.INSTANCE.getWateringProgram(
+                    raspberryId,
+                    programId,
+                    onSuccess = { wateringProgram ->
+                        setInitialValues(wateringProgram)
+                    },
+                    onFailure = {
+                        Toast.makeText(
+                            navigator.context,
+                            "Failed to load watering program",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
+            } catch (e: Exception) {
+                Toast.makeText(
+                    navigator.context,
+                    "Failed to load watering program",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
-        _state.value = _state.value.copy(
-            screenInfo = screenInfo,
-            isRefreshing = false,
-            timeOfDayMin = (currentHour * 60 + currentMinute).toString()
-        )
+        } else {
+
+            val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+            val currentMinute = Calendar.getInstance().get(Calendar.MINUTE)
+
+            _state.value = _state.value.copy(
+                screenInfo = screenInfo,
+                isRefreshing = false,
+                timeOfDayMin = (currentHour * 60 + currentMinute).toString()
+            )
+        }
     }
 
-    fun setInitialValues(wateringProgram: WateringProgram) {
+    private fun setInitialValues(wateringProgram: WateringProgram?) {
+        Log.d("TAG", "setInitialValues: $wateringProgram")
+        if (wateringProgram == null) {
+            return
+        }
+
         _state.value = _state.value.copy(
             id = wateringProgram.getId(),
             name = wateringProgram.getName(),

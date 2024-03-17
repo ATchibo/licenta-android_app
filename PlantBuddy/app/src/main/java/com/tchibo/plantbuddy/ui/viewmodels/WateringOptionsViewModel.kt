@@ -259,7 +259,16 @@ class WateringOptionsViewModel (
     }
 
     fun goToAddWateringProgram() {
-        navigator.navigate(Routes.getNavigateAddProgram(raspberryId))
+        navigator.navigate(Routes.getNavigateAddProgram(raspberryId, ""))
+    }
+
+    fun goToEditWateringProgram(programId: String) {
+        Log.d("TAG", "Edit program: $programId")
+        navigator.navigate(Routes.getNavigateAddProgram(raspberryId, programId))
+    }
+
+    fun onWateringProgramDelete(programId: String) {
+
     }
 
     fun checkMoisture() {
