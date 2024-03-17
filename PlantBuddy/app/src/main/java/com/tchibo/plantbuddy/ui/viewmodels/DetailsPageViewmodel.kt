@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import com.google.firebase.Timestamp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.controller.MoistureInfoController
 import com.tchibo.plantbuddy.controller.RaspberryInfoController
 import com.tchibo.plantbuddy.domain.MoistureInfoDto
@@ -67,13 +68,20 @@ class DetailsPageViewmodel(
 
             val raspberryInfo = async {
                 RaspberryInfoController.INSTANCE.getRaspberryInfo(raspberryId)
+            }.await()
+
+            _state.value = _state.value.copy(
+                raspberryInfo = raspberryInfo!!,
+            )
+
+            async {
+                checkRaspberryOnlineStatus(raspberryInfo);
             }
 
             updateHumidityValuesList()
 
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
-                raspberryInfo = raspberryInfo.await()!!,
                 isRefreshing = false,
             )
         }
@@ -178,6 +186,13 @@ class DetailsPageViewmodel(
     fun goToLogs() {
         navigator.navigate(
             Routes.getNavigateLogs(raspberryId),
+        )
+    }
+
+    private suspend fun checkRaspberryOnlineStatus(raspberryInfo: RaspberryInfo) {
+        val raspberryStatus = FirebaseController.INSTANCE.getRaspberryStatus(raspberryInfo.raspberryId)
+        _state.value = _state.value.copy(
+            raspberryInfo = raspberryInfo.copy(raspberryStatus = raspberryStatus),
         )
     }
 }

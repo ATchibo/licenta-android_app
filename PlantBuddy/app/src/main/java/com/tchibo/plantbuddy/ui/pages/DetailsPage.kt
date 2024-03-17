@@ -41,9 +41,9 @@ import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
 @Composable
 fun DetailsPage(rpiId: String) {
@@ -79,7 +79,11 @@ fun DetailsPage(rpiId: String) {
                 )
 
                 Text(
-                    text = state.raspberryInfo.raspberryStatus.toString(),
+                    text = if (state.raspberryInfo.raspberryStatus == RaspberryStatus.NOT_COMPUTED) {
+                        ""
+                    } else {
+                        state.raspberryInfo.raspberryStatus.toString()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(30.dp, 10.dp, 0.dp, 20.dp),
