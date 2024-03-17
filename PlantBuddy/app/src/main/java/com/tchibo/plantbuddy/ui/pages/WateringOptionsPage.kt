@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -105,7 +106,7 @@ fun WateringOptionsPage (
                     text = stringResource(id = R.string.watering_options_description),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(30.dp, 10.dp, 30.dp, 40.dp),
+                        .padding(30.dp, 10.dp, 30.dp, 30.dp),
                     fontSize = TEXT_SIZE_SMALL,
                     color = Color.White,
                 )
@@ -121,6 +122,8 @@ fun WateringOptionsPage (
                             .padding(10.dp, 10.dp)
                             .verticalScroll(rememberScrollState()),
                     ) {
+                        // section header
+
                         Text(
                             text = stringResource(id = R.string.manual_watering),
                             modifier = Modifier
@@ -129,6 +132,42 @@ fun WateringOptionsPage (
                             fontSize = TEXT_SIZE_BIG,
                             fontWeight = FontWeight.Medium,
                         )
+
+                        // manual moisture check
+
+                        Button(
+                            onClick = { viewModel.checkMoisture() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.WaterDrop,
+                                    contentDescription = null
+                                )
+                                Text(
+                                    text = stringResource(id = R.string.check_moisture),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = stringResource(
+                                id = R.string.moisture_level,
+                                state.currentMoistureLevel
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 10.dp, 0.dp, 10.dp),
+                            textAlign = TextAlign.Center,
+                            fontSize = TEXT_SIZE_NORMAL,
+                            fontWeight = FontWeight.Normal,
+                        )
+
+                        // watering controls
 
                         Button(
                             onClick = { viewModel.toggleWatering() },
@@ -171,14 +210,14 @@ fun WateringOptionsPage (
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp, 20.dp, 10.dp, 40.dp),
+                            .padding(10.dp, 10.dp, 10.dp, 30.dp),
                     ) {
                         Text(
                             text = stringResource(id = R.string.watering_presets),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(0.dp, 0.dp, 0.dp, 20.dp)
-                                .weight(0.11f),
+                                .padding(0.dp, 0.dp, 0.dp, 15.dp)
+                                .weight(0.2f),
                             fontSize = TEXT_SIZE_BIG,
                             fontWeight = FontWeight.Medium,
                         )
@@ -210,7 +249,7 @@ fun WateringOptionsPage (
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(0.dp, 5.dp)
-                                    .weight(0.1f),
+                                    .weight(0.15f),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(

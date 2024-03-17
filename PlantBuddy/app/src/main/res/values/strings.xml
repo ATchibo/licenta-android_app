@@ -66,5 +66,7 @@
     <string name="min_moisture">Minimum moisture</string>
     <string name="max_moisture">Maximum moisture</string>
     <string name="time_of_day_min">Time of day when the watering first occurs</string>
+    <string name="check_moisture">Check moisture</string>
+    <string name="moisture_level">Current soil moisture: %s</string>
 
 </resources>

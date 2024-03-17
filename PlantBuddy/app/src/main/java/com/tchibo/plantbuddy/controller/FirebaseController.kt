@@ -18,6 +18,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.math.round
 import kotlin.reflect.KFunction2
 
 class FirebaseController private constructor(
@@ -348,6 +349,48 @@ class FirebaseController private constructor(
     ): ListenerRegistration {
 
         return db.collection(generalWsCollectionName)
+            .document(raspberryId)
+            .addSnapshotListener { snapshot, e ->
+                callback(snapshot, e)
+            }
+    }
+
+    suspend fun getMoistureLevel(raspberryId: String): String {
+        var result = "N/A"
+        val valueRegistered = Mutex(true)
+
+        val listenerRegistration = onMoistureChange(raspberryId) { snapshot, e ->
+            if (e != null) {
+                result = "N/A"
+                valueRegistered.unlock()
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val message = snapshot.data?.get("soilMoisture")
+                if (message.toString().toFloatOrNull() != null) {
+                    result = message.toString()
+                    valueRegistered.unlock()
+                }
+            }
+        }
+
+        val docRef = db.collection(wateringNowCollectionName).document(raspberryId)
+        docRef.update("soilMoisture", "REQUEST" + round(Math.random() * 1000).toInt())
+
+        withTimeoutOrNull(2000) {
+            valueRegistered.lock()
+        }
+
+        listenerRegistration.remove()
+        return result
+    }
+
+    private fun onMoistureChange(
+        raspberryId: String,
+        callback: (snapshot: DocumentSnapshot?, e: FirebaseFirestoreException?) -> Unit
+    ): ListenerRegistration {
+
+        return db.collection(wateringNowCollectionName)
             .document(raspberryId)
             .addSnapshotListener { snapshot, e ->
                 callback(snapshot, e)
