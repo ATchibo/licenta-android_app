@@ -26,9 +26,11 @@ import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
 import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.ProgressIndicator
+import com.tchibo.plantbuddy.ui.components.raspberrysettingspage.NotifiableMessageComponent
 import com.tchibo.plantbuddy.ui.components.raspberrysettingspage.PropertyEditingComponent
 import com.tchibo.plantbuddy.ui.viewmodels.RaspberrySettingsViewModel
 import com.tchibo.plantbuddy.ui.viewmodels.RaspberrySettingsViewModelFactory
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
@@ -122,6 +124,28 @@ fun RaspberrySettingsPage(raspberryId: String) {
                             cancelIcon = state.cancelIcon,
                             editIcon = state.editIcon,
                         )
+
+                        Text(
+                            text = stringResource(id = R.string.notification_settings),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 30.dp, 0.dp, 10.dp),
+                            fontSize = TEXT_SIZE_NORMAL,
+                            color = Color.White,
+                        )
+
+                        state.notifiableMessages.forEach { notifiableMessage ->
+                            NotifiableMessageComponent(
+                                notifiableMessageName = notifiableMessage.key,
+                                notifiableMessageValue = notifiableMessage.value
+                            ) { newValue, onSuccess ->
+                                viewModel.onNotifiableMessageValueChange(
+                                    notifiableMessage.key,
+                                    newValue,
+                                    onSuccess
+                                )
+                            }
+                        }
                     }
                 }
             }

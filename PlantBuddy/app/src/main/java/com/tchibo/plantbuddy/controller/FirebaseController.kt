@@ -485,4 +485,24 @@ class FirebaseController private constructor(
                 onFailure(it)
             }
     }
+
+    fun setNotifiableMessage(raspberryId: String, key: String, value: Boolean, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        try {
+            db.collection(raspberryInfoCollectionName)
+                .document(raspberryId)
+                .update(
+                    hashMapOf(
+                        "notifiable_messages.$key" to value
+                    ) as Map<String, Any>
+                )
+                .addOnSuccessListener {
+                    onSuccess()
+                }
+                .addOnFailureListener {
+                    onFailure(it)
+                }
+        } catch (e: Exception) {
+            onFailure(e)
+        }
+    }
 }

@@ -76,5 +76,6 @@
     <string name="raspberry_name">Name</string>
     <string name="raspberry_description">Description</string>
     <string name="raspberry_location">Location</string>
+    <string name="notification_settings">Set the notifications you want to receive</string>
 
 </resources>

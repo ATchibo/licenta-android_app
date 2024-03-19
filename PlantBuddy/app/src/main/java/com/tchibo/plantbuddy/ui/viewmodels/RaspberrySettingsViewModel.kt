@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.ui.viewmodels
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -209,6 +210,32 @@ class RaspberrySettingsViewModel (
                 _state.value = _state.value.copy(
                     editingLocation = false,
                 )
+            }
+        )
+    }
+
+    fun onNotifiableMessageValueChange(key: String, value: Boolean, onSuccess: (Boolean) -> Unit) {
+        Log.d("RaspberrySettingsViewModel", "onNotifiableMessageValueChange: $key, $value")
+
+        FirebaseController.INSTANCE.setNotifiableMessage(
+            raspberryId,
+            key,
+            value,
+            {
+                _state.value = _state.value.copy(
+                    notifiableMessages = _state.value.notifiableMessages.apply {
+                        this[key] = value
+                    }
+                )
+
+                onSuccess(value)
+            },
+            { error ->
+                Toast.makeText(
+                    navigator.context,
+                    "Error updating notifiable message: $error",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         )
     }
