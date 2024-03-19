@@ -11,10 +11,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FormatListNumbered
+import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -39,9 +41,9 @@ import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
-import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
 @Composable
 fun DetailsPage(rpiId: String) {
@@ -77,7 +79,11 @@ fun DetailsPage(rpiId: String) {
                 )
 
                 Text(
-                    text = state.raspberryInfo.raspberryStatus.toString(),
+                    text = if (state.raspberryInfo.raspberryStatus == RaspberryStatus.NOT_COMPUTED) {
+                        ""
+                    } else {
+                        state.raspberryInfo.raspberryStatus.toString()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(30.dp, 10.dp, 0.dp, 20.dp),
@@ -124,7 +130,7 @@ fun DetailsPage(rpiId: String) {
                     Text(
                         text = stringResource(
                             id = R.string.last_update,
-                            state.lastUpdatedTime.value
+                            state.lastUpdatedTime
                         ),
                         modifier = Modifier
                             .padding(0.dp, 10.dp, 0.dp, 10.dp),
@@ -215,7 +221,7 @@ fun DetailsPage(rpiId: String) {
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { viewModel.goToWateringOptions() }
+                                onClick = { viewModel.goToLogs() }
                             ) {
                                 Row (
                                     verticalAlignment = Alignment.CenterVertically
@@ -232,24 +238,7 @@ fun DetailsPage(rpiId: String) {
                         item {
                             Button(
                                 modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { viewModel.goToWateringOptions() }
-                            ) {
-                                Row (
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(imageVector = Icons.Default.WaterDrop, contentDescription = null)
-                                    Text(
-                                        text = stringResource(id = R.string.watering_options),
-                                        fontSize = TEXT_SIZE_SMALL,
-                                    )
-                                }
-                            }
-                        }
-
-                        item {
-                            Button(
-                                modifier = Modifier.padding(10.dp, 5.dp),
-                                onClick = { viewModel.goToWateringOptions() }
+                                onClick = { viewModel.goToRaspberrySettings() }
                             ) {
                                 Row (
                                     verticalAlignment = Alignment.CenterVertically
@@ -262,27 +251,31 @@ fun DetailsPage(rpiId: String) {
                                 }
                             }
                         }
+
+                        item {
+                            Button(
+                                modifier = Modifier.padding(10.dp, 5.dp),
+                                colors = buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.error,
+                                    contentColor = MaterialTheme.colorScheme.onError
+                                ),
+                                onClick = { viewModel.unlinkRaspberry() }
+                            ) {
+                                Row (
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(imageVector = Icons.Default.LinkOff, contentDescription = null)
+                                    Text(
+                                        text = stringResource(id = R.string.unlink_device),
+                                        fontSize = TEXT_SIZE_SMALL,
+                                    )
+                                }
+                            }
+                        }
                     }
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
-
-
-//                Button(
-//                    modifier = Modifier
-//                        .padding(10.dp, 15.dp, 10.dp, 30.dp)
-//                        .fillMaxWidth(),
-//                    colors = buttonColors(
-//                        containerColor = MaterialTheme.colorScheme.error,
-//                        contentColor = MaterialTheme.colorScheme.onError
-//                    ),
-//                    onClick = { /*TODO*/ }
-//                ) {
-//                    Text(
-//                        text = stringResource(id = R.string.unlink_device),
-//                        fontSize = TEXT_SIZE_SMALL,
-//                    )
-//                }
             }
         }
     }

@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,20 +43,20 @@ import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 @Composable
 fun AddProgramPage (
     raspberryId: String,
+    programId: String
 ) {
 
     val navigator = LocalNavController.current
     val viewModel = viewModel<ProgramViewModel>(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProgramViewModel(navigator, raspberryId) as T
+                return ProgramViewModel(navigator, raspberryId, programId) as T
             }
         }
     )
 
     val state = viewModel.state.value
 
-    val timePickerState = rememberTimePickerState()
     val context = LocalContext.current
 
     val timePickerDialog =

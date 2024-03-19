@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.ui.viewmodels
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.MutableState
@@ -12,6 +13,7 @@ import androidx.navigation.NavHostController
 import com.google.firebase.Timestamp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.controller.MoistureInfoController
 import com.tchibo.plantbuddy.controller.RaspberryInfoController
 import com.tchibo.plantbuddy.domain.MoistureInfoDto
@@ -20,7 +22,8 @@ import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.stream.Collectors.toList
 import kotlin.random.Random
 
@@ -30,7 +33,7 @@ data class DetailsPageState(
     val moistureMaps: Map<Float, Pair<Timestamp, Float>> = mutableMapOf(),
     val isRefreshing: Boolean = false,
     val isGraphRefreshing: Boolean = false,
-    val lastUpdatedTime: MutableState<String> = mutableStateOf(""),
+    val lastUpdatedTime: String = "",
     val isHumidityDropdownExpanded: MutableState<Boolean> = mutableStateOf(false),
     val humidityDropdownOptions: MutableList<String> = mutableListOf("Last 24h", "Last 7 days", "Last 30 days"),
     val currentHumidityDropdownOptionIndex: MutableState<Int> = mutableIntStateOf(0),
@@ -66,22 +69,23 @@ class DetailsPageViewmodel(
 
             val raspberryInfo = async {
                 RaspberryInfoController.INSTANCE.getRaspberryInfo(raspberryId)
+            }.await()
+
+            _state.value = _state.value.copy(
+                raspberryInfo = raspberryInfo!!,
+            )
+
+            async {
+                checkRaspberryOnlineStatus(raspberryInfo);
             }
 
             updateHumidityValuesList()
 
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
-                raspberryInfo = raspberryInfo.await()!!,
                 isRefreshing = false,
             )
         }
-    }
-
-    fun goToWateringOptions() {
-        navigator.navigate(
-            Routes.getNavigateWateringOptions(raspberryId),
-        )
     }
 
     fun onHumidityDropdownOptionSelected(index: Int) {
@@ -150,17 +154,47 @@ class DetailsPageViewmodel(
             }
 
             val currentDateTime = getCurrentTime()
+            val currentDateString = DateTimeFormatter.ofPattern("MMMM dd, yyyy | hh:mm:ss").format(currentDateTime)
 
             _state.value = _state.value.copy(
                 moistureMaps = moistureMaps,
                 chartModelProducer = chartModelProducer,
                 isGraphRefreshing = false,
-                lastUpdatedTime = mutableStateOf(currentDateTime.toString()),
+                lastUpdatedTime = currentDateString,
             )
         }
     }
 
-    private fun getCurrentTime(): Date {
-        return Timestamp.now().toDate()
+    private fun getCurrentTime(): LocalDateTime {
+        return LocalDateTime.now()
+    }
+
+    fun unlinkRaspberry() {
+        Log.d("hehe", "Not yet implemented")
+    }
+
+    fun goToWateringOptions() {
+        navigator.navigate(
+            Routes.getNavigateWateringOptions(raspberryId),
+        )
+    }
+
+    fun goToRaspberrySettings() {
+        navigator.navigate(
+            Routes.getNavigateRaspberrySettings(raspberryId),
+        )
+    }
+
+    fun goToLogs() {
+        navigator.navigate(
+            Routes.getNavigateLogs(raspberryId),
+        )
+    }
+
+    private suspend fun checkRaspberryOnlineStatus(raspberryInfo: RaspberryInfo) {
+        val raspberryStatus = FirebaseController.INSTANCE.getRaspberryStatus(raspberryInfo.raspberryId)
+        _state.value = _state.value.copy(
+            raspberryInfo = raspberryInfo.copy(raspberryStatus = raspberryStatus),
+        )
     }
 }

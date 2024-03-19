@@ -1,5 +1,6 @@
 package com.tchibo.plantbuddy.controller
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -8,13 +9,17 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.tchibo.plantbuddy.domain.MoistureInfo
 import com.tchibo.plantbuddy.domain.RaspberryInfo
+import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.domain.WateringProgram
 import com.tchibo.plantbuddy.exceptions.DeserializationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.math.round
 import kotlin.reflect.KFunction2
 
 class FirebaseController private constructor(
@@ -28,6 +33,8 @@ class FirebaseController private constructor(
     private val wateringProgramsCollectionName = "watering_programs"
     private val wateringProgramsCollectionNestedCollectionName = "programs"
     private val globalWateringProgramsCollectionName = "global_watering_programs"
+    private val generalWsCollectionName = "general_purpose_ws"
+    private val logsCollectionName = "logs"
 
     companion object {
         private lateinit var userData: UserData
@@ -125,10 +132,7 @@ class FirebaseController private constructor(
                             .document(raspId.toString())
                             .get()
                             .await()
-                            .data
-
-                        if (raspInfo == null)
-                            return@async null
+                            .data ?: return@async null
 
                         RaspberryInfo(raspId.toString())
                             .fromMap(raspInfo as Map<String, Any>)
@@ -146,10 +150,7 @@ class FirebaseController private constructor(
                     .document(raspberryId)
                     .get()
                     .await()
-                    .data
-
-                if (raspInfo == null)
-                    return null
+                    .data ?: return null
 
                 RaspberryInfo(raspberryId)
                     .fromMap(raspInfo as Map<String, Any>)
@@ -222,19 +223,19 @@ class FirebaseController private constructor(
             }
             .toMutableList()
 
-        val globalWateringPrograms = db.collection(globalWateringProgramsCollectionName)
-            .get()
-            .await()
-            .documents.map { documentSnapshot ->
-                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
-                    ?: throw DeserializationException(
-                        "Error deserializing watering program document",
-                        FirebaseFirestoreException.Code.ABORTED
-                    )
-                wateringProgram.copy(id = documentSnapshot.id)
-            }
-
-        wateringPrograms.addAll(globalWateringPrograms)
+//        val globalWateringPrograms = db.collection(globalWateringProgramsCollectionName)
+//            .get()
+//            .await()
+//            .documents.map { documentSnapshot ->
+//                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
+//                    ?: throw DeserializationException(
+//                        "Error deserializing watering program document",
+//                        FirebaseFirestoreException.Code.ABORTED
+//                    )
+//                wateringProgram.copy(id = documentSnapshot.id)
+//            }
+//
+//        wateringPrograms.addAll(globalWateringPrograms)
 
         return wateringPrograms
     }
@@ -284,17 +285,54 @@ class FirebaseController private constructor(
         onSuccess: () -> Unit = {},
         onFailure: () -> Unit = {}
     ) {
+        val collection = db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .collection(wateringProgramsCollectionNestedCollectionName)
+
+        Log.d("TAG", "addWateringProgram: ${wateringProgram.getId()}")
+
+        if (wateringProgram.getId().isNotEmpty()) {
+            collection
+                .document(wateringProgram.getId())
+                .set(wateringProgram)
+                .addOnSuccessListener { onSuccess() }
+                .addOnFailureListener { onFailure() }
+        } else {
+            collection
+                .add(wateringProgram)
+                .addOnSuccessListener { onSuccess() }
+                .addOnFailureListener { onFailure() }
+        }
+    }
+
+    fun getWateringProgram(
+        raspberryId: String,
+        programId: String,
+        onSuccess: (WateringProgram?) -> Unit,
+        onFailure: () -> Unit
+    ) {
         db.collection(wateringProgramsCollectionName)
             .document(raspberryId)
             .collection(wateringProgramsCollectionNestedCollectionName)
-            .add(wateringProgram)
+            .document(programId)
+            .get()
             .addOnSuccessListener {
-                onSuccess()
+                val wateringProgram = it.toObject(WateringProgram::class.java)?.copy(id = programId)
+                onSuccess(wateringProgram)
             }
             .addOnFailureListener {
                 onFailure()
             }
     }
+
+    fun deleteWateringProgram(raspberryId: String, programToDelete: String) {
+        db.collection(wateringProgramsCollectionName)
+            .document(raspberryId)
+            .collection(wateringProgramsCollectionNestedCollectionName)
+            .document(programToDelete)
+            .delete()
+    }
+
 
     fun updateLocalToken(localToken: String?) {
         if (localToken == null)
@@ -306,5 +344,165 @@ class FirebaseController private constructor(
                 "tokens",
                 FieldValue.arrayUnion(localToken)
             )
+    }
+
+    suspend fun getRaspberryStatus(raspberryId: String): RaspberryStatus {
+        var result = RaspberryStatus.OFFLINE
+        val valueRegistered = Mutex(true)
+
+        val listenerRegistration = onRaspberryStatusChange(raspberryId) { snapshot, e ->
+            if (e != null) {
+                result = RaspberryStatus.UNKNOWN
+                valueRegistered.unlock()
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val message = snapshot.data?.get("message") as String
+                if (message == "PONG") {
+                    result = RaspberryStatus.ONLINE
+                    valueRegistered.unlock()
+                }
+            }
+        }
+
+        val docRef = db.collection(generalWsCollectionName).document(raspberryId)
+        docRef.update("message", "PING")
+
+        withTimeoutOrNull(2000) {
+            valueRegistered.lock()
+        }
+
+        listenerRegistration.remove()
+        return result
+    }
+
+    private fun onRaspberryStatusChange(
+        raspberryId: String,
+        callback: (snapshot: DocumentSnapshot?, e: FirebaseFirestoreException?) -> Unit
+    ): ListenerRegistration {
+
+        return db.collection(generalWsCollectionName)
+            .document(raspberryId)
+            .addSnapshotListener { snapshot, e ->
+                callback(snapshot, e)
+            }
+    }
+
+    suspend fun getMoistureLevel(raspberryId: String): String {
+        var result = "N/A"
+        val valueRegistered = Mutex(true)
+
+        val listenerRegistration = onMoistureChange(raspberryId) { snapshot, e ->
+            if (e != null) {
+                result = "N/A"
+                valueRegistered.unlock()
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val message = snapshot.data?.get("soilMoisture")
+                if (message.toString().toFloatOrNull() != null) {
+                    result = message.toString()
+                    valueRegistered.unlock()
+                }
+            }
+        }
+
+        val docRef = db.collection(wateringNowCollectionName).document(raspberryId)
+        docRef.update("soilMoisture", "REQUEST" + round(Math.random() * 1000).toInt())
+
+        withTimeoutOrNull(2000) {
+            valueRegistered.lock()
+        }
+
+        listenerRegistration.remove()
+        return result
+    }
+
+    private fun onMoistureChange(
+        raspberryId: String,
+        callback: (snapshot: DocumentSnapshot?, e: FirebaseFirestoreException?) -> Unit
+    ): ListenerRegistration {
+
+        return db.collection(wateringNowCollectionName)
+            .document(raspberryId)
+            .addSnapshotListener { snapshot, e ->
+                callback(snapshot, e)
+            }
+    }
+
+    suspend fun getLogs(raspberryId: String): HashMap<String, Any> {
+        return db.collection(logsCollectionName)
+            .document(raspberryId)
+            .get()
+            .await()
+            .get("messages") as HashMap<String, Any>? ?: hashMapOf()
+    }
+
+    fun setRaspberryName(raspberryId: String, name: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(raspberryInfoCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "name" to name
+                ) as Map<String, Any>
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
+    }
+
+    fun setRaspberryLocation(raspberryId: String, location: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(raspberryInfoCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "location" to location
+                ) as Map<String, Any>
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
+    }
+
+    fun setRaspberryDescription(raspberryId: String, description: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(raspberryInfoCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "description" to description
+                ) as Map<String, Any>
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
+    }
+
+    fun setNotifiableMessage(raspberryId: String, key: String, value: Boolean, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        try {
+            db.collection(raspberryInfoCollectionName)
+                .document(raspberryId)
+                .update(
+                    hashMapOf(
+                        "notifiable_messages.$key" to value
+                    ) as Map<String, Any>
+                )
+                .addOnSuccessListener {
+                    onSuccess()
+                }
+                .addOnFailureListener {
+                    onFailure(it)
+                }
+        } catch (e: Exception) {
+            onFailure(e)
+        }
     }
 }

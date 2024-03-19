@@ -47,6 +47,8 @@ import com.tchibo.plantbuddy.ui.pages.AddRpiPage
 import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
+import com.tchibo.plantbuddy.ui.pages.LogsPage
+import com.tchibo.plantbuddy.ui.pages.RaspberrySettingsPage
 import com.tchibo.plantbuddy.ui.pages.SettingsPage
 import com.tchibo.plantbuddy.ui.pages.WateringOptionsPage
 import com.tchibo.plantbuddy.ui.viewmodels.SignInViewModel
@@ -74,9 +76,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             PlantBuddyTheme {
                 val navController = rememberNavController()
-
-//                val context = LocalContext.current
-//                LocalDbController_deprecated.initialize(context)
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -242,7 +241,16 @@ class MainActivity : ComponentActivity() {
             }
             composable(Routes.getNavigateAddProgramRaw()) {
                 val rpiId = it.arguments?.getString("id").orEmpty()
-                AddProgramPage(raspberryId = rpiId)
+                val programId = it.arguments?.getString("programId").orEmpty()
+                AddProgramPage(raspberryId = rpiId, programId = programId)
+            }
+            composable(Routes.getNavigateLogsRaw()) {
+                val rpiId = it.arguments?.getString("id").orEmpty()
+                LogsPage(raspberryId = rpiId)
+            }
+            composable(Routes.getNavigateRaspberrySettingsRaw()) {
+                val rpiId = it.arguments?.getString("id").orEmpty()
+                RaspberrySettingsPage(raspberryId = rpiId)
             }
         }
     }

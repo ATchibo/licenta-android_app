@@ -66,5 +66,16 @@
     <string name="min_moisture">Minimum moisture</string>
     <string name="max_moisture">Maximum moisture</string>
     <string name="time_of_day_min">Time of day when the watering first occurs</string>
+    <string name="check_moisture">Check moisture</string>
+    <string name="moisture_level">Current soil moisture: %s</string>
+    <string name="delete">Delete</string>
+    <string name="logs_page">Event Logs</string>
+    <string name="logs_page_description">Here you can see logs regarding the activity of your device</string>
+    <string name="raspberry_settings">Raspberry Settings</string>
+    <string name="raspberry_settings_description">Feel free to customize the details of your device</string>
+    <string name="raspberry_name">Name</string>
+    <string name="raspberry_description">Description</string>
+    <string name="raspberry_location">Location</string>
+    <string name="notification_settings">Set the notifications you want to receive</string>
 
 </resources>

@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults.iconButtonColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +24,8 @@ fun WateringProgramLine(
     index: Int,
     wateringProgram: WateringProgram,
     onTap: (Int) -> Unit,
-    onEdit: (Int) -> Unit,
+    onEdit: (String) -> Unit,
+    onDelete: (String) -> Unit,
 ) {
 
     Row (
@@ -39,11 +43,24 @@ fun WateringProgramLine(
 
         IconButton(
             modifier = Modifier.weight(0.2f),
-            onClick = { onEdit(index) }
+            onClick = { onEdit(wateringProgram.getId()) }
         ) {
             Icon(
                 imageVector = Icons.Default.Edit,
                 contentDescription = "Edit",
+            )
+        }
+
+        IconButton(
+            modifier = Modifier.weight(0.2f),
+            colors = iconButtonColors(
+                contentColor = MaterialTheme.colorScheme.error
+            ),
+            onClick = { onDelete(wateringProgram.getId()) }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete",
             )
         }
     }
