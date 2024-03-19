@@ -71,5 +71,10 @@
     <string name="delete">Delete</string>
     <string name="logs_page">Event Logs</string>
     <string name="logs_page_description">Here you can see logs regarding the activity of your device</string>
+    <string name="raspberry_settings">Raspberry Settings</string>
+    <string name="raspberry_settings_description">Feel free to customize the details of your device</string>
+    <string name="raspberry_name">Name</string>
+    <string name="raspberry_description">Description</string>
+    <string name="raspberry_location">Location</string>
 
 </resources>

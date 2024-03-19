@@ -132,10 +132,7 @@ class FirebaseController private constructor(
                             .document(raspId.toString())
                             .get()
                             .await()
-                            .data
-
-                        if (raspInfo == null)
-                            return@async null
+                            .data ?: return@async null
 
                         RaspberryInfo(raspId.toString())
                             .fromMap(raspInfo as Map<String, Any>)
@@ -153,10 +150,7 @@ class FirebaseController private constructor(
                     .document(raspberryId)
                     .get()
                     .await()
-                    .data
-
-                if (raspInfo == null)
-                    return null
+                    .data ?: return null
 
                 RaspberryInfo(raspberryId)
                     .fromMap(raspInfo as Map<String, Any>)
