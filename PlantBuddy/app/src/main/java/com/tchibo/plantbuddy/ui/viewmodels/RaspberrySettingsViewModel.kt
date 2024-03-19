@@ -100,9 +100,32 @@ class RaspberrySettingsViewModel (
     }
 
     fun onNameConfirmEditClick(value: String) {
-        _state.value = _state.value.copy(
-            editingName = false,
-            raspberryName = value,
+        FirebaseController.INSTANCE.setRaspberryName(
+            raspberryId,
+            value,
+            {
+                Toast.makeText(
+                    navigator.context,
+                    "Raspberry name updated",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                _state.value = _state.value.copy(
+                    editingName = false,
+                    raspberryName = value,
+                )
+            },
+            { error ->
+                Toast.makeText(
+                    navigator.context,
+                    "Error updating raspberry name: $error",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                _state.value = _state.value.copy(
+                    editingName = false,
+                )
+            }
         )
     }
 
@@ -119,9 +142,32 @@ class RaspberrySettingsViewModel (
     }
 
     fun onDescriptionConfirmEditClick(value: String) {
-        _state.value = _state.value.copy(
-            editingDescription = false,
-            raspberryDescription = value,
+        FirebaseController.INSTANCE.setRaspberryDescription(
+            raspberryId,
+            value,
+            {
+                Toast.makeText(
+                    navigator.context,
+                    "Raspberry description updated",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                _state.value = _state.value.copy(
+                    editingDescription = false,
+                    raspberryDescription = value,
+                )
+            },
+            { error ->
+                Toast.makeText(
+                    navigator.context,
+                    "Error updating raspberry description: $error",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                _state.value = _state.value.copy(
+                    editingDescription = false,
+                )
+            }
         )
     }
 
@@ -138,9 +184,32 @@ class RaspberrySettingsViewModel (
     }
 
     fun onLocationConfirmEditClick(value: String) {
-        _state.value = _state.value.copy(
-            editingLocation = false,
-            raspberryLocation = value,
+        FirebaseController.INSTANCE.setRaspberryLocation(
+            raspberryId,
+            value,
+            {
+                Toast.makeText(
+                    navigator.context,
+                    "Raspberry location updated",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                _state.value = _state.value.copy(
+                    editingLocation = false,
+                    raspberryLocation = value,
+                )
+            },
+            { error ->
+                Toast.makeText(
+                    navigator.context,
+                    "Error updating raspberry location: $error",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                _state.value = _state.value.copy(
+                    editingLocation = false,
+                )
+            }
         )
     }
 

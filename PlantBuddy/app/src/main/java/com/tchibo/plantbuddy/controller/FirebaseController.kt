@@ -437,4 +437,52 @@ class FirebaseController private constructor(
             .await()
             .get("messages") as HashMap<String, Any>? ?: hashMapOf()
     }
+
+    fun setRaspberryName(raspberryId: String, name: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(raspberryInfoCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "name" to name
+                ) as Map<String, Any>
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
+    }
+
+    fun setRaspberryLocation(raspberryId: String, location: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(raspberryInfoCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "location" to location
+                ) as Map<String, Any>
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
+    }
+
+    fun setRaspberryDescription(raspberryId: String, description: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(raspberryInfoCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "description" to description
+                ) as Map<String, Any>
+            )
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener {
+                onFailure(it)
+            }
+    }
 }
