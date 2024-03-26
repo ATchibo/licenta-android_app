@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.domain.WateringProgram
+import java.time.LocalDateTime
 import java.util.Calendar
 
 
@@ -21,6 +22,7 @@ data class ProgramState (
     val frequencyDays: String = "",
     val quantityL: String = "",
     val timeOfDayMin: String = "",
+    val selectedDate: String = "",
     val minMoisture: String = "",
     val maxMoisture: String = "",
 )
@@ -93,12 +95,17 @@ class ProgramViewModel(
             return
         }
 
+        val startingDateTime = wateringProgram.getStartingDateTime()
+        val selectedDate = "${startingDateTime.dayOfMonth}.${startingDateTime.monthValue}.${startingDateTime.year}"
+        val selectedTime = "${startingDateTime.hour}:${startingDateTime.minute}"
+
         _state.value = _state.value.copy(
             id = wateringProgram.getId(),
             name = wateringProgram.getName(),
             frequencyDays = wateringProgram.getFrequencyDays().toString(),
             quantityL = wateringProgram.getQuantityL().toString(),
-            timeOfDayMin = wateringProgram.getTimeOfDayMin().toString(),
+            timeOfDayMin = selectedTime,
+            selectedDate = selectedDate,
             minMoisture = wateringProgram.getMinMoisture().toString(),
             maxMoisture = wateringProgram.getMaxMoisture().toString(),
         )
@@ -125,6 +132,15 @@ class ProgramViewModel(
     fun onTimeOfDayChanged(hour: Int, minute: Int) {
         _state.value = _state.value.copy(
             timeOfDayMin = (hour * 60 + minute).toString()
+        )
+    }
+
+    fun onDateChanged(selectedDate: Calendar) {
+        val day = selectedDate.get(Calendar.DAY_OF_MONTH)
+        val month = selectedDate.get(Calendar.MONTH) + 1
+        val year = selectedDate.get(Calendar.YEAR)
+        _state.value = _state.value.copy(
+            selectedDate = "$day.$month.$year"
         )
     }
 
@@ -162,13 +178,17 @@ class ProgramViewModel(
         }
     }
 
-    fun isTimeOfDayValid(): Boolean {
+    private fun isTimeOfDayValid(): Boolean {
         return try {
             val timeOfDayMin: Int = _state.value.timeOfDayMin.toInt()
             timeOfDayMin in 0..1439
         } catch (e: NumberFormatException) {
             false
         }
+    }
+
+    fun isDateValid(selectedDate: Calendar): Boolean {
+        return selectedDate.after(Calendar.getInstance())
     }
 
     fun isMinMoistureValid(): Boolean {
@@ -214,11 +234,19 @@ class ProgramViewModel(
         return _state.value.timeOfDayMin.toInt() % 60
     }
 
+    fun getSelectedDate(): String {
+        return _state.value.selectedDate.ifEmpty {
+            "Select date"
+        }
+    }
+
     fun onCancelButtonClicked() {
         navigator.popBackStack()
     }
 
     fun onSaveButtonClicked() {
+        val dateTimeString = "${_state.value.selectedDate} ${getTimeOfDayString()}"
+
         FirebaseController.INSTANCE.addWateringProgram(
             raspberryId,
             WateringProgram(
@@ -226,7 +254,7 @@ class ProgramViewModel(
                 name = _state.value.name,
                 frequencyDays = _state.value.frequencyDays.toFloat(),
                 quantityL = _state.value.quantityL.toFloat(),
-                timeOfDayMin = _state.value.timeOfDayMin.toInt(),
+                startingDateTime = LocalDateTime.parse(dateTimeString),
                 minMoisture = _state.value.minMoisture.toFloat(),
                 maxMoisture = _state.value.maxMoisture.toFloat(),
             ),

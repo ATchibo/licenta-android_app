@@ -1,5 +1,7 @@
 package com.tchibo.plantbuddy.domain
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.round
 
 data class WateringProgram (
@@ -7,7 +9,8 @@ data class WateringProgram (
     private val name: String = "",
     private val frequencyDays: Float = 0.0f,
     private val quantityL: Float = 0.0f,
-    private val timeOfDayMin: Int = 0,
+    private val startingDateTime: LocalDateTime = LocalDateTime.now(),
+//    private val startingDateTime: Timestamp = Timestamp.now(),
     private val minMoisture: Float = 0.0f,
     private val maxMoisture: Float = 0.0f,
 ) {
@@ -18,7 +21,7 @@ data class WateringProgram (
             name = if (map["name"] != null) map["name"] as String else "",
             frequencyDays = if (map["frequencyDays"] != null) (map["frequencyDays"] as Long).toFloat() else 0.0f,
             quantityL = if (map["quantityL"] != null) (map["quantityL"] as Double).toFloat() else 0.0f,
-            timeOfDayMin = if (map["timeOfDayMin"] != null) (map["timeOfDayMin"] as Long).toInt() else 0,
+            startingDateTime = if (map["startingDateTime"] != null) map["startingDateTime"] as LocalDateTime else LocalDateTime.now(),
             minMoisture = if (map["minMoisture"] != null) (map["minMoisture"] as Double).toFloat() else 0.0f,
             maxMoisture = if (map["maxMoisture"] != null) (map["maxMoisture"] as Double).toFloat() else 0.0f,
         )
@@ -30,7 +33,7 @@ data class WateringProgram (
             "name" to name,
             "frequencyDays" to frequencyDays,
             "quantityL" to quantityL,
-            "timeOfDayMin" to timeOfDayMin,
+            "startingDateTime" to startingDateTime,
             "minMoisture" to minMoisture,
             "maxMoisture" to maxMoisture,
         )
@@ -48,8 +51,8 @@ data class WateringProgram (
         return quantityL
     }
 
-    fun getTimeOfDayMin(): Int {
-        return timeOfDayMin
+    fun getStartingDateTime(): LocalDateTime {
+        return startingDateTime
     }
 
     fun getId(): String {
@@ -65,9 +68,8 @@ data class WateringProgram (
     }
 
     fun toStringBody(): String {
-        val hours = timeOfDayMin / 60
-        val minutes = timeOfDayMin % 60
-        val time =  String.format("%02d:%02d", hours, minutes)
+        val time = DateTimeFormatter.ofPattern("MMMM dd, yyyy | hh:mm:ss")
+            .format(startingDateTime)
 
         val freqDays = round(frequencyDays.toDouble() * 100) / 100
 
