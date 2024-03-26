@@ -184,7 +184,7 @@ fun AddProgramPage (
                             Button(
                                 onClick = { showDatePicker = true },
                                 modifier = Modifier
-                                    .padding(0.dp, 5.dp)
+                                    .padding(5.dp)
                             ) {
                                 Text(
                                     text = viewModel.getSelectedDate(),
@@ -195,7 +195,7 @@ fun AddProgramPage (
                             Button(
                                 onClick = { timePickerDialog.show() },
                                 modifier = Modifier
-                                    .padding(0.dp, 5.dp)
+                                    .padding(5.dp)
                             ) {
                                 Text(
                                     text = viewModel.getTimeOfDayString(),

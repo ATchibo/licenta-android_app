@@ -1,6 +1,8 @@
 package com.tchibo.plantbuddy.domain
 
+import com.google.firebase.Timestamp
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.math.round
 
@@ -9,8 +11,7 @@ data class WateringProgram (
     private val name: String = "",
     private val frequencyDays: Float = 0.0f,
     private val quantityL: Float = 0.0f,
-    private val startingDateTime: LocalDateTime = LocalDateTime.now(),
-//    private val startingDateTime: Timestamp = Timestamp.now(),
+    private val startingDateTime: Timestamp = Timestamp.now(),
     private val minMoisture: Float = 0.0f,
     private val maxMoisture: Float = 0.0f,
 ) {
@@ -21,7 +22,7 @@ data class WateringProgram (
             name = if (map["name"] != null) map["name"] as String else "",
             frequencyDays = if (map["frequencyDays"] != null) (map["frequencyDays"] as Long).toFloat() else 0.0f,
             quantityL = if (map["quantityL"] != null) (map["quantityL"] as Double).toFloat() else 0.0f,
-            startingDateTime = if (map["startingDateTime"] != null) map["startingDateTime"] as LocalDateTime else LocalDateTime.now(),
+            startingDateTime = if (map["startingDateTime"] != null) map["startingDateTime"] as Timestamp else Timestamp.now(),
             minMoisture = if (map["minMoisture"] != null) (map["minMoisture"] as Double).toFloat() else 0.0f,
             maxMoisture = if (map["maxMoisture"] != null) (map["maxMoisture"] as Double).toFloat() else 0.0f,
         )
@@ -51,7 +52,7 @@ data class WateringProgram (
         return quantityL
     }
 
-    fun getStartingDateTime(): LocalDateTime {
+    fun getStartingDateTime(): Timestamp {
         return startingDateTime
     }
 
@@ -69,7 +70,7 @@ data class WateringProgram (
 
     fun toStringBody(): String {
         val time = DateTimeFormatter.ofPattern("MMMM dd, yyyy | hh:mm:ss")
-            .format(startingDateTime)
+            .format(LocalDateTime.ofInstant(startingDateTime.toDate().toInstant(), ZoneId.systemDefault()))
 
         val freqDays = round(frequencyDays.toDouble() * 100) / 100
 

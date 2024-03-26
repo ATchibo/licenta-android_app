@@ -7,11 +7,17 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.google.firebase.Timestamp
 import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.domain.WateringProgram
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Date
 
 
 data class ProgramState (
@@ -95,16 +101,16 @@ class ProgramViewModel(
             return
         }
 
-        val startingDateTime = wateringProgram.getStartingDateTime()
+        val startingDateTime = LocalDateTime.ofInstant(wateringProgram.getStartingDateTime().toDate().toInstant(), ZoneId.systemDefault())
         val selectedDate = "${startingDateTime.dayOfMonth}.${startingDateTime.monthValue}.${startingDateTime.year}"
-        val selectedTime = "${startingDateTime.hour}:${startingDateTime.minute}"
+        val selectedTime = startingDateTime.hour*60 + startingDateTime.minute
 
         _state.value = _state.value.copy(
             id = wateringProgram.getId(),
             name = wateringProgram.getName(),
             frequencyDays = wateringProgram.getFrequencyDays().toString(),
             quantityL = wateringProgram.getQuantityL().toString(),
-            timeOfDayMin = selectedTime,
+            timeOfDayMin = selectedTime.toString(),
             selectedDate = selectedDate,
             minMoisture = wateringProgram.getMinMoisture().toString(),
             maxMoisture = wateringProgram.getMaxMoisture().toString(),
@@ -188,7 +194,9 @@ class ProgramViewModel(
     }
 
     fun isDateValid(selectedDate: Calendar): Boolean {
-        return selectedDate.after(Calendar.getInstance())
+        val now = Calendar.getInstance()
+        now.add(Calendar.DATE, -1)
+        return selectedDate.after(now)
     }
 
     fun isMinMoistureValid(): Boolean {
@@ -245,7 +253,14 @@ class ProgramViewModel(
     }
 
     fun onSaveButtonClicked() {
-        val dateTimeString = "${_state.value.selectedDate} ${getTimeOfDayString()}"
+        val dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy")
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        val date = LocalDate.parse(_state.value.selectedDate, dateFormatter)
+        val time = LocalTime.parse(getTimeOfDayString(), timeFormatter)
+
+        // Combine date and time into a LocalDateTime
+        val dateTime = LocalDateTime.of(date, time)
+        val timestamp = Timestamp(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()))
 
         FirebaseController.INSTANCE.addWateringProgram(
             raspberryId,
@@ -254,7 +269,7 @@ class ProgramViewModel(
                 name = _state.value.name,
                 frequencyDays = _state.value.frequencyDays.toFloat(),
                 quantityL = _state.value.quantityL.toFloat(),
-                startingDateTime = LocalDateTime.parse(dateTimeString),
+                startingDateTime = timestamp,
                 minMoisture = _state.value.minMoisture.toFloat(),
                 maxMoisture = _state.value.maxMoisture.toFloat(),
             ),
