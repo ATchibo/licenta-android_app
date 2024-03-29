@@ -300,26 +300,26 @@ fun WateringOptionsPage (
                                     }
                                 }
                             )
-
-                            Button(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                onClick = {
-                                    viewModel.goToAddWateringProgram()
-                                }
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                                    Text(
-                                        text = stringResource(id = R.string.add_watering_preset),
-                                        fontSize = TEXT_SIZE_SMALL,
-                                    )
-                                }
-                            }
                         } else {
                             Spacer(modifier = Modifier.weight(0.7f))
+                        }
+
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            onClick = {
+                                viewModel.goToAddWateringProgram()
+                            }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                                Text(
+                                    text = stringResource(id = R.string.add_watering_preset),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
                         }
                     }
 

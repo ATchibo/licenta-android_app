@@ -75,7 +75,7 @@ data class WateringProgram (
         val freqDays = round(frequencyDays.toDouble() * 100) / 100
 
         return "Frequency: once every $freqDays days\n" +
-                "Time of day: $time\n" +
+                "First watering occurs on: $time\n" +
                 "Quantity: $quantityL L\n" +
                 "Moisture range: $minMoisture% - $maxMoisture%"
 //                "Id: $id\n"
