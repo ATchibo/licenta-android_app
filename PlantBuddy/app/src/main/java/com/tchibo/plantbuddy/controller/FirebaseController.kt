@@ -436,7 +436,7 @@ class FirebaseController private constructor(
         val valueRegistered = Mutex(true)
 
         val docRef = db.collection(wateringNowCollectionName).document(raspberryId)
-        docRef.update("waterVolume", "REQUEST" + round(Math.random() * 1000).toInt())
+        docRef.update("waterTankVolume", "REQUEST" + round(Math.random() * 1000).toInt())
 
         val listenerRegistration = onWaterVolumeChange(raspberryId) { snapshot, e ->
             if (e != null) {
@@ -445,7 +445,7 @@ class FirebaseController private constructor(
             }
 
             if (snapshot != null && snapshot.exists()) {
-                val message = snapshot.data?.get("waterVolume")
+                val message = snapshot.data?.get("waterTankVolume")
                 if (message.toString().toFloatOrNull() != null) {
                     result = message.toString().substring(0..min(4, message.toString().length - 1))
                     valueRegistered.unlock()
