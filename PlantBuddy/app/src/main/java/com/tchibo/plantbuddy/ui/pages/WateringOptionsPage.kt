@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -163,6 +164,40 @@ fun WateringOptionsPage (
                             text = stringResource(
                                 id = R.string.moisture_level,
                                 state.currentMoistureLevel
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 10.dp, 0.dp, 10.dp),
+                            textAlign = TextAlign.Center,
+                            fontSize = TEXT_SIZE_NORMAL,
+                            fontWeight = FontWeight.Normal,
+                        )
+
+                        // water volume check
+
+                        Button(
+                            onClick = { viewModel.checkWaterVolume() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Height,
+                                    contentDescription = null
+                                )
+                                Text(
+                                    text = stringResource(id = R.string.check_water_volume),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = stringResource(
+                                id = R.string.current_water_volume,
+                                state.currentWaterVolume
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()

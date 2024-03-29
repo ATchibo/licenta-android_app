@@ -33,6 +33,7 @@ data class WateringOptionsState(
     val isWatering: Boolean = false,
     val currentWateringVolume: String = "N/A",
     val currentMoistureLevel: String = "N/A",
+    val currentWaterVolume: String = "N/A",
     val currentWateringDuration: String = "N/A",
     var isLoadingInitData: Boolean = false,
 
@@ -311,6 +312,19 @@ class WateringOptionsViewModel (
             val moistureLevel = FirebaseController.INSTANCE.getMoistureLevel(raspberryId)
             _state.value = _state.value.copy(
                 currentMoistureLevel = "$moistureLevel%",
+            )
+        }
+    }
+
+    fun checkWaterVolume() {
+        _state.value = _state.value.copy(
+            currentWaterVolume = "Checking...",
+        )
+
+        viewModelScope.launch {
+            val waterVolume = FirebaseController.INSTANCE.getWaterVolume(raspberryId)
+            _state.value = _state.value.copy(
+                currentWaterVolume = "$waterVolume liters",
             )
         }
     }
