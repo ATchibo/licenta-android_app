@@ -1,6 +1,7 @@
 package com.tchibo.plantbuddy.ui.pages
 
 import android.app.TimePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,13 +14,20 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +46,7 @@ import com.tchibo.plantbuddy.ui.viewmodels.ProgramViewModel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,10 +72,21 @@ fun AddProgramPage (
         TimePickerDialog (
             context,
             { _, hour, minute -> viewModel.onTimeOfDayChanged(hour, minute) },
-            viewModel.getTimeOfDayHour() / 60,
-            viewModel.getTimeOfDayMinute() % 60,
+            viewModel.getTimeOfDayHour(),
+            viewModel.getTimeOfDayMinute(),
             true
         )
+
+    val date = remember {
+        Calendar.getInstance().timeInMillis
+    }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = date,
+        yearRange = Calendar.getInstance().get(Calendar.YEAR)..Calendar.getInstance().get(Calendar.YEAR) + 2
+    )
+    var showDatePicker by remember {
+        mutableStateOf(false)
+    }
 
     Scaffold (
         topBar = { Appbar(screenInfo = state.screenInfo) }
@@ -155,15 +175,33 @@ fun AddProgramPage (
                                 .padding(0.dp, 5.dp),
                             fontSize = TEXT_SIZE_NORMAL,
                         )
-                        Button(
-                            onClick = { timePickerDialog.show() },
+
+                        Row (
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(0.dp, 5.dp)
                         ) {
-                            Text(
-                                text = viewModel.getTimeOfDayString(),
-                                fontSize = TEXT_SIZE_SMALL,
-                            )
+                            Button(
+                                onClick = { showDatePicker = true },
+                                modifier = Modifier
+                                    .padding(5.dp)
+                            ) {
+                                Text(
+                                    text = viewModel.getSelectedDate(),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
+
+                            Button(
+                                onClick = { timePickerDialog.show() },
+                                modifier = Modifier
+                                    .padding(5.dp)
+                            ) {
+                                Text(
+                                    text = viewModel.getTimeOfDayString(),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
                         }
                     }
                 }
@@ -198,6 +236,48 @@ fun AddProgramPage (
                             keyboardType = KeyboardType.Decimal
                         )
                     )
+                }
+            }
+
+            if (showDatePicker) {
+                DatePickerDialog(
+                    onDismissRequest = {},
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                val selectedDate = Calendar.getInstance().apply {
+                                    timeInMillis = datePickerState.selectedDateMillis!!
+                                }
+                                if (viewModel.isDateValid(selectedDate)) {
+                                    Toast.makeText(
+                                        context,
+                                        "Saved date",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    showDatePicker = false
+                                    viewModel.onDateChanged(selectedDate)
+
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Invalid date",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        ) { Text("OK") }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                showDatePicker = false
+                            }
+                        ) { Text("Cancel") }
+                    }
+                )
+                {
+                    DatePicker(state = datePickerState)
                 }
             }
 

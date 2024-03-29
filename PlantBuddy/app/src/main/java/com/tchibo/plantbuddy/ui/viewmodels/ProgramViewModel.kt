@@ -7,10 +7,17 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.google.firebase.Timestamp
 import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.domain.ScreenInfo
 import com.tchibo.plantbuddy.domain.WateringProgram
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Date
 
 
 data class ProgramState (
@@ -21,6 +28,7 @@ data class ProgramState (
     val frequencyDays: String = "",
     val quantityL: String = "",
     val timeOfDayMin: String = "",
+    val selectedDate: String = "",
     val minMoisture: String = "",
     val maxMoisture: String = "",
 )
@@ -93,12 +101,17 @@ class ProgramViewModel(
             return
         }
 
+        val startingDateTime = LocalDateTime.ofInstant(wateringProgram.getStartingDateTime().toDate().toInstant(), ZoneId.systemDefault())
+        val selectedDate = "${startingDateTime.dayOfMonth}.${startingDateTime.monthValue}.${startingDateTime.year}"
+        val selectedTime = startingDateTime.hour*60 + startingDateTime.minute
+
         _state.value = _state.value.copy(
             id = wateringProgram.getId(),
             name = wateringProgram.getName(),
             frequencyDays = wateringProgram.getFrequencyDays().toString(),
             quantityL = wateringProgram.getQuantityL().toString(),
-            timeOfDayMin = wateringProgram.getTimeOfDayMin().toString(),
+            timeOfDayMin = selectedTime.toString(),
+            selectedDate = selectedDate,
             minMoisture = wateringProgram.getMinMoisture().toString(),
             maxMoisture = wateringProgram.getMaxMoisture().toString(),
         )
@@ -125,6 +138,15 @@ class ProgramViewModel(
     fun onTimeOfDayChanged(hour: Int, minute: Int) {
         _state.value = _state.value.copy(
             timeOfDayMin = (hour * 60 + minute).toString()
+        )
+    }
+
+    fun onDateChanged(selectedDate: Calendar) {
+        val day = selectedDate.get(Calendar.DAY_OF_MONTH)
+        val month = selectedDate.get(Calendar.MONTH) + 1
+        val year = selectedDate.get(Calendar.YEAR)
+        _state.value = _state.value.copy(
+            selectedDate = "$day.$month.$year"
         )
     }
 
@@ -162,13 +184,19 @@ class ProgramViewModel(
         }
     }
 
-    fun isTimeOfDayValid(): Boolean {
+    private fun isTimeOfDayValid(): Boolean {
         return try {
             val timeOfDayMin: Int = _state.value.timeOfDayMin.toInt()
             timeOfDayMin in 0..1439
         } catch (e: NumberFormatException) {
             false
         }
+    }
+
+    fun isDateValid(selectedDate: Calendar): Boolean {
+        val now = Calendar.getInstance()
+        now.add(Calendar.DATE, -1)
+        return selectedDate.after(now)
     }
 
     fun isMinMoistureValid(): Boolean {
@@ -214,11 +242,26 @@ class ProgramViewModel(
         return _state.value.timeOfDayMin.toInt() % 60
     }
 
+    fun getSelectedDate(): String {
+        return _state.value.selectedDate.ifEmpty {
+            "Select date"
+        }
+    }
+
     fun onCancelButtonClicked() {
         navigator.popBackStack()
     }
 
     fun onSaveButtonClicked() {
+        val dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy")
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        val date = LocalDate.parse(_state.value.selectedDate, dateFormatter)
+        val time = LocalTime.parse(getTimeOfDayString(), timeFormatter)
+
+        // Combine date and time into a LocalDateTime
+        val dateTime = LocalDateTime.of(date, time)
+        val timestamp = Timestamp(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()))
+
         FirebaseController.INSTANCE.addWateringProgram(
             raspberryId,
             WateringProgram(
@@ -226,7 +269,7 @@ class ProgramViewModel(
                 name = _state.value.name,
                 frequencyDays = _state.value.frequencyDays.toFloat(),
                 quantityL = _state.value.quantityL.toFloat(),
-                timeOfDayMin = _state.value.timeOfDayMin.toInt(),
+                startingDateTime = timestamp,
                 minMoisture = _state.value.minMoisture.toFloat(),
                 maxMoisture = _state.value.maxMoisture.toFloat(),
             ),
