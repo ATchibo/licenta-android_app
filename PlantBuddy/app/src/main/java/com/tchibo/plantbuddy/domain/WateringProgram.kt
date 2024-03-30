@@ -69,7 +69,7 @@ data class WateringProgram (
     }
 
     fun toStringBody(): String {
-        val time = DateTimeFormatter.ofPattern("MMMM dd, yyyy | hh:mm:ss")
+        val time = DateTimeFormatter.ofPattern("MMMM dd, yyyy | HH:mm:ss")
             .format(LocalDateTime.ofInstant(startingDateTime.toDate().toInstant(), ZoneId.systemDefault()))
 
         val freqDays = round(frequencyDays.toDouble() * 100) / 100

@@ -154,7 +154,7 @@ class DetailsPageViewmodel(
             }
 
             val currentDateTime = getCurrentTime()
-            val currentDateString = DateTimeFormatter.ofPattern("MMMM dd, yyyy | hh:mm:ss").format(currentDateTime)
+            val currentDateString = DateTimeFormatter.ofPattern("MMMM dd, yyyy | HH:mm:ss").format(currentDateTime)
 
             _state.value = _state.value.copy(
                 moistureMaps = moistureMaps,
