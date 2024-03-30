@@ -265,7 +265,8 @@ fun WateringOptionsPage (
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(0.1f),
+                                .weight(0.15f)
+                                .padding(0.dp, 0.dp, 0.dp, 5.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
@@ -284,60 +285,56 @@ fun WateringOptionsPage (
                             )
                         }
 
-                        if (state.isWateringProgramsEnabled) {
-                            Row(
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 5.dp)
+                                .weight(0.15f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(0.dp, 5.dp)
-                                    .weight(0.15f),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .wrapContentHeight(align = Alignment.CenterVertically),
-                                    text = stringResource(id = R.string.active_watering_preset),
-                                    fontSize = TEXT_SIZE_NORMAL,
-                                )
-
-                                Spacer(modifier = Modifier.weight(1f))
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .wrapContentHeight(align = Alignment.CenterVertically),
-                                    text = viewModel.getCurrentWateringProgramName(),
-                                    fontSize = TEXT_SIZE_NORMAL,
-                                    fontWeight = FontWeight.Medium,
-                                )
-                            }
-
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(0.5f),
-                                content = {
-                                    items(state.wateringPrograms.size) { index ->
-                                        val wateringProgram = state.wateringPrograms[index]
-                                        WateringProgramLine(
-                                            index = index,
-                                            wateringProgram = wateringProgram,
-                                            onTap = viewModel::onWateringProgramTap,
-                                            onEdit = viewModel::goToEditWateringProgram,
-                                            onDelete = viewModel::onPressWateringProgramDelete,
-                                        )
-
-                                        if (index < state.wateringPrograms.size - 1)
-                                            Divider(
-                                                color = MaterialTheme.colorScheme.primary,
-                                                thickness = 1.dp
-                                            )
-                                    }
-                                }
+                                    .fillMaxHeight()
+                                    .wrapContentHeight(align = Alignment.CenterVertically),
+                                text = stringResource(id = R.string.active_watering_preset),
+                                fontSize = TEXT_SIZE_NORMAL,
                             )
-                        } else {
-                            Spacer(modifier = Modifier.weight(0.7f))
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .wrapContentHeight(align = Alignment.CenterVertically),
+                                text = viewModel.getCurrentWateringProgramName(),
+                                fontSize = TEXT_SIZE_NORMAL,
+                                fontWeight = FontWeight.Medium,
+                            )
                         }
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(0.6f),
+                            content = {
+                                items(state.wateringPrograms.size) { index ->
+                                    val wateringProgram = state.wateringPrograms[index]
+                                    WateringProgramLine(
+                                        index = index,
+                                        wateringProgram = wateringProgram,
+                                        onTap = viewModel::onWateringProgramTap,
+                                        onEdit = viewModel::goToEditWateringProgram,
+                                        onDelete = viewModel::onPressWateringProgramDelete,
+                                    )
+
+                                    if (index < state.wateringPrograms.size - 1)
+                                        Divider(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            thickness = 1.dp
+                                        )
+                                }
+                            }
+                        )
 
                         Button(
                             modifier = Modifier

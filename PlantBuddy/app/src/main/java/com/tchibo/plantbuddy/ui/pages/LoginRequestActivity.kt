@@ -102,7 +102,7 @@ fun LoginRequestActivity (
 
         Spacer(modifier = Modifier.weight(1f))
 
-        if (state.connecting) {
+        if (state.connecting || state.loginSuccessful) {
             ProgressIndicator()
             Button(
                 modifier = Modifier
