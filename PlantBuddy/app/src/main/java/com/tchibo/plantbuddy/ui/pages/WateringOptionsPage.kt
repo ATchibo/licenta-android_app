@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -172,6 +173,40 @@ fun WateringOptionsPage (
                             fontWeight = FontWeight.Normal,
                         )
 
+                        // water volume check
+
+                        Button(
+                            onClick = { viewModel.checkWaterVolume() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Height,
+                                    contentDescription = null
+                                )
+                                Text(
+                                    text = stringResource(id = R.string.check_water_volume),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = stringResource(
+                                id = R.string.current_water_volume,
+                                state.currentWaterVolume
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 10.dp, 0.dp, 10.dp),
+                            textAlign = TextAlign.Center,
+                            fontSize = TEXT_SIZE_NORMAL,
+                            fontWeight = FontWeight.Normal,
+                        )
+
                         // watering controls
 
                         Button(
@@ -300,26 +335,26 @@ fun WateringOptionsPage (
                                     }
                                 }
                             )
-
-                            Button(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                onClick = {
-                                    viewModel.goToAddWateringProgram()
-                                }
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                                    Text(
-                                        text = stringResource(id = R.string.add_watering_preset),
-                                        fontSize = TEXT_SIZE_SMALL,
-                                    )
-                                }
-                            }
                         } else {
                             Spacer(modifier = Modifier.weight(0.7f))
+                        }
+
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            onClick = {
+                                viewModel.goToAddWateringProgram()
+                            }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                                Text(
+                                    text = stringResource(id = R.string.add_watering_preset),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                )
+                            }
                         }
                     }
 

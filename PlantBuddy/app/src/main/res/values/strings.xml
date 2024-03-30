@@ -77,5 +77,8 @@
     <string name="raspberry_description">Description</string>
     <string name="raspberry_location">Location</string>
     <string name="notification_settings">Set the notifications you want to receive</string>
+    <string name="check_water_volume">Check water volume</string>
+    <string name="current_water_volume">Volume: %s</string>
+    <string name="refresh">Refresh</string>
 
 </resources>

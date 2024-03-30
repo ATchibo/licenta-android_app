@@ -16,6 +16,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -126,6 +127,16 @@ fun HomePage(
                             fontSize = TEXT_SIZE_NORMAL,
                             color = Color.White,
                         )
+
+                        Button(
+                            onClick = { viewModel.reloadRaspberryDtoList() },
+                            modifier = Modifier
+                                .padding(10.dp),
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.refresh),
+                            )
+                        }
                     } else {
                         LazyVerticalGrid(
                             modifier = Modifier.fillMaxHeight(),

@@ -19,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.math.min
 import kotlin.math.round
 import kotlin.reflect.KFunction2
 
@@ -392,6 +393,9 @@ class FirebaseController private constructor(
         var result = "N/A"
         val valueRegistered = Mutex(true)
 
+        val docRef = db.collection(wateringNowCollectionName).document(raspberryId)
+        docRef.update("soilMoisture", "REQUEST" + round(Math.random() * 1000).toInt())
+
         val listenerRegistration = onMoistureChange(raspberryId) { snapshot, e ->
             if (e != null) {
                 result = "N/A"
@@ -401,14 +405,11 @@ class FirebaseController private constructor(
             if (snapshot != null && snapshot.exists()) {
                 val message = snapshot.data?.get("soilMoisture")
                 if (message.toString().toFloatOrNull() != null) {
-                    result = message.toString()
+                    result = message.toString().substring(0..min(4, message.toString().length - 1))
                     valueRegistered.unlock()
                 }
             }
         }
-
-        val docRef = db.collection(wateringNowCollectionName).document(raspberryId)
-        docRef.update("soilMoisture", "REQUEST" + round(Math.random() * 1000).toInt())
 
         withTimeoutOrNull(2000) {
             valueRegistered.lock()
@@ -429,6 +430,49 @@ class FirebaseController private constructor(
                 callback(snapshot, e)
             }
     }
+
+    suspend fun getWaterVolume(raspberryId: String): String {
+        var result = "N/A"
+        val valueRegistered = Mutex(true)
+
+        val docRef = db.collection(wateringNowCollectionName).document(raspberryId)
+        docRef.update("waterTankVolume", "REQUEST" + round(Math.random() * 1000).toInt())
+
+        val listenerRegistration = onWaterVolumeChange(raspberryId) { snapshot, e ->
+            if (e != null) {
+                result = "N/A"
+                valueRegistered.unlock()
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val message = snapshot.data?.get("waterTankVolume")
+                if (message.toString().toFloatOrNull() != null) {
+                    result = message.toString().substring(0..min(4, message.toString().length - 1))
+                    valueRegistered.unlock()
+                }
+            }
+        }
+
+        withTimeoutOrNull(2000) {
+            valueRegistered.lock()
+        }
+
+        listenerRegistration.remove()
+        return result
+    }
+
+    private fun onWaterVolumeChange(
+        raspberryId: String,
+        callback: (snapshot: DocumentSnapshot?, e: FirebaseFirestoreException?) -> Unit
+    ): ListenerRegistration {
+
+        return db.collection(wateringNowCollectionName)
+            .document(raspberryId)
+            .addSnapshotListener { snapshot, e ->
+                callback(snapshot, e)
+            }
+    }
+
 
     suspend fun getLogs(raspberryId: String): HashMap<String, Any> {
         return db.collection(logsCollectionName)
