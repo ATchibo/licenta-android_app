@@ -80,5 +80,7 @@
     <string name="check_water_volume">Check water volume</string>
     <string name="current_water_volume">Volume: %s</string>
     <string name="refresh">Refresh</string>
+    <string name="unlink_dialog_title">Unlink device</string>
+    <string name="unlink_dialog_content">Are you sure you want to unlink this device?</string>
 
 </resources>

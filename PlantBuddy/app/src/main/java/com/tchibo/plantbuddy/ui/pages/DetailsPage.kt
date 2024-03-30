@@ -40,6 +40,7 @@ import com.tchibo.plantbuddy.domain.RaspberryStatus
 import com.tchibo.plantbuddy.ui.components.Appbar
 import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
+import com.tchibo.plantbuddy.ui.components.detailspage.UnlinkDialog
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
@@ -259,7 +260,7 @@ fun DetailsPage(rpiId: String) {
                                     containerColor = MaterialTheme.colorScheme.error,
                                     contentColor = MaterialTheme.colorScheme.onError
                                 ),
-                                onClick = { viewModel.unlinkRaspberry() }
+                                onClick = { viewModel.openUnlingDialog() }
                             ) {
                                 Row (
                                     verticalAlignment = Alignment.CenterVertically
@@ -276,6 +277,13 @@ fun DetailsPage(rpiId: String) {
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            if (state.showUnlinkDialog) {
+                UnlinkDialog(
+                    onOk = { viewModel.confirmUnlinkRaspberry() },
+                    onDismiss = { viewModel.closeUnlinkDialog() }
+                )
             }
         }
     }
