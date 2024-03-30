@@ -12,6 +12,7 @@ class Routes {
         private const val SETTINGS = "/settings"
         private const val LOGS = "/logs/{id}"
         private const val RASPBERRY_SETTINGS = "/raspberry_settings/{id}"
+        private const val LOGIN_REQUEST = "/login_request"
 
         fun getNavigateLogin(): String {
             return LOGIN
@@ -74,6 +75,10 @@ class Routes {
 
         fun getNavigateRaspberrySettings(rpiId: String) : String {
             return RASPBERRY_SETTINGS.replace("{id}", rpiId)
+        }
+
+        fun getNavigateLoginRequest(): String {
+            return LOGIN_REQUEST
         }
     }
 }

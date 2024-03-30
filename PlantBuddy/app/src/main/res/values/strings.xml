@@ -82,5 +82,6 @@
     <string name="refresh">Refresh</string>
     <string name="unlink_dialog_title">Unlink device</string>
     <string name="unlink_dialog_content">Are you sure you want to unlink this device?</string>
+    <string name="go_to_home">Terminate and go home</string>
 
 </resources>

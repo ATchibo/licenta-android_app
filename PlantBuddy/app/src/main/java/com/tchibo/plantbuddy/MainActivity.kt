@@ -41,12 +41,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.PlantBuddyTheme
 import com.google.android.gms.auth.api.identity.Identity
 import com.tchibo.plantbuddy.controller.FirebaseController
-import com.tchibo.plantbuddy.ui.components.LoginRequestAlertComponent
 import com.tchibo.plantbuddy.ui.pages.AddProgramPage
 import com.tchibo.plantbuddy.ui.pages.AddRpiPage
 import com.tchibo.plantbuddy.ui.pages.DetailsPage
 import com.tchibo.plantbuddy.ui.pages.HomePage
 import com.tchibo.plantbuddy.ui.pages.LoginPage
+import com.tchibo.plantbuddy.ui.pages.LoginRequestActivity
 import com.tchibo.plantbuddy.ui.pages.LogsPage
 import com.tchibo.plantbuddy.ui.pages.RaspberrySettingsPage
 import com.tchibo.plantbuddy.ui.pages.SettingsPage
@@ -57,6 +57,7 @@ import com.tchibo.plantbuddy.utils.Routes
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -81,10 +82,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    LoginRequestAlertComponent(intent)
-
                     CompositionLocalProvider (LocalNavController provides navController) {
-                        ComposeNavigation()
+                        ComposeNavigation(intent)
                     }
                 }
             }
@@ -95,7 +94,7 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
 
         val mainActivityIntent = Intent(this, MainActivity::class.java).apply {
-            flags= Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
 
         mainActivityIntent.putExtra("title", intent?.extras?.getString("title"))
@@ -104,7 +103,7 @@ class MainActivity : ComponentActivity() {
 
         val requestCode = System.currentTimeMillis().toInt()
         val pendingIntent : PendingIntent = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getActivity(this, requestCode,mainActivityIntent, PendingIntent.FLAG_MUTABLE)
+            PendingIntent.getActivity(this, requestCode, mainActivityIntent, PendingIntent.FLAG_MUTABLE)
         }else{
             PendingIntent.getActivity(this, requestCode, mainActivityIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -118,7 +117,23 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ComposeNavigation() {
+    fun ComposeNavigation(intent: Intent?) {
+
+        var routeAfterLogin = Routes.getNavigateHome()
+
+        val intentData = intent?.extras?.getString("data")
+        if (intentData != null) {
+            val dataMap: Map<String, String> = Json.decodeFromString(intentData)
+
+            when (dataMap["type"]) {
+                "LOG" -> {
+                    // do nothing
+                }
+                "LOGIN_REQUEST" -> {
+                    routeAfterLogin = Routes.getNavigateLoginRequest()
+                }
+            }
+        }
 
         val navController = LocalNavController.current
 
@@ -132,7 +147,7 @@ class MainActivity : ComponentActivity() {
                 showLoading.value = true
                 initialiseDbs()
                 showLoading.value = false
-                navController.navigate(Routes.getNavigateHome()) {
+                navController.navigate(routeAfterLogin) {
                     popUpTo(0)
                 }
             }
@@ -251,6 +266,11 @@ class MainActivity : ComponentActivity() {
             composable(Routes.getNavigateRaspberrySettingsRaw()) {
                 val rpiId = it.arguments?.getString("id").orEmpty()
                 RaspberrySettingsPage(raspberryId = rpiId)
+            }
+            composable(Routes.getNavigateLoginRequest()) {
+                if (intent != null) {
+                    LoginRequestActivity(intent = intent)
+                }
             }
         }
     }

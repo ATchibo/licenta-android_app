@@ -14,18 +14,17 @@ import org.json.JSONObject
 import javax.inject.Inject
 
 data class LoginAlertState(
-    val showNotification: Boolean = false,
-    val notificationMessage: String = "",
-    val notificationTitle: String = "",
-    val onOk: () -> Unit = {},
-    val onCancel: () -> Unit = {},
+    val loadedData: Boolean = false,
+    val message: String = "",
+    val title: String = "",
+    val onFinished: () -> Unit = {},
     val connecting: Boolean = false,
     val toastMessage: String = "",
     val loginSuccessful: Boolean = false
 )
 
 @HiltViewModel
-class LoginAlertViewModel @Inject constructor (
+class LoginActivityViewModel @Inject constructor (
 
 ): ViewModel() {
 
@@ -48,28 +47,26 @@ class LoginAlertViewModel @Inject constructor (
 
     private fun initLoading() {
         _state.value = _state.value.copy(
-            showNotification = false
+            loadedData = false
         )
     }
 
-    fun showNotification(
+    fun loadData(
         title: String,
         message: String,
         data: String,
-        onOk: () -> Unit,
-        onCancel: () -> Unit
+        onFinished: () -> Unit
     ) {
-        Log.d("LoginRequestViewModel", "showNotification: $title, $message, $data")
+//        Log.d("LoginRequestViewModel", "showNotification: $title, $message, $data")
 
         val dataMap: Map<String, String> = Json.decodeFromString(data)
         wsCode = dataMap["wsToken"] ?: ""
 
         _state.value = _state.value.copy(
-            showNotification = true,
-            notificationTitle = title,
-            notificationMessage = message,
-            onOk = onOk,
-            onCancel = onCancel
+            loadedData = true,
+            title = title,
+            message = message,
+            onFinished = onFinished
         )
     }
 
@@ -106,8 +103,10 @@ class LoginAlertViewModel @Inject constructor (
 
             _state.value = _state.value.copy(
                 connecting = false,
-                toastMessage = "Error linking device"
+                toastMessage = "Could not send rejection message"
             )
+
+            _state.value.onFinished()
         }
     }
 
@@ -148,25 +147,36 @@ class LoginAlertViewModel @Inject constructor (
         Log.d("LoginRequestViewModel", "onFail: $message")
     }
 
-    fun onOk() {
+    fun onAcceptLogin() {
+        _state.value = _state.value.copy(
+            connecting = true
+        )
+
         logDeviceIn = true
         CoroutineScope(Dispatchers.IO).launch {
             messageService.connect(wsCode)
-            Log.d("LoginRequestViewModel", "logDeviceIn: connected to $wsCode")
+//            Log.d("LoginRequestViewModel", "logDeviceIn: connected to $wsCode")
         }
-        
-        _state.value.onOk()
-        initLoading()
     }
 
-    fun onCancel() {
+    fun onDenyLogin() {
+        _state.value = _state.value.copy(
+            connecting = true
+        )
+
         logDeviceIn = false
         CoroutineScope(Dispatchers.IO).launch {
             messageService.connect(wsCode)
-            Log.d("LoginRequestViewModel", "dont log device in: connected to $wsCode")
+//            Log.d("LoginRequestViewModel", "dont log device in: connected to $wsCode")
         }
+    }
 
-        _state.value.onCancel()
-        initLoading()
+    fun onTerminate() {
+        messageService.disconnect()
+        _state.value = _state.value.copy(
+            connecting = false
+        )
+
+        _state.value.onFinished()
     }
 }
