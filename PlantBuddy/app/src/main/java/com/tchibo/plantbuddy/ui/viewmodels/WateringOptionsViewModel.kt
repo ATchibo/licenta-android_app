@@ -103,15 +103,10 @@ class WateringOptionsViewModel (
 
     private fun wateringNowListener(snapshot: DocumentSnapshot?, e: FirebaseFirestoreException?) {
         if (e != null) {
-            Log.w("TAG", "Listen failed.", e)
             return
         }
 
         if (snapshot != null && snapshot.exists()) {
-            // Handle the updated data
-            Log.d("TAG", "Current data: ${snapshot.data}")
-            // Update your UI or perform necessary actions
-
             val wateringInfo = WateringInfo().fromMap(snapshot.data!!)
 
             _state.value = _state.value.copy(
@@ -120,9 +115,13 @@ class WateringOptionsViewModel (
             )
 
             if (wateringInfo.getWateringCommand() == "stop_watering") {
-                stopWatering();
+                _state.value = _state.value.copy(
+                    isWatering = false
+                )
             } else if (wateringInfo.getWateringCommand() == "start_watering") {
-                startWatering();
+                _state.value = _state.value.copy(
+                    isWatering = true
+                )
             }
         } else {
             Log.d("TAG", "Current data: null")
@@ -270,7 +269,6 @@ class WateringOptionsViewModel (
     }
 
     fun goToEditWateringProgram(programId: String) {
-        Log.d("TAG", "Edit program: $programId")
         navigator.navigate(Routes.getNavigateAddProgram(raspberryId, programId))
     }
 

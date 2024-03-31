@@ -169,7 +169,7 @@ class DetailsPageViewmodel(
         return LocalDateTime.now()
     }
 
-    fun openUnlingDialog() {
+    fun openUnlinkDialog() {
         _state.value = _state.value.copy(
             showUnlinkDialog = true,
         )
