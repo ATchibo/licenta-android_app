@@ -1,6 +1,5 @@
 package com.tchibo.plantbuddy.ui.viewmodels
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.MutableState
@@ -34,6 +33,7 @@ data class DetailsPageState(
     val isRefreshing: Boolean = false,
     val isGraphRefreshing: Boolean = false,
     val lastUpdatedTime: String = "",
+    val showUnlinkDialog: Boolean = false,
     val isHumidityDropdownExpanded: MutableState<Boolean> = mutableStateOf(false),
     val humidityDropdownOptions: MutableList<String> = mutableListOf("Last 24h", "Last 7 days", "Last 30 days"),
     val currentHumidityDropdownOptionIndex: MutableState<Int> = mutableIntStateOf(0),
@@ -154,7 +154,7 @@ class DetailsPageViewmodel(
             }
 
             val currentDateTime = getCurrentTime()
-            val currentDateString = DateTimeFormatter.ofPattern("MMMM dd, yyyy | hh:mm:ss").format(currentDateTime)
+            val currentDateString = DateTimeFormatter.ofPattern("MMMM dd, yyyy | HH:mm:ss").format(currentDateTime)
 
             _state.value = _state.value.copy(
                 moistureMaps = moistureMaps,
@@ -169,8 +169,25 @@ class DetailsPageViewmodel(
         return LocalDateTime.now()
     }
 
-    fun unlinkRaspberry() {
-        Log.d("hehe", "Not yet implemented")
+    fun openUnlingDialog() {
+        _state.value = _state.value.copy(
+            showUnlinkDialog = true,
+        )
+    }
+
+    fun confirmUnlinkRaspberry() {
+        viewModelScope.launch {
+            FirebaseController.INSTANCE.unlinkRaspberry(raspberryId)
+            navigator.popBackStack()
+        }
+
+        closeUnlinkDialog()
+    }
+
+    fun closeUnlinkDialog() {
+        _state.value = _state.value.copy(
+            showUnlinkDialog = false,
+        )
     }
 
     fun goToWateringOptions() {

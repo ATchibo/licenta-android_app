@@ -549,4 +549,17 @@ class FirebaseController private constructor(
             onFailure(e)
         }
     }
+
+    fun unlinkRaspberry(raspberryId: String) {
+        db.collection(ownerInfoCollectionName)
+            .document(userData.email)
+            .update(
+                "raspberry_ids",
+                FieldValue.arrayRemove(raspberryId)
+            )
+
+        db.collection(raspberryInfoCollectionName)
+            .document(raspberryId)
+            .delete()
+    }
 }

@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 fun LogCard(
     log: Pair<LocalDateTime, String>
 ) {
-    val dateTime = DateTimeFormatter.ofPattern("MMMM dd, yyyy | hh:mm:ss").format(log.first)
+    val dateTime = DateTimeFormatter.ofPattern("MMMM dd, yyyy | HH:mm:ss").format(log.first)
 
     Column (
         modifier = Modifier

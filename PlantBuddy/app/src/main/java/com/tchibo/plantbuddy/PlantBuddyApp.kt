@@ -17,21 +17,16 @@ class PlantBuddyApp: Application() {
 
     //Create Notification Channel.
     private fun createNotificationChannel(){
-        val name = "JetpackPushNotification"
-        val description ="Jetpack Push Notification"
+        val name = "Notification Channel"
+        val description ="-"
         val importance = NotificationManager.IMPORTANCE_HIGH
 
-        //Now Create Notification Channel.
-        // it take three parameters. notification id,name, and importance.
-        val channel = NotificationChannel("Login",name,importance)
+        val channel = NotificationChannel("NotificationChannel", name, importance)
         channel.description = description;
 
-        // Get Notification Manager.
         val notificationManager : NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        //Lets Create Notification channel.
         notificationManager.createNotificationChannel(channel)
-
     }
 }
