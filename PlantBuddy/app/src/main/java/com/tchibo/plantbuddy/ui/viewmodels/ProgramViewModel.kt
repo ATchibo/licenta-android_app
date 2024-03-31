@@ -202,7 +202,7 @@ class ProgramViewModel(
     fun isMinMoistureValid(): Boolean {
         return try {
             val minMoisture: Float = _state.value.minMoisture.toFloat()
-            minMoisture in 0.1f..99.9f
+            minMoisture in 0.0f..100.0f
         } catch (e: NumberFormatException) {
             false
         }
@@ -211,7 +211,7 @@ class ProgramViewModel(
     fun isMaxMoistureValid(): Boolean {
         return try {
             val maxMoisture: Float = _state.value.maxMoisture.toFloat()
-            maxMoisture in 0.1f..99.9f
+            maxMoisture in 0.0f..100.0f && maxMoisture >= _state.value.minMoisture.toFloat()
         } catch (e: NumberFormatException) {
             false
         }

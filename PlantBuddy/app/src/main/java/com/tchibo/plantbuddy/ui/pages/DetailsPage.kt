@@ -260,7 +260,7 @@ fun DetailsPage(rpiId: String) {
                                     containerColor = MaterialTheme.colorScheme.error,
                                     contentColor = MaterialTheme.colorScheme.onError
                                 ),
-                                onClick = { viewModel.openUnlingDialog() }
+                                onClick = { viewModel.openUnlinkDialog() }
                             ) {
                                 Row (
                                     verticalAlignment = Alignment.CenterVertically
