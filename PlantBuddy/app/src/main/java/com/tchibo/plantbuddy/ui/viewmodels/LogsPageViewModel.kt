@@ -73,4 +73,9 @@ class LogsPageViewModel (
     fun navigateBack() {
         navigator.popBackStack()
     }
+
+    fun clearLogs() {
+        FirebaseController.INSTANCE.clearLogs(raspberryId)
+        loadLogs()
+    }
 }

@@ -453,7 +453,7 @@ class FirebaseController private constructor(
             }
         }
 
-        withTimeoutOrNull(2000) {
+        withTimeoutOrNull(3500) {
             valueRegistered.lock()
         }
 
@@ -561,5 +561,15 @@ class FirebaseController private constructor(
         db.collection(raspberryInfoCollectionName)
             .document(raspberryId)
             .delete()
+    }
+
+    fun clearLogs(raspberryId: String) {
+        db.collection(logsCollectionName)
+            .document(raspberryId)
+            .update(
+                hashMapOf(
+                    "messages" to hashMapOf<String, Any>()
+                ) as Map<String, Any>
+            )
     }
 }

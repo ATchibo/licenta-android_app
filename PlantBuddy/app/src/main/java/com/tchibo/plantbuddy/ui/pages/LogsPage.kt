@@ -11,11 +11,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -96,6 +97,19 @@ fun LogsPage(raspberryId: String) {
                             .fillMaxWidth()
                             .weight(0.9f)
                     ) {
+                        if (state.logs.isEmpty()) {
+                            item {
+                                Text(
+                                    text = stringResource(id = R.string.no_logs),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(30.dp, 10.dp, 30.dp, 30.dp),
+                                    fontSize = TEXT_SIZE_SMALL,
+                                    color = Color.White,
+                                )
+                            }
+                        }
+
                         items(state.logs.size) { index ->
                             LogCard(log = state.logs[index])
                         }
@@ -105,7 +119,11 @@ fun LogsPage(raspberryId: String) {
                 Spacer(modifier = Modifier.weight(0.1f))
 
                 Button(
-                    onClick = { viewModel.navigateBack() },
+                    onClick = { viewModel.clearLogs() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp),
@@ -114,11 +132,11 @@ fun LogsPage(raspberryId: String) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.Default.Delete,
                             contentDescription = null
                         )
                         Text(
-                            text = stringResource(id = R.string.back_button_text),
+                            text = stringResource(id = R.string.clear_logs),
                             fontSize = TEXT_SIZE_SMALL,
                         )
                     }
