@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
@@ -25,6 +26,9 @@ import com.tchibo.plantbuddy.domain.WateringInfo
 import com.tchibo.plantbuddy.domain.WateringProgram
 import com.tchibo.plantbuddy.utils.Routes
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 data class WateringOptionsState(
@@ -35,6 +39,7 @@ data class WateringOptionsState(
     val currentMoistureLevel: String = "N/A",
     val currentWaterVolume: String = "N/A",
     val currentWateringDuration: String = "N/A",
+    val nextWateringTime: String = "N/A",
     var isLoadingInitData: Boolean = false,
 
     val wateringPrograms: List<WateringProgram> = mutableListOf(),
@@ -107,6 +112,8 @@ class WateringOptionsViewModel (
         }
 
         if (snapshot != null && snapshot.exists()) {
+            // watering info
+
             val wateringInfo = WateringInfo().fromMap(snapshot.data!!)
 
             _state.value = _state.value.copy(
@@ -121,6 +128,27 @@ class WateringOptionsViewModel (
             } else if (wateringInfo.getWateringCommand() == "start_watering") {
                 _state.value = _state.value.copy(
                     isWatering = true
+                )
+            }
+
+            // next watering time
+            if (snapshot.data?.containsKey("nextWateringTime")!!) {
+                val nextWateringTime = snapshot.data?.get("nextWateringTime") as Timestamp
+                val nextWateringTimeString = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")//.SSSSSSXXX")
+                    .format(LocalDateTime.ofInstant(nextWateringTime.toDate().toInstant(), ZoneId.systemDefault()))
+
+                if (nextWateringTimeString.isNotEmpty()) {
+                    _state.value = _state.value.copy(
+                        nextWateringTime = nextWateringTimeString,
+                    )
+                } else {
+                    _state.value = _state.value.copy(
+                        nextWateringTime = "N/A",
+                    )
+                }
+            } else {
+                _state.value = _state.value.copy(
+                    nextWateringTime = "N/A",
                 )
             }
         } else {
@@ -183,6 +211,10 @@ class WateringOptionsViewModel (
         } else {
             Icons.Filled.PlayArrow
         }
+    }
+
+    fun getNextWateringTimeString(): String {
+        return state.value.nextWateringTime
     }
 
     fun selectWateringOption(index: Int) {
@@ -326,4 +358,6 @@ class WateringOptionsViewModel (
             )
         }
     }
+    
+    
 }

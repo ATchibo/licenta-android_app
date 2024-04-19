@@ -85,5 +85,6 @@
     <string name="go_to_home">Terminate and go home</string>
     <string name="clear_logs">Clear logs</string>
     <string name="no_logs">No logs</string>
+    <string name="next_watering_time">Time of next watering:</string>
 
 </resources>

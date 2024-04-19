@@ -58,7 +58,7 @@ class LogsPageViewModel (
     }
 
     private suspend fun getLogs(): List<Pair<LocalDateTime, String>> {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSXXX")
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSSSSSXXX")
 
         val logs: HashMap<String, Any> = FirebaseController.INSTANCE.getLogs(raspberryId)
         val logsList = mutableListOf<Pair<LocalDateTime, String>>()
