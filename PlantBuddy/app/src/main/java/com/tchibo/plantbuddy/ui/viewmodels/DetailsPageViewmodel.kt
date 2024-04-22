@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.stream.Collectors.toList
+import kotlin.math.round
 
 data class DetailsPageState(
     val screenInfo: ScreenInfo = ScreenInfo(),
@@ -154,7 +155,7 @@ class DetailsPageViewmodel(
             _state.value = _state.value.copy(
                 moistureValuesTimestampsMap = moistureValuesTimestampsMap,
                 moistureValuesList = moistureValues,
-                averageMoistureValue = moistureValues.average().toFloat(),
+                averageMoistureValue = round(moistureValues.average().toFloat() * 100) / 100,
                 isGraphRefreshing = false,
                 lastUpdatedTime = currentDateString,
             )
