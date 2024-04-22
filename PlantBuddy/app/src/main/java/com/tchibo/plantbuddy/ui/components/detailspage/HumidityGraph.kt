@@ -73,7 +73,7 @@ fun HumidityGraph(
             padding = Dimensions.of(5.dp),
             margins = Dimensions.of(5.dp),
         ),
-        labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
+        labelPosition = DefaultCartesianMarker.LabelPosition.Top,
         indicator = rememberShapeComponent(Shape.Pill, MaterialTheme.colorScheme.onSurface),
     )
 
