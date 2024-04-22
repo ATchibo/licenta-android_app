@@ -63,8 +63,8 @@
     <string name="name">Name</string>
     <string name="frequency_days">Watering frequency (in days)</string>
     <string name="quantity_l">Water quantity (in liters)</string>
-    <string name="min_moisture">Minimum moisture</string>
-    <string name="max_moisture">Maximum moisture</string>
+    <string name="min_moisture">Minimum moisture (percentage)</string>
+    <string name="max_moisture">Maximum moisture (percentage)</string>
     <string name="time_of_day_min">Time when the watering first occurs</string>
     <string name="check_moisture">Check moisture</string>
     <string name="moisture_level">Current soil moisture: %s</string>
