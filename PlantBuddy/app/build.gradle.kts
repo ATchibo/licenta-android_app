@@ -117,7 +117,8 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation ("androidx.compose.material:material:1.5.4")
 
-    implementation("com.patrykandpatrick.vico:compose-m3:1.13.1")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.16")
+//    implementation("com.patrykandpatrick.vico:compose-m3:1.13.1")
 
     implementation("androidx.compose.material:material-icons-extended")
 

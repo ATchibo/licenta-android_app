@@ -7,6 +7,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalLine
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.core.axis.Axis
@@ -33,6 +34,18 @@ fun HumidityGraph(
             axisValuesOverrider = AxisValuesOverrider.fixed(
                 minY = 0f, maxY = 100f),
             spacing = 100.dp,
+            decorations =
+            listOf(
+                rememberHorizontalLine(
+                    y = { 2f },
+                    line = rememberLineComponent(color = Color.Black, thickness = 2.dp),
+                    labelComponent =
+                    rememberTextComponent(
+                        Color.Black,
+                        padding = Dimensions.of(horizontal = 8.dp),
+                    ),
+                ),
+            ),
         ),
         chartModelProducer = state.chartModelProducer,
         startAxis = rememberStartAxis(
@@ -55,8 +68,9 @@ fun HumidityGraph(
                 )
                 formatter.format(timestamp)
             },
-            labelRotationDegrees = 45f,
+            labelRotationDegrees = -45f,
             sizeConstraint = Axis.SizeConstraint.Exact(100f),
         ),
+
     )
 }
