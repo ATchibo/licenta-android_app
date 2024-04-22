@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -42,6 +41,7 @@ import com.tchibo.plantbuddy.ui.components.ProgressIndicator
 import com.tchibo.plantbuddy.ui.components.detailspage.HumidityGraph
 import com.tchibo.plantbuddy.ui.components.detailspage.UnlinkDialog
 import com.tchibo.plantbuddy.ui.viewmodels.DetailsPageViewmodel
+import com.tchibo.plantbuddy.utils.TEXT_SIZE_BIG
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_NORMAL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_SMALL
 import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
@@ -100,12 +100,10 @@ fun DetailsPage(rpiId: String) {
                 Text(
                     text = stringResource(id = R.string.moisture_history),
                     modifier = Modifier
-                        .padding(10.dp, 10.dp)
-                        .fillMaxWidth(),
-                    fontSize = TEXT_SIZE_NORMAL,
+                        .fillMaxWidth()
+                        .padding(10.dp, 20.dp, 0.dp, 10.dp),
+                    fontSize = TEXT_SIZE_BIG,
                     fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center,
-                    color = Color.White,
                 )
 
                 Box(

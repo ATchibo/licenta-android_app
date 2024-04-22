@@ -10,8 +10,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.google.firebase.Timestamp
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.entryOf
 import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.controller.MoistureInfoController
 import com.tchibo.plantbuddy.controller.RaspberryInfoController
@@ -24,12 +22,10 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.stream.Collectors.toList
-import kotlin.random.Random
 
 data class DetailsPageState(
     val screenInfo: ScreenInfo = ScreenInfo(),
     val raspberryInfo: RaspberryInfo = RaspberryInfo(),
-    val moistureMaps: Map<Float, Pair<Timestamp, Float>> = mutableMapOf(),
     val isRefreshing: Boolean = false,
     val isGraphRefreshing: Boolean = false,
     val lastUpdatedTime: String = "",
@@ -37,8 +33,9 @@ data class DetailsPageState(
     val isHumidityDropdownExpanded: MutableState<Boolean> = mutableStateOf(false),
     val humidityDropdownOptions: MutableList<String> = mutableListOf("Last 24h", "Last 7 days", "Last 30 days"),
     val currentHumidityDropdownOptionIndex: MutableState<Int> = mutableIntStateOf(0),
-    val chartModelProducer: ChartEntryModelProducer =
-        ChartEntryModelProducer(List(4) { entryOf(it, Random.nextFloat() * 16f) })
+    val moistureValuesList: List<Float> = listOf(),
+    val moistureValuesTimestampsMap: Map<Float, Timestamp> = mapOf(),
+    val averageMoistureValue: Float = 0f,
 ) {
 }
 
@@ -143,22 +140,21 @@ class DetailsPageViewmodel(
                 .map { MoistureInfoDto(it!!.measurementValuePercent, it.measurementTime) }
                 .collect(toList())
 
-            val chartModelProducer = ChartEntryModelProducer(
-                moistureInfoDtoList.map {
-                    entryOf(moistureInfoDtoList.indexOf(it) + 1, it.measurementValuePercent)
-                }
-            )
+            val moistureValues = moistureInfoDtoList.map {
+                it.measurementValuePercent
+            }
 
-            val moistureMaps = moistureInfoDtoList.associate {
-                moistureInfoDtoList.indexOf(it) + 1.0f to (it.measurementTime to it.measurementValuePercent)
+            val moistureValuesTimestampsMap = moistureInfoDtoList.associate {
+                moistureInfoDtoList.indexOf(it).toFloat() to it.measurementTime
             }
 
             val currentDateTime = getCurrentTime()
             val currentDateString = DateTimeFormatter.ofPattern("MMMM dd, yyyy | HH:mm:ss").format(currentDateTime)
 
             _state.value = _state.value.copy(
-                moistureMaps = moistureMaps,
-                chartModelProducer = chartModelProducer,
+                moistureValuesTimestampsMap = moistureValuesTimestampsMap,
+                moistureValuesList = moistureValues,
+                averageMoistureValue = moistureValues.average().toFloat(),
                 isGraphRefreshing = false,
                 lastUpdatedTime = currentDateString,
             )
