@@ -122,7 +122,7 @@ fun HumidityGraph(
         ),
         model = model,
         modifier = Modifier
-            .height(250.dp),
+            .height(320.dp),
         marker = marker,
         scrollState = rememberVicoScrollState(scrollEnabled = true),
     )
