@@ -95,7 +95,7 @@ fun LogsPage(raspberryId: String) {
                     LazyColumn (
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(0.9f)
+                            .weight(0.95f)
                     ) {
                         if (state.logs.isEmpty()) {
                             item {
@@ -116,7 +116,7 @@ fun LogsPage(raspberryId: String) {
                     }
                 }
 
-                Spacer(modifier = Modifier.weight(0.1f))
+                Spacer(modifier = Modifier.weight(0.05f))
 
                 Button(
                     onClick = { viewModel.clearLogs() },
