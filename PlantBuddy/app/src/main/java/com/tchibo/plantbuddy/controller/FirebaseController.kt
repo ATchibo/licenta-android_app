@@ -52,71 +52,25 @@ class FirebaseController private constructor(
         }
     }
 
-//    fun addDeviceAccountLink(
-//        firebaseDeviceLinking: FirebaseDeviceLinking,
-//        context: Context,
-//        onSuccess: () -> Unit = {},
-//        onFailure: () -> Unit = {}
-//    ) {
-//        val dbLinks: CollectionReference = db.collection(ownerInfoCollectionName)
-//
-//        try {
-//            dbLinks.whereArrayContains("raspberry_ids", firebaseDeviceLinking.raspberryId)
-//                .get()
-//                .addOnSuccessListener { it ->
-//                    if (it.isEmpty) {
-//                        dbLinks.document(firebaseDeviceLinking.ownerEmail)
-//                            .set(
-//                                hashMapOf(
-//                                    "raspberry_ids" to firebaseDeviceLinking.raspberryId
-//                                ) as Map<String, String>,
-//                                SetOptions.merge()
-//                            )
-//                            .addOnSuccessListener {
-//                                Toast.makeText(
-//                                    context,
-//                                    "Device linked successfully",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-//
-//                                onSuccess()
-//                            }
-//                            .addOnFailureListener { e ->
-//                                Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
-//                                    .show()
-//
-//                                onFailure()
-//                            }
-//
-//                    } else {
-//                        if (it.documents.size > 1)
-//                            throw IllegalStateException("More than one document found for the same raspberry id")
-//
-//                        if (it.documents[0].id == firebaseDeviceLinking.ownerEmail) {
-//                            Toast.makeText(
-//                                context,
-//                                "Device already linked to this account",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-//
-//                            onSuccess()
-//                        } else {
-//                            Toast.makeText(
-//                                context,
-//                                "Device already linked to another account",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-//
-//                            onFailure()
-//                        }
-//                    }
-//                }
-//        } catch (e: Exception) {
-//            Toast.makeText(context, "Fail to link device: \n$e", Toast.LENGTH_SHORT)
-//                .show()
-//            onFailure()
-//        }
-//    }
+    suspend fun registerUser(signedInUser: UserData) {
+        val user = db.collection(ownerInfoCollectionName)
+            .document(signedInUser.email)
+            .get()
+            .await()
+
+        if (user.exists()) {
+            return
+        }
+
+        val data = hashMapOf(
+            "tokens" to listOf<String>(),
+            "raspberry_ids" to listOf<String>()
+        )
+
+        db.collection(ownerInfoCollectionName)
+            .document(signedInUser.email)
+            .set(data)
+    }
 
     suspend fun getRaspberryInfoList(): List<RaspberryInfo> {
         val raspberryIds = db.collection(ownerInfoCollectionName)

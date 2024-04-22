@@ -181,6 +181,9 @@ class MainActivity : ComponentActivity() {
                         showLoading.value = true
                         initialiseDbs()
                         showLoading.value = false
+
+                        viewModel.registerUser(googleAuthClient.getSignedInUser())
+
                         navController.navigate(Routes.getNavigateHome()) {
                             popUpTo(0)
                         }

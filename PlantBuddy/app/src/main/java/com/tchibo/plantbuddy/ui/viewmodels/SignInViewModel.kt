@@ -1,7 +1,9 @@
 package com.tchibo.plantbuddy.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
+import com.tchibo.plantbuddy.controller.FirebaseController
 import com.tchibo.plantbuddy.domain.SignInResult
+import com.tchibo.plantbuddy.domain.UserData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -30,5 +32,13 @@ class SignInViewModel: ViewModel() {
         _state.update {
             SignInState()
         }
+    }
+
+    suspend fun registerUser(signedInUser: UserData?) {
+        if (signedInUser == null) {
+            return
+        }
+
+        FirebaseController.INSTANCE.registerUser(signedInUser)
     }
 }
