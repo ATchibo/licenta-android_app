@@ -27,7 +27,7 @@
     <string name="add_device_title">Link Raspberry Pi to your account</string>
     <string name="add_device_instructions_0">Instructions:</string>
     <string name="add_device_instructions_1">Connect your Raspberry Pi to a network</string>
-    <string name="add_device_instructions_2">Display the QR Code</string>
+    <string name="add_device_instructions_2">Go to the Connect page on your Raspberry Pi application and press "Connect" to display the QR Code</string>
     <string name="add_device_instructions_3">Scan the code to link the device</string>
     <string name="camera_alert_title">Camera required</string>
     <string name="camera_alert_body">Please grant the app permission to use the camera</string>
