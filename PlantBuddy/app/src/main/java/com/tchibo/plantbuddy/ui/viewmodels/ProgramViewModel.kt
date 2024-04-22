@@ -90,7 +90,10 @@ class ProgramViewModel(
             _state.value = _state.value.copy(
                 screenInfo = screenInfo,
                 isRefreshing = false,
-                timeOfDayMin = (currentHour * 60 + currentMinute).toString()
+                timeOfDayMin = (currentHour * 60 + currentMinute).toString(),
+                selectedDate = "${Calendar.getInstance().get(Calendar.DAY_OF_MONTH)}." +
+                        "${Calendar.getInstance().get(Calendar.MONTH) + 1}." +
+                        "${Calendar.getInstance().get(Calendar.YEAR)}",
             )
         }
     }
