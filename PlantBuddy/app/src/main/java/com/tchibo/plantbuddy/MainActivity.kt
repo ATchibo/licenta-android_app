@@ -90,16 +90,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
         val mainActivityIntent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
 
-        mainActivityIntent.putExtra("title", intent?.extras?.getString("title"))
-        mainActivityIntent.putExtra("body", intent?.extras?.getString("body"))
-        mainActivityIntent.putExtra("data", intent?.extras?.getString("data"))
+        mainActivityIntent.putExtra("title", intent.extras?.getString("title"))
+        mainActivityIntent.putExtra("body", intent.extras?.getString("body"))
+        mainActivityIntent.putExtra("data", intent.extras?.getString("data"))
 
         val requestCode = System.currentTimeMillis().toInt()
         val pendingIntent : PendingIntent = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

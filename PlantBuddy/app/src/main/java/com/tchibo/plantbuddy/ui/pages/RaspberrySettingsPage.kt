@@ -136,7 +136,7 @@ fun RaspberrySettingsPage(raspberryId: String) {
 
                         state.notifiableMessages.forEach { notifiableMessage ->
                             NotifiableMessageComponent(
-                                notifiableMessageName = notifiableMessage.key,
+                                notifiableMessageName = notifiableMessage.key.replace("_", " "),
                                 notifiableMessageValue = notifiableMessage.value
                             ) { newValue, onSuccess ->
                                 viewModel.onNotifiableMessageValueChange(
