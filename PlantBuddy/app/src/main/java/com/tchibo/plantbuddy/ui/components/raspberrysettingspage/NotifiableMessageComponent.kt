@@ -36,8 +36,8 @@ fun NotifiableMessageComponent (
     Row (
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .padding(0.dp, 5.dp)
+            .height(60.dp)
+            .padding(0.dp, 3.dp)
     ) {
 
         Text(
