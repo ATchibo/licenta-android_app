@@ -30,14 +30,6 @@ class WateringInfo (
         )
     }
 
-    fun toMap(): Map<String, Any> {
-        return mapOf(
-            "command" to wateringCommand,
-            "watering_duration" to wateringDuration,
-            "watering_volume" to wateringVolume,
-        )
-    }
-
     fun getWateringCommand(): String {
         return wateringCommand
     }

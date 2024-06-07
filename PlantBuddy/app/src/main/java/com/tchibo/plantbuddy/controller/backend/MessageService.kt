@@ -54,7 +54,6 @@ class MessageService(
     }
 
     fun connect(token: String) {
-//        val webSocketUrl = "ws://10.0.2.2:8080/api/ws/register/$token"
         val webSocketUrl = "ws://82.208.160.92:8181/api/ws/register/$token"
 
         val request = Request.Builder()

@@ -234,11 +234,7 @@ class MainActivity : ComponentActivity() {
                 DetailsPage(rpiId.orEmpty())
             }
             composable(Routes.getNavigateAdd()) {
-                googleAuthClient.getSignedInUser()?.let { it1 ->
-                    AddRpiPage(
-                        userData = it1,
-                    )
-                }
+                AddRpiPage()
             }
             composable(Routes.getNavigateSettings()) {
                 googleAuthClient.getSignedInUser()?.let { it1 ->

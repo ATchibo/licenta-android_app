@@ -33,7 +33,6 @@ class FirebaseController private constructor(
     private val wateringNowCollectionName = "watering_info"
     private val wateringProgramsCollectionName = "watering_programs"
     private val wateringProgramsCollectionNestedCollectionName = "programs"
-    private val globalWateringProgramsCollectionName = "global_watering_programs"
     private val generalWsCollectionName = "general_purpose_ws"
     private val logsCollectionName = "logs"
 
@@ -177,20 +176,6 @@ class FirebaseController private constructor(
                 wateringProgram.copy(id = documentSnapshot.id)
             }
             .toMutableList()
-
-//        val globalWateringPrograms = db.collection(globalWateringProgramsCollectionName)
-//            .get()
-//            .await()
-//            .documents.map { documentSnapshot ->
-//                val wateringProgram = documentSnapshot.toObject(WateringProgram::class.java)
-//                    ?: throw DeserializationException(
-//                        "Error deserializing watering program document",
-//                        FirebaseFirestoreException.Code.ABORTED
-//                    )
-//                wateringProgram.copy(id = documentSnapshot.id)
-//            }
-//
-//        wateringPrograms.addAll(globalWateringPrograms)
 
         return wateringPrograms
     }

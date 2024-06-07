@@ -34,7 +34,6 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.tchibo.plantbuddy.LocalNavController
 import com.tchibo.plantbuddy.R
-import com.tchibo.plantbuddy.domain.UserData
 import com.tchibo.plantbuddy.ui.components.addpage.BulletpointText
 import com.tchibo.plantbuddy.ui.components.addpage.QrScanner
 import com.tchibo.plantbuddy.ui.viewmodels.AddRpiPageViewmodel
@@ -44,9 +43,7 @@ import com.tchibo.plantbuddy.utils.TEXT_SIZE_UGE
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun AddRpiPage(
-    userData: UserData
-) {
+fun AddRpiPage() {
 
     val navigator = LocalNavController.current
 
@@ -58,7 +55,7 @@ fun AddRpiPage(
     val viewModel = viewModel<AddRpiPageViewmodel>(
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return AddRpiPageViewmodel(navigator) as T
+                return AddRpiPageViewmodel() as T
             }
         }
     )

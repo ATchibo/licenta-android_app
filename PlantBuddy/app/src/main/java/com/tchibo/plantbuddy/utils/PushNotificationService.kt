@@ -18,15 +18,9 @@ class PushNotificationService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        // TODO: Send the token to the server
-
-//        Log.d("PushNotificationService", "Token: $token")
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-//        Log.d("PushNotificationService", "Message: ${remoteMessage.notification?.title} - ${remoteMessage.notification?.body}")
-//        Log.d("PushNotificationService", "Data: ${remoteMessage.data}")
-
         super.onMessageReceived(remoteMessage)
 
         val title = remoteMessage.notification?.title ?: "Title"

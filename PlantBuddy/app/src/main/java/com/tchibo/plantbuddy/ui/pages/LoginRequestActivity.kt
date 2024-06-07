@@ -143,34 +143,4 @@ fun LoginRequestActivity (
             }
         }
     }
-
-//    if (state.showNotification) {
-//        AlertDialog(
-//            onDismissRequest = {},
-//            title = {
-//                Text(text = state.notificationTitle)
-//            },
-//            text = {
-//                Text(text = state.notificationMessage)
-//            },
-//            confirmButton = {
-//                Button(
-//                    onClick = {
-//                        viewModel.onAcceptLogin()
-//                    }
-//                ) {
-//                    Text("OK")
-//                }
-//            },
-//            dismissButton = {
-//                Button(
-//                    onClick = {
-//                        viewModel.onDenyLogin()
-//                    }
-//                ) {
-//                    Text("NO")
-//                }
-//            },
-//        )
-//    }
 }

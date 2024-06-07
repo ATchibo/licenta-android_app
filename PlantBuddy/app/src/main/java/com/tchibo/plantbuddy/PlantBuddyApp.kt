@@ -11,11 +11,9 @@ class PlantBuddyApp: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        //Let's call the function.
         createNotificationChannel()
     }
 
-    //Create Notification Channel.
     private fun createNotificationChannel(){
         val name = "Notification Channel"
         val description ="-"

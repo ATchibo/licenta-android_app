@@ -57,7 +57,6 @@ class LoginActivityViewModel @Inject constructor (
         data: String,
         onFinished: () -> Unit
     ) {
-//        Log.d("LoginRequestViewModel", "showNotification: $title, $message, $data")
 
         val dataMap: Map<String, String> = Json.decodeFromString(data)
         wsCode = dataMap["wsToken"] ?: ""
@@ -155,7 +154,6 @@ class LoginActivityViewModel @Inject constructor (
         logDeviceIn = true
         CoroutineScope(Dispatchers.IO).launch {
             messageService.connect(wsCode)
-//            Log.d("LoginRequestViewModel", "logDeviceIn: connected to $wsCode")
         }
     }
 
@@ -167,7 +165,6 @@ class LoginActivityViewModel @Inject constructor (
         logDeviceIn = false
         CoroutineScope(Dispatchers.IO).launch {
             messageService.connect(wsCode)
-//            Log.d("LoginRequestViewModel", "dont log device in: connected to $wsCode")
         }
     }
 

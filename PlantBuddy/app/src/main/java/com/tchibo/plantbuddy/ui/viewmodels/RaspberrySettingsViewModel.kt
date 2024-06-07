@@ -239,10 +239,6 @@ class RaspberrySettingsViewModel (
             }
         )
     }
-
-    fun navigateBack() {
-        navigator.popBackStack()
-    }
 }
 
 class RaspberrySettingsViewModelFactory (

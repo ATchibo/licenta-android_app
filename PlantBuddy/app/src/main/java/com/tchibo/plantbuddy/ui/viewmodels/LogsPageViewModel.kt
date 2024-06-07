@@ -70,10 +70,6 @@ class LogsPageViewModel (
         return logsList.sortedByDescending { it.first }
     }
 
-    fun navigateBack() {
-        navigator.popBackStack()
-    }
-
     fun clearLogs() {
         FirebaseController.INSTANCE.clearLogs(raspberryId)
         loadLogs()
