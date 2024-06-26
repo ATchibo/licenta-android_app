@@ -18,6 +18,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.of
+import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
@@ -124,6 +125,6 @@ fun HumidityGraph(
         modifier = Modifier
             .height(320.dp),
         marker = marker,
-        scrollState = rememberVicoScrollState(scrollEnabled = true),
+        scrollState = rememberVicoScrollState(scrollEnabled = true, initialScroll = Scroll.Absolute.End),
     )
 }
