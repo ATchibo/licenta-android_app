@@ -125,7 +125,8 @@ class WateringOptionsViewModel (
                 _state.value = _state.value.copy(
                     isWatering = false
                 )
-            } else if (wateringInfo.getWateringCommand() == "start_watering") {
+            } else if (wateringInfo.getWateringCommand() == "start_watering" ||
+                        wateringInfo.getWateringCommand() == "processing") {
                 _state.value = _state.value.copy(
                     isWatering = true
                 )
@@ -134,7 +135,7 @@ class WateringOptionsViewModel (
             // next watering time
             if (snapshot.data?.containsKey("nextWateringTime")!!) {
                 val nextWateringTime = snapshot.data?.get("nextWateringTime") as Timestamp
-                val nextWateringTimeString = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")//.SSSSSSXXX")
+                val nextWateringTimeString = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
                     .format(LocalDateTime.ofInstant(nextWateringTime.toDate().toInstant(), ZoneId.systemDefault()))
 
                 if (nextWateringTimeString.isNotEmpty()) {
